@@ -1,0 +1,6 @@
+{
+  "parsehtml_tests.py::test_file_to_database": true,
+  "parsehtml_tests.py::test_fill_merge_cells": true,
+  "parsehtml_tests.py::test_get_file_cells_text": true,
+  "parsehtml_tests.py::test_spreed_file_tables": true
+}
