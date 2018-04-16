@@ -16,3 +16,4 @@ def test_file_to_database():
 #     filepath = r'H:\data_extract\report\shenzhen\1204618902.html'
 #     file = HtmlFile(filepath)
 #     file.parse_dir_structure()
+

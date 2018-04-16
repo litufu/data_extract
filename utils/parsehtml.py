@@ -38,6 +38,7 @@ class HtmlFile(object):
         self.pageId =  [pf['id'] for pf in self.pfs]
         self.page_contents_base_pgid = OrderedDict(zip(self.pageId,self.pfs))
         self.page_contents_base_pgCount = OrderedDict(zip(range(1,self.pageCount+1),self.pfs))
+
         #文件的所有内容
         self.file_content = []
         #文件中所有的表格单元格列表
