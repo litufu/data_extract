@@ -35,10 +35,9 @@ def similar_item_with_list(item,list):
             return i
     return None
 
+
+
 if __name__ == '__main__':
-    for i in range(10):
-        for j in range(11):
-            print('i',i)
-            print('j',j)
-            if j > i:
-                break
+    import re
+    pattern = re.compile('\d+(/\d+)?')
+    print(pattern.match('13'))

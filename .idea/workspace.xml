@@ -2,32 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3e60a4fc-352a-4d30-94f3-d54b031b611f" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/ReadMe" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/report_data_extract/models/__init__.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/report_data_extract/models/business.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/report_data_extract/models/root.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/report_data_extract/models/standard.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/report_data_extract/models/temp.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/utils/mytools.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/utils/op_db.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/report/shanghai/sh_600312_20171231.html" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/report/shanghai/sh_601006_20141231.html" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/report/shenzhen/sz_300623_20171231.html" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/report/shenzhen/sz_300662_20171231.html" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/utils/sh.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/utils/stdcom.xlsx" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/utils/stdcom1.xlsx" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
-      <change beforePath="$PROJECT_DIR$/report/shenzhen/1204618202.PDF" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/report/shenzhen/1204618202.html" afterPath="$PROJECT_DIR$/report/shenzhen/sz_000878_20171231.html" />
-      <change beforePath="$PROJECT_DIR$/report/shenzhen/1204618902.PDF" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/report/shenzhen/1204618902.html" afterPath="$PROJECT_DIR$/report/shenzhen/sz_002085_20171231.html" />
-      <change beforePath="$PROJECT_DIR$/report/shenzhen/1204618953.PDF" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/report/shenzhen/1204618953.html" afterPath="$PROJECT_DIR$/report/shenzhen/sz_000701_20171231.html" />
-      <change beforePath="$PROJECT_DIR$/report_data_extract/models.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/report_data_extract/tests.py" afterPath="$PROJECT_DIR$/report_data_extract/tests.py" />
-      <change beforePath="$PROJECT_DIR$/utils/db.sqlite3" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/utils/nw.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/utils/parsehtml.py" afterPath="$PROJECT_DIR$/utils/parsehtml.py" />
+      <change beforePath="$PROJECT_DIR$/utils/mytools.py" afterPath="$PROJECT_DIR$/utils/mytools.py" />
       <change beforePath="$PROJECT_DIR$/utils/parsehtml_new.py" afterPath="$PROJECT_DIR$/utils/parsehtml_new.py" />
-      <change beforePath="$PROJECT_DIR$/utils/re.csv" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/utils/t.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/utils/tempParseHtml.db" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/utils/test.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/utils/tests/.cache/parsehtmlnew_tests.py" afterPath="$PROJECT_DIR$/utils/tests/.cache/parsehtmlnew_tests.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -50,7 +35,7 @@
     <SUITE FILE_PATH="coverage/data_extract$op_db.coverage" NAME="op_db Coverage Results" MODIFIED="1523764001533" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_origin_page_num.coverage" NAME="py.test for parsehtml_tests.test_get_origin_page_num Coverage Results" MODIFIED="1523502900155" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_in_parsehtmlnew_tests_py.coverage" NAME="py.test in parsehtmlnew_tests.py Coverage Results" MODIFIED="1523521482870" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests/.cache" />
-    <SUITE FILE_PATH="coverage/data_extract$parsehtml_new.coverage" NAME="parsehtml_new Coverage Results" MODIFIED="1523881757891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
+    <SUITE FILE_PATH="coverage/data_extract$parsehtml_new.coverage" NAME="parsehtml_new Coverage Results" MODIFIED="1523973486527" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$parsehtml.coverage" NAME="parsehtml Coverage Results" MODIFIED="1523279356453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtmlnew_tests_test_file_to_database.coverage" NAME="py.test for parsehtmlnew_tests.test_file_to_database Coverage Results" MODIFIED="1523521715079" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests/.cache" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_tables_cells.coverage" NAME="py.test for parsehtml_tests.test_get_tables_cells Coverage Results" MODIFIED="1523162121337" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
@@ -74,7 +59,7 @@
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_check_if_pure_digital.coverage" NAME="py.test for parsehtml_tests.test_check_if_pure_digital Coverage Results" MODIFIED="1523241881840" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_longest_row_x.coverage" NAME="py.test for parsehtml_tests.test_get_longest_row_x Coverage Results" MODIFIED="1523163487897" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_all_table_previous_text.coverage" NAME="py.test for parsehtml_tests.test_get_all_table_previous_text Coverage Results" MODIFIED="1523283461205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
-    <SUITE FILE_PATH="coverage/data_extract$mytools.coverage" NAME="mytools Coverage Results" MODIFIED="1523801295919" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
+    <SUITE FILE_PATH="coverage/data_extract$mytools.coverage" NAME="mytools Coverage Results" MODIFIED="1523885050475" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_spreed_table.coverage" NAME="py.test for parsehtml_tests.test_spreed_table Coverage Results" MODIFIED="1523268788066" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$parsehtmlnew_tests.coverage" NAME="parsehtmlnew_tests Coverage Results" MODIFIED="1523521551585" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests/.cache" />
   </component>
@@ -86,94 +71,20 @@
       <file leaf-file-name="parsehtml_new.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/utils/parsehtml_new.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18930">
-              <caret line="841" column="29" lean-forward="false" selection-start-line="841" selection-start-column="29" selection-end-line="841" selection-end-column="29" />
+            <state relative-caret-position="-302">
+              <caret line="872" column="36" lean-forward="false" selection-start-line="872" selection-start-column="36" selection-end-line="872" selection-end-column="36" />
               <folding>
                 <element signature="e#37#66#0" expanded="true" />
-                <element signature="e#5858#8752#0" expanded="false" />
-                <element signature="e#8801#8883#0" expanded="false" />
-                <element signature="e#8927#8999#0" expanded="false" />
-                <element signature="e#9079#12709#0" expanded="false" />
-                <element signature="e#12765#13181#0" expanded="false" />
-                <element signature="e#13272#14088#0" expanded="false" />
-                <element signature="e#38288#38292#0" expanded="false" />
+                <element signature="e#4209#5038#0" expanded="false" />
+                <element signature="e#9162#9244#0" expanded="false" />
+                <element signature="e#9288#9360#0" expanded="false" />
+                <element signature="e#9440#13070#0" expanded="false" />
+                <element signature="e#13126#13542#0" expanded="false" />
+                <element signature="e#13633#14449#0" expanded="false" />
+                <element signature="e#35340#37168#0" expanded="false" />
+                <element signature="e#37238#37365#0" expanded="false" />
+                <element signature="e#41698#41702#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/report_data_extract/models/__init__.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="4" column="31" lean-forward="false" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
-              <folding>
-                <element signature="e#1#29#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tests.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/report_data_extract/tests.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="op_db.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/utils/op_db.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="570">
-              <caret line="23" column="25" lean-forward="false" selection-start-line="23" selection-start-column="25" selection-end-line="23" selection-end-column="25" />
-              <folding>
-                <element signature="e#38#81#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="temp.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/report_data_extract/models/temp.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="11" column="35" lean-forward="false" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="35" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mytools.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/utils/mytools.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="780">
-              <caret line="27" column="16" lean-forward="false" selection-start-line="27" selection-start-column="16" selection-end-line="27" selection-end-column="16" />
-              <folding>
-                <element signature="e#38#52#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="standard.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/report_data_extract/models/standard.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="20" column="16" lean-forward="false" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="16" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="root.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/report_data_extract/models/root.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="570">
-              <caret line="19" column="72" lean-forward="false" selection-start-line="19" selection-start-column="58" selection-end-line="19" selection-end-column="72" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -190,13 +101,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>pf97</find>
-      <find>x8f</find>
-      <find>x8f y93</find>
-      <find>x8f yf93</find>
-      <find>get_longest_row_x</find>
-      <find>space</find>
-      <find>soup</find>
       <find>sub</find>
       <find>sibi</find>
       <find>index</find>
@@ -214,12 +118,19 @@
       <find>index_co</find>
       <find>Counter</find>
       <find>map</find>
-      <find>是否增加到标准库</find>
       <find>loc</find>
       <find>get_</find>
       <find>num</find>
-      <find>compare_similar_with_std_and_comp</find>
       <find>num_list_1</find>
+      <find>sz</find>
+      <find>是否增加到标准库</find>
+      <find>相似性检验项目</find>
+      <find>compare_similar_with_std_and_comp</find>
+      <find>StdContentIndex</find>
+      <find>std</find>
+      <find>has</find>
+      <find>8</find>
+      <find>第一步还剩下</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -253,6 +164,7 @@
         <option value="$PROJECT_DIR$/report_data_extract/models/standard.py" />
         <option value="$PROJECT_DIR$/report_data_extract/tests.py" />
         <option value="$PROJECT_DIR$/report_data_extract/models/__init__.py" />
+        <option value="$PROJECT_DIR$/Readme" />
         <option value="$PROJECT_DIR$/utils/mytools.py" />
         <option value="$PROJECT_DIR$/utils/parsehtml_new.py" />
       </list>
@@ -288,6 +200,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -303,31 +217,12 @@
             <path>
               <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
               <item name="data_extract" type="462c0819:PsiDirectoryNode" />
-              <item name="report" type="462c0819:PsiDirectoryNode" />
-              <item name="shenzhen" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
-              <item name="data_extract" type="462c0819:PsiDirectoryNode" />
-              <item name="report_data_extract" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
-              <item name="data_extract" type="462c0819:PsiDirectoryNode" />
-              <item name="report_data_extract" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
-              <item name="data_extract" type="462c0819:PsiDirectoryNode" />
               <item name="utils" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -337,13 +232,15 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="H:\data_extract\report\shenzhen" />
-      <recent name="H:\data_extract\utils" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="H:\data_extract\utils" />
       <recent name="H:\data_extract\report_data_extract\models" />
       <recent name="H:\data_extract\utils\tests" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="H:\data_extract\report\shanghai" />
+      <recent name="H:\data_extract\utils" />
+      <recent name="H:\data_extract\report\shenzhen" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -565,11 +462,11 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40983605" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3363734" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34603006" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17864807" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17864807" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48243558" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -729,1339 +626,1300 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>385</line>
+          <line>410</line>
           <option name="timeStamp" value="229" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>395</line>
+          <line>424</line>
           <option name="timeStamp" value="231" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>397</line>
+          <line>427</line>
           <option name="timeStamp" value="232" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>399</line>
+          <line>466</line>
           <option name="timeStamp" value="233" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>407</line>
+          <line>474</line>
           <option name="timeStamp" value="234" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>410</line>
+          <line>477</line>
           <option name="timeStamp" value="235" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>413</line>
+          <line>480</line>
           <option name="timeStamp" value="237" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>415</line>
+          <line>482</line>
           <option name="timeStamp" value="238" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>419</line>
+          <line>486</line>
           <option name="timeStamp" value="239" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>421</line>
+          <line>488</line>
           <option name="timeStamp" value="240" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>422</line>
+          <line>489</line>
           <option name="timeStamp" value="241" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>424</line>
+          <line>491</line>
           <option name="timeStamp" value="243" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>425</line>
+          <line>492</line>
           <option name="timeStamp" value="244" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>427</line>
+          <line>494</line>
           <option name="timeStamp" value="245" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>468</line>
+          <line>535</line>
           <option name="timeStamp" value="248" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>739</line>
+          <line>808</line>
           <option name="timeStamp" value="260" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>746</line>
+          <line>815</line>
           <option name="timeStamp" value="261" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>747</line>
+          <line>816</line>
           <option name="timeStamp" value="262" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>748</line>
+          <line>817</line>
           <option name="timeStamp" value="263" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>750</line>
+          <line>819</line>
           <option name="timeStamp" value="264" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>764</line>
+          <line>833</line>
           <option name="timeStamp" value="265" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>766</line>
+          <line>835</line>
           <option name="timeStamp" value="266" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>767</line>
+          <line>836</line>
           <option name="timeStamp" value="267" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>772</line>
+          <line>841</line>
           <option name="timeStamp" value="268" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>773</line>
+          <line>842</line>
           <option name="timeStamp" value="269" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>774</line>
+          <line>843</line>
           <option name="timeStamp" value="270" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>775</line>
+          <line>844</line>
           <option name="timeStamp" value="271" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>776</line>
+          <line>845</line>
           <option name="timeStamp" value="272" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>778</line>
+          <line>847</line>
           <option name="timeStamp" value="273" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>780</line>
+          <line>849</line>
           <option name="timeStamp" value="274" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>781</line>
+          <line>850</line>
           <option name="timeStamp" value="275" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>782</line>
+          <line>851</line>
           <option name="timeStamp" value="276" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>783</line>
+          <line>852</line>
           <option name="timeStamp" value="277" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>784</line>
+          <line>853</line>
           <option name="timeStamp" value="278" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>785</line>
+          <line>854</line>
           <option name="timeStamp" value="279" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>787</line>
+          <line>856</line>
           <option name="timeStamp" value="281" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>789</line>
+          <line>864</line>
           <option name="timeStamp" value="282" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>790</line>
+          <line>865</line>
           <option name="timeStamp" value="286" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>791</line>
+          <line>866</line>
           <option name="timeStamp" value="287" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>792</line>
+          <line>867</line>
           <option name="timeStamp" value="288" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>793</line>
+          <line>868</line>
           <option name="timeStamp" value="292" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>794</line>
+          <line>870</line>
           <option name="timeStamp" value="293" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>797</line>
+          <line>873</line>
           <option name="timeStamp" value="294" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>806</line>
+          <line>883</line>
           <option name="timeStamp" value="295" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>807</line>
+          <line>884</line>
           <option name="timeStamp" value="296" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>489</line>
+          <line>556</line>
           <option name="timeStamp" value="304" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>490</line>
+          <line>557</line>
           <option name="timeStamp" value="305" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>491</line>
+          <line>558</line>
           <option name="timeStamp" value="306" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>461</line>
+          <line>528</line>
           <option name="timeStamp" value="329" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>462</line>
+          <line>529</line>
           <option name="timeStamp" value="330" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>466</line>
+          <line>533</line>
           <option name="timeStamp" value="331" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>391</line>
+          <line>420</line>
           <option name="timeStamp" value="339" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>401</line>
+          <line>468</line>
           <option name="timeStamp" value="340" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>754</line>
+          <line>823</line>
           <option name="timeStamp" value="341" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>755</line>
+          <line>824</line>
           <option name="timeStamp" value="342" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>756</line>
+          <line>825</line>
           <option name="timeStamp" value="343" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>761</line>
+          <line>830</line>
           <option name="timeStamp" value="344" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>737</line>
+          <line>806</line>
           <option name="timeStamp" value="346" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>760</line>
+          <line>829</line>
           <option name="timeStamp" value="347" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>372</line>
-          <option name="timeStamp" value="349" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>390</line>
+          <line>419</line>
           <option name="timeStamp" value="350" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>431</line>
+          <line>498</line>
           <option name="timeStamp" value="351" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>435</line>
+          <line>502</line>
           <option name="timeStamp" value="352" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>436</line>
+          <line>503</line>
           <option name="timeStamp" value="353" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>437</line>
+          <line>504</line>
           <option name="timeStamp" value="354" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>439</line>
+          <line>506</line>
           <option name="timeStamp" value="355" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>442</line>
+          <line>509</line>
           <option name="timeStamp" value="356" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>463</line>
+          <line>530</line>
           <option name="timeStamp" value="369" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>464</line>
+          <line>531</line>
           <option name="timeStamp" value="370" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>470</line>
+          <line>537</line>
           <option name="timeStamp" value="371" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>481</line>
+          <line>548</line>
           <option name="timeStamp" value="372" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>486</line>
+          <line>553</line>
           <option name="timeStamp" value="373" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>487</line>
+          <line>554</line>
           <option name="timeStamp" value="374" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>488</line>
+          <line>555</line>
           <option name="timeStamp" value="375" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>483</line>
+          <line>550</line>
           <option name="timeStamp" value="376" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>496</line>
+          <line>563</line>
           <option name="timeStamp" value="377" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>497</line>
+          <line>564</line>
           <option name="timeStamp" value="378" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>501</line>
+          <line>568</line>
           <option name="timeStamp" value="380" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>499</line>
+          <line>566</line>
           <option name="timeStamp" value="381" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>503</line>
+          <line>570</line>
           <option name="timeStamp" value="382" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>505</line>
+          <line>572</line>
           <option name="timeStamp" value="383" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>506</line>
+          <line>573</line>
           <option name="timeStamp" value="384" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>507</line>
+          <line>574</line>
           <option name="timeStamp" value="385" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>510</line>
+          <line>577</line>
           <option name="timeStamp" value="386" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>511</line>
+          <line>578</line>
           <option name="timeStamp" value="387" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>513</line>
+          <line>580</line>
           <option name="timeStamp" value="388" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>520</line>
+          <line>587</line>
           <option name="timeStamp" value="389" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>521</line>
+          <line>588</line>
           <option name="timeStamp" value="390" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>523</line>
+          <line>590</line>
           <option name="timeStamp" value="392" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>522</line>
+          <line>589</line>
           <option name="timeStamp" value="393" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>526</line>
+          <line>593</line>
           <option name="timeStamp" value="394" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>527</line>
+          <line>594</line>
           <option name="timeStamp" value="395" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>528</line>
+          <line>595</line>
           <option name="timeStamp" value="396" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>532</line>
+          <line>599</line>
           <option name="timeStamp" value="397" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>533</line>
+          <line>600</line>
           <option name="timeStamp" value="398" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>534</line>
+          <line>601</line>
           <option name="timeStamp" value="399" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>535</line>
+          <line>602</line>
           <option name="timeStamp" value="401" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>536</line>
+          <line>603</line>
           <option name="timeStamp" value="402" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>537</line>
+          <line>604</line>
           <option name="timeStamp" value="403" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>539</line>
+          <line>606</line>
           <option name="timeStamp" value="404" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>540</line>
+          <line>607</line>
           <option name="timeStamp" value="405" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>542</line>
+          <line>609</line>
           <option name="timeStamp" value="406" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>543</line>
+          <line>610</line>
           <option name="timeStamp" value="407" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>544</line>
+          <line>611</line>
           <option name="timeStamp" value="408" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>545</line>
+          <line>612</line>
           <option name="timeStamp" value="409" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>546</line>
+          <line>613</line>
           <option name="timeStamp" value="411" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>547</line>
+          <line>614</line>
           <option name="timeStamp" value="412" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>548</line>
+          <line>615</line>
           <option name="timeStamp" value="413" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>549</line>
+          <line>616</line>
           <option name="timeStamp" value="414" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>550</line>
+          <line>617</line>
           <option name="timeStamp" value="415" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>551</line>
+          <line>618</line>
           <option name="timeStamp" value="416" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>553</line>
+          <line>620</line>
           <option name="timeStamp" value="417" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>554</line>
+          <line>621</line>
           <option name="timeStamp" value="419" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>555</line>
+          <line>622</line>
           <option name="timeStamp" value="420" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>556</line>
+          <line>623</line>
           <option name="timeStamp" value="421" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>557</line>
+          <line>624</line>
           <option name="timeStamp" value="422" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>558</line>
+          <line>625</line>
           <option name="timeStamp" value="423" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>559</line>
+          <line>626</line>
           <option name="timeStamp" value="424" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>562</line>
+          <line>629</line>
           <option name="timeStamp" value="425" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>563</line>
+          <line>630</line>
           <option name="timeStamp" value="426" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>564</line>
+          <line>631</line>
           <option name="timeStamp" value="427" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>565</line>
+          <line>632</line>
           <option name="timeStamp" value="428" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>566</line>
+          <line>633</line>
           <option name="timeStamp" value="429" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>567</line>
+          <line>634</line>
           <option name="timeStamp" value="430" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>568</line>
+          <line>635</line>
           <option name="timeStamp" value="431" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>569</line>
+          <line>636</line>
           <option name="timeStamp" value="432" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>570</line>
+          <line>637</line>
           <option name="timeStamp" value="433" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>571</line>
+          <line>638</line>
           <option name="timeStamp" value="435" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>572</line>
+          <line>639</line>
           <option name="timeStamp" value="436" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>574</line>
+          <line>641</line>
           <option name="timeStamp" value="437" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>575</line>
+          <line>642</line>
           <option name="timeStamp" value="438" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>576</line>
+          <line>643</line>
           <option name="timeStamp" value="439" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>577</line>
+          <line>644</line>
           <option name="timeStamp" value="440" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>578</line>
+          <line>645</line>
           <option name="timeStamp" value="441" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>580</line>
+          <line>647</line>
           <option name="timeStamp" value="442" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>582</line>
+          <line>649</line>
           <option name="timeStamp" value="443" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>584</line>
+          <line>651</line>
           <option name="timeStamp" value="444" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>585</line>
+          <line>652</line>
           <option name="timeStamp" value="445" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>587</line>
+          <line>654</line>
           <option name="timeStamp" value="446" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>589</line>
+          <line>656</line>
           <option name="timeStamp" value="447" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>590</line>
+          <line>657</line>
           <option name="timeStamp" value="448" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>592</line>
+          <line>659</line>
           <option name="timeStamp" value="449" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>599</line>
+          <line>666</line>
           <option name="timeStamp" value="450" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>600</line>
+          <line>667</line>
           <option name="timeStamp" value="451" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>601</line>
+          <line>668</line>
           <option name="timeStamp" value="453" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>602</line>
+          <line>669</line>
           <option name="timeStamp" value="454" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>603</line>
+          <line>670</line>
           <option name="timeStamp" value="455" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>604</line>
+          <line>671</line>
           <option name="timeStamp" value="456" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>605</line>
+          <line>672</line>
           <option name="timeStamp" value="457" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>606</line>
+          <line>673</line>
           <option name="timeStamp" value="458" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>607</line>
+          <line>674</line>
           <option name="timeStamp" value="459" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>608</line>
+          <line>675</line>
           <option name="timeStamp" value="460" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>609</line>
+          <line>676</line>
           <option name="timeStamp" value="461" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>610</line>
+          <line>677</line>
           <option name="timeStamp" value="462" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>611</line>
+          <line>678</line>
           <option name="timeStamp" value="463" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>612</line>
+          <line>679</line>
           <option name="timeStamp" value="464" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>613</line>
+          <line>680</line>
           <option name="timeStamp" value="465" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>614</line>
+          <line>681</line>
           <option name="timeStamp" value="466" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>615</line>
+          <line>682</line>
           <option name="timeStamp" value="467" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>616</line>
+          <line>683</line>
           <option name="timeStamp" value="468" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>617</line>
+          <line>684</line>
           <option name="timeStamp" value="469" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>618</line>
+          <line>685</line>
           <option name="timeStamp" value="470" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>619</line>
+          <line>686</line>
           <option name="timeStamp" value="471" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>621</line>
+          <line>688</line>
           <option name="timeStamp" value="472" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>631</line>
+          <line>698</line>
           <option name="timeStamp" value="473" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>632</line>
+          <line>699</line>
           <option name="timeStamp" value="474" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>633</line>
+          <line>700</line>
           <option name="timeStamp" value="475" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>637</line>
+          <line>704</line>
           <option name="timeStamp" value="476" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>638</line>
+          <line>705</line>
           <option name="timeStamp" value="477" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>639</line>
+          <line>706</line>
           <option name="timeStamp" value="478" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>649</line>
+          <line>716</line>
           <option name="timeStamp" value="479" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>650</line>
+          <line>717</line>
           <option name="timeStamp" value="481" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>652</line>
+          <line>719</line>
           <option name="timeStamp" value="482" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>654</line>
+          <line>721</line>
           <option name="timeStamp" value="483" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>663</line>
+          <line>730</line>
           <option name="timeStamp" value="484" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>664</line>
+          <line>731</line>
           <option name="timeStamp" value="485" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>665</line>
+          <line>732</line>
           <option name="timeStamp" value="486" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>666</line>
+          <line>733</line>
           <option name="timeStamp" value="487" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>667</line>
+          <line>734</line>
           <option name="timeStamp" value="488" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>668</line>
+          <line>735</line>
           <option name="timeStamp" value="489" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>669</line>
+          <line>736</line>
           <option name="timeStamp" value="490" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>671</line>
+          <line>738</line>
           <option name="timeStamp" value="491" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>673</line>
+          <line>740</line>
           <option name="timeStamp" value="492" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>674</line>
+          <line>741</line>
           <option name="timeStamp" value="493" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>675</line>
+          <line>742</line>
           <option name="timeStamp" value="494" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>679</line>
+          <line>746</line>
           <option name="timeStamp" value="495" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>680</line>
+          <line>747</line>
           <option name="timeStamp" value="496" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>681</line>
+          <line>748</line>
           <option name="timeStamp" value="497" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>683</line>
+          <line>750</line>
           <option name="timeStamp" value="498" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>684</line>
+          <line>751</line>
           <option name="timeStamp" value="499" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>686</line>
+          <line>755</line>
           <option name="timeStamp" value="500" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>687</line>
+          <line>756</line>
           <option name="timeStamp" value="501" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>688</line>
+          <line>757</line>
           <option name="timeStamp" value="502" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>689</line>
+          <line>758</line>
           <option name="timeStamp" value="503" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>690</line>
+          <line>759</line>
           <option name="timeStamp" value="504" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>691</line>
+          <line>760</line>
           <option name="timeStamp" value="505" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>692</line>
+          <line>761</line>
           <option name="timeStamp" value="507" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>693</line>
+          <line>762</line>
           <option name="timeStamp" value="508" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>694</line>
+          <line>763</line>
           <option name="timeStamp" value="509" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>695</line>
+          <line>764</line>
           <option name="timeStamp" value="510" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>696</line>
+          <line>765</line>
           <option name="timeStamp" value="511" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>697</line>
+          <line>766</line>
           <option name="timeStamp" value="512" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>698</line>
+          <line>767</line>
           <option name="timeStamp" value="513" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>699</line>
+          <line>768</line>
           <option name="timeStamp" value="514" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>700</line>
+          <line>769</line>
           <option name="timeStamp" value="515" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>701</line>
+          <line>770</line>
           <option name="timeStamp" value="516" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>702</line>
+          <line>771</line>
           <option name="timeStamp" value="517" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>703</line>
+          <line>772</line>
           <option name="timeStamp" value="518" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>704</line>
+          <line>773</line>
           <option name="timeStamp" value="519" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>705</line>
+          <line>774</line>
           <option name="timeStamp" value="520" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>706</line>
+          <line>775</line>
           <option name="timeStamp" value="521" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>707</line>
+          <line>776</line>
           <option name="timeStamp" value="522" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>708</line>
+          <line>777</line>
           <option name="timeStamp" value="523" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>709</line>
+          <line>778</line>
           <option name="timeStamp" value="524" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>710</line>
+          <line>779</line>
           <option name="timeStamp" value="525" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>711</line>
+          <line>780</line>
           <option name="timeStamp" value="526" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>712</line>
+          <line>781</line>
           <option name="timeStamp" value="527" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>713</line>
+          <line>782</line>
           <option name="timeStamp" value="528" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>714</line>
+          <line>783</line>
           <option name="timeStamp" value="529" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>715</line>
+          <line>784</line>
           <option name="timeStamp" value="530" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>716</line>
+          <line>785</line>
           <option name="timeStamp" value="531" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>717</line>
+          <line>786</line>
           <option name="timeStamp" value="532" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>718</line>
+          <line>787</line>
           <option name="timeStamp" value="533" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>751</line>
+          <line>820</line>
           <option name="timeStamp" value="534" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>752</line>
+          <line>821</line>
           <option name="timeStamp" value="535" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>762</line>
+          <line>831</line>
           <option name="timeStamp" value="536" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>798</line>
+          <line>874</line>
           <option name="timeStamp" value="537" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>796</line>
+          <line>872</line>
           <option name="timeStamp" value="538" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>795</line>
+          <line>871</line>
           <option name="timeStamp" value="539" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>799</line>
+          <line>875</line>
           <option name="timeStamp" value="540" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>801</line>
+          <line>877</line>
           <option name="timeStamp" value="541" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>800</line>
+          <line>876</line>
           <option name="timeStamp" value="542" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>802</line>
+          <line>878</line>
           <option name="timeStamp" value="543" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>803</line>
+          <line>879</line>
           <option name="timeStamp" value="544" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>804</line>
+          <line>880</line>
           <option name="timeStamp" value="545" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>805</line>
+          <line>882</line>
           <option name="timeStamp" value="546" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>808</line>
+          <line>885</line>
           <option name="timeStamp" value="547" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>809</line>
-          <option name="timeStamp" value="548" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>459</line>
+          <line>526</line>
           <option name="timeStamp" value="549" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>456</line>
+          <line>523</line>
           <option name="timeStamp" value="550" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>449</line>
+          <line>516</line>
           <option name="timeStamp" value="552" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>446</line>
+          <line>513</line>
           <option name="timeStamp" value="553" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>443</line>
+          <line>510</line>
           <option name="timeStamp" value="554" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>444</line>
+          <line>511</line>
           <option name="timeStamp" value="555" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>445</line>
+          <line>512</line>
           <option name="timeStamp" value="556" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>448</line>
+          <line>515</line>
           <option name="timeStamp" value="557" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>515</line>
+          <line>582</line>
           <option name="timeStamp" value="558" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>516</line>
+          <line>583</line>
           <option name="timeStamp" value="559" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>517</line>
+          <line>584</line>
           <option name="timeStamp" value="560" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>518</line>
+          <line>585</line>
           <option name="timeStamp" value="561" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>519</line>
+          <line>586</line>
           <option name="timeStamp" value="562" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>552</line>
+          <line>619</line>
           <option name="timeStamp" value="563" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>469</line>
+          <line>536</line>
           <option name="timeStamp" value="564" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>473</line>
+          <line>540</line>
           <option name="timeStamp" value="565" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>474</line>
+          <line>541</line>
           <option name="timeStamp" value="566" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>475</line>
+          <line>542</line>
           <option name="timeStamp" value="567" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>478</line>
+          <line>545</line>
           <option name="timeStamp" value="568" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
-          <line>498</line>
+          <line>565</line>
           <option name="timeStamp" value="572" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
+          <line>397</line>
+          <option name="timeStamp" value="573" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/utils/parsehtml_new.py</url>
+          <line>463</line>
+          <option name="timeStamp" value="599" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="573" />
+      <option name="time" value="600" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/utils/parsehtml_tests.html" />
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/collections/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="88" column="25" lean-forward="false" selection-start-line="88" selection-start-column="25" selection-end-line="88" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/unittest/case.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-540">
-          <caret line="209" column="13" lean-forward="false" selection-start-line="209" selection-start-column="13" selection-end-line="209" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons/nose/tools/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="71" column="39" lean-forward="false" selection-start-line="71" selection-start-column="28" selection-end-line="71" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/bs4/element.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="283">
-          <caret line="1806" column="0" lean-forward="false" selection-start-line="1806" selection-start-column="0" selection-end-line="1806" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/re.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="183" column="29" lean-forward="false" selection-start-line="183" selection-start-column="23" selection-end-line="183" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils/tttt.py" />
     <entry file="file://$PROJECT_DIR$/utils/pandas_text_process.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -2233,26 +2091,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ReadMe">
+    <entry file="file://$PROJECT_DIR$/utils/ReadMe">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="14" column="22" lean-forward="false" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/frame.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="274" column="0" lean-forward="false" selection-start-line="274" selection-start-column="0" selection-end-line="274" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/series.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="2157" column="0" lean-forward="false" selection-start-line="2157" selection-start-column="0" selection-end-line="2157" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2286,26 +2128,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/generic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="1870" column="0" lean-forward="false" selection-start-line="1870" selection-start-column="0" selection-end-line="1870" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/models/fields/related.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-266">
           <caret line="783" column="27" lean-forward="false" selection-start-line="783" selection-start-column="27" selection-end-line="783" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/models/root.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="19" column="72" lean-forward="false" selection-start-line="19" selection-start-column="58" selection-end-line="19" selection-end-column="72" />
           <folding />
         </state>
       </provider>
@@ -2318,31 +2144,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/tests.py">
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/models/sql/compiler.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="136">
+          <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Readme">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="3" lean-forward="false" selection-start-line="0" selection-start-column="3" selection-end-line="0" selection-end-column="3" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/report_data_extract/models/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
+        <state relative-caret-position="120">
           <caret line="4" column="31" lean-forward="false" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
-          <folding>
-            <element signature="e#1#29#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/mytools.py">
+    <entry file="file://$PROJECT_DIR$/report_data_extract/tests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="780">
-          <caret line="27" column="16" lean-forward="false" selection-start-line="27" selection-start-column="16" selection-end-line="27" selection-end-column="16" />
-          <folding>
-            <element signature="e#38#52#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="120">
+          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/op_db.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="23" column="25" lean-forward="false" selection-start-line="23" selection-start-column="25" selection-end-line="23" selection-end-column="25" />
         </state>
       </provider>
     </entry>
@@ -2354,50 +2187,113 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/op_db.py">
+    <entry file="file://$PROJECT_DIR$/utils/sz.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="23" column="25" lean-forward="false" selection-start-line="23" selection-start-column="25" selection-end-line="23" selection-end-column="25" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/generic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="3080" column="0" lean-forward="false" selection-start-line="3080" selection-start-column="0" selection-end-line="3080" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/frame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="2567" column="0" lean-forward="false" selection-start-line="2567" selection-start-column="0" selection-end-line="2567" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/series.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="2878" column="0" lean-forward="false" selection-start-line="2878" selection-start-column="0" selection-end-line="2878" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/io/excel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="194" column="28" lean-forward="false" selection-start-line="194" selection-start-column="19" selection-end-line="194" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/report/shanghai/sh_600312_20171231.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/models/sql/query.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="127">
+          <caret line="1252" column="0" lean-forward="false" selection-start-line="1252" selection-start-column="0" selection-end-line="1252" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="127">
+          <caret line="1676" column="0" lean-forward="false" selection-start-line="1676" selection-start-column="0" selection-end-line="1676" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/mytools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="235">
+          <caret line="41" column="38" lean-forward="false" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="38" />
           <folding>
-            <element signature="e#38#81#0" expanded="true" />
+            <element signature="e#38#52#0" expanded="false" />
+            <element signature="e#102#308#0" expanded="false" />
+            <element signature="e#345#594#0" expanded="false" />
+            <element signature="e#639#832#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/report_data_extract/models/standard.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="20" column="16" lean-forward="false" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="16" />
+        <state relative-caret-position="30">
+          <caret line="4" column="21" lean-forward="false" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="21" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/models/sql/compiler.py">
+    <entry file="file://$PROJECT_DIR$/report_data_extract/models/root.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-          <folding>
-            <marker date="1517494938000" expanded="true" signature="27001:27029" ph="SELECT missi... missing_value" />
-            <marker date="1517494938000" expanded="true" signature="56273:56285" ph="INSERT INTO missing_value... " />
-            <marker date="1517494938000" expanded="true" signature="59896:59908" ph="DELETE FROM missing_value... " />
-            <marker date="1517494938000" expanded="true" signature="65863:65891" ph="SELECT missi... missing_value" />
-          </folding>
+        <state relative-caret-position="385">
+          <caret line="19" column="72" lean-forward="false" selection-start-line="19" selection-start-column="58" selection-end-line="19" selection-end-column="72" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/utils/parsehtml_new.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18930">
-          <caret line="841" column="29" lean-forward="false" selection-start-line="841" selection-start-column="29" selection-end-line="841" selection-end-column="29" />
+        <state relative-caret-position="-302">
+          <caret line="872" column="36" lean-forward="false" selection-start-line="872" selection-start-column="36" selection-end-line="872" selection-end-column="36" />
           <folding>
             <element signature="e#37#66#0" expanded="true" />
-            <element signature="e#5858#8752#0" expanded="false" />
-            <element signature="e#8801#8883#0" expanded="false" />
-            <element signature="e#8927#8999#0" expanded="false" />
-            <element signature="e#9079#12709#0" expanded="false" />
-            <element signature="e#12765#13181#0" expanded="false" />
-            <element signature="e#13272#14088#0" expanded="false" />
-            <element signature="e#38288#38292#0" expanded="false" />
+            <element signature="e#4209#5038#0" expanded="false" />
+            <element signature="e#9162#9244#0" expanded="false" />
+            <element signature="e#9288#9360#0" expanded="false" />
+            <element signature="e#9440#13070#0" expanded="false" />
+            <element signature="e#13126#13542#0" expanded="false" />
+            <element signature="e#13633#14449#0" expanded="false" />
+            <element signature="e#35340#37168#0" expanded="false" />
+            <element signature="e#37238#37365#0" expanded="false" />
+            <element signature="e#41698#41702#0" expanded="false" />
           </folding>
         </state>
       </provider>

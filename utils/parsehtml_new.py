@@ -61,7 +61,7 @@ class HtmlPage(object):
         self.file = file
         self.pgNum = pgNum
 
-    @property
+    # @property
     def get_page_content(self):
         '''
         获取当前页面的内容，删除页眉页脚和内容为空的行（不包括内容为空的单元格）
@@ -71,10 +71,18 @@ class HtmlPage(object):
         pf = self.file.page_contents_base_pgCount[self.pgNum]
         pc = pf.find(class_='pc')
         # 删除没有内容的标签，前3个div(包括页眉、页脚和空行）
-        img = pc.img
-        title = img.next_sibling
-        origin_page_number = title.next_sibling
-        tags = [img,title,origin_page_number]
+        tags = []
+        pattern = re.compile('^\d+(/\d+)?$')
+        for child in pc.children:
+            if pattern.match(re.sub('\s+','',child.get_text())):
+                tags.append(child)
+                break
+            else:
+                tags.append(child)
+        # img = pc.img
+        # title = img.next_sibling
+        # origin_page_number = title.next_sibling
+        # tags = [img,title,origin_page_number]
         for tag in tags:
             tag.decompose()
 
@@ -151,17 +159,17 @@ class HtmlFile(object):
 
         for pageNum in range(1,self.pageCount+1):
             page = HtmlPage(self,pageNum)
-            page_content = page.get_page_content
+            page_content = page.get_page_content()
             page_content_length = len(page_content)
             page_num.extend([pageNum for i in range(page_content_length)])
             file_cells.extend(page_content)
-
+        # print(file_cells)
         for cell in file_cells:
             cells_text.append(re.sub('\s+','',cell.get_text()))
             cells_class.append(cell['class'])
             cells_category.append(cell['class'][0])
 
-
+        # print(cells_text)
         data = {'id':[i for i in range(len(page_num))],'pageNum':page_num,'cellText':cells_text,'cellCategory':cells_category}
         df = pd.DataFrame(data=data)
         return df
@@ -169,6 +177,7 @@ class HtmlFile(object):
 
     def get_std_dir(self,root,market,layer=0, fatherid=''):
         '''
+        初始化深圳交易所标准库
         根据一份已有的报告生成标准的索引，然后再在这个标准索引的基础上进行增加
         :param root:bs4.Beautifulsoup root = file.soup.find('div',id='outline')
         :param layer:默认为0
@@ -228,6 +237,9 @@ class HtmlFile(object):
                 else:
                     models.StdContentIndex.objects.create(market=market,name=name,no_name=no_name,fatherno=fatherid,level=layer,\
                                         selfno=k,no=last_num,has_child='0')
+
+
+
 
     def clearTempIndexCellCount(self):
         # 清空数据库TempIndexCellCount
@@ -357,22 +369,35 @@ class HtmlFile(object):
         #扣除目录页
         dir_pagenum = df_all_cells.loc[df_all_cells.cellText == '目录'].pageNum.values[0]
         all_cells = df_all_cells.loc[df_all_cells.pageNum != dir_pagenum]
-        # 扣除审计报告页
-        start_cell = df_all_cells.loc[df_all_cells.cellText == '一、审计报告'].id.values[0]
-        end_cell = df_all_cells.loc[df_all_cells.cellText == '二、财务报表'].id.values[0]
-        all_cells = all_cells.loc[(all_cells.id<=start_cell) | (all_cells.id>=end_cell)]
-        #只筛选文本区域，不包含报表区域
+        if self.market == 'sz':
+            # # 扣除审计报告页
+            start_cell = df_all_cells.loc[df_all_cells.cellText == '一、审计报告'].id.values[0]
+            end_cell = df_all_cells.loc[df_all_cells.cellText == '二、财务报表'].id.values[0]
+            all_cells = all_cells.loc[(all_cells.id<=start_cell) | (all_cells.id>=end_cell)]
+        # #只筛选文本区域，不包含报表区域
         all_cells = all_cells.loc[all_cells.cellCategory=='t']
-        #解析不同级别索引的正则表达式
-        pattern0 = re.compile('^第([一二三四五六七八九十]{1,2})节([^：；。]*?)$')
-        pattern1 = re.compile('^([一二三四五六七八九十]{1,2})、([^：；。]*?)$')
-        pattern2 = re.compile('^(\d+)、([^：；。]*?)$')
-        pattern3 = re.compile('\（(\d+)\）([^：；。]*?)$')
+        # 深圳年报解析不同级别索引的正则表达式
+        sz_pattern0 = re.compile('^第([一二三四五六七八九十]{1,2})节([^：；。]*?)$')
+        sz_pattern1 = re.compile('^([一二三四五六七八九十]{1,2})、([^：；。]*?)$')
+        sz_pattern2 = re.compile('^(\d+)、([^：；。]*?)$')
+        sz_pattern3 = re.compile('\（(\d+)\）([^：；。]*?)$')
+        sz_pattern_dict = {1: sz_pattern0, 2: sz_pattern1, 3: sz_pattern2, 4: sz_pattern3}
+        #上证年报
+        sh_pattern0 = re.compile('^第([一二三四五六七八九十]{1,2})节([^；。]*?)$')
+        sh_pattern1 = re.compile('^([一二三四五六七八九十]{1,2})、([^；。]*?)$')
+        sh_pattern2 = re.compile('^[\(（]([一二三四五六七八九十]{1,2})[\)）]([^；。]*?)$')
+        sh_pattern3 = re.compile('^(\d+)[\.\、]?([^；。]*?)$')
+        sh_pattern4 = re.compile('[\(（](\d+)[\)）][\.\、]?([^；。]*?)。?$')
+        sh_pattern_dict = {1: sh_pattern0, 2: sh_pattern1, 3: sh_pattern2, 4: sh_pattern3,5:sh_pattern4}
 
-        pattern_dict = {1:pattern0,2:pattern1,3:pattern2,4:pattern3}
-        self.parse_dir_structure(all_cells,level=0,pattern_dict=pattern_dict,fatherno='')
+        if self.market == 'sz':
+            pattern_dict = sz_pattern_dict
+        elif self.market == 'sh':
+            pattern_dict = sh_pattern_dict
 
-    def parse_dir_structure(self,cells,level,pattern_dict,fatherno):
+        self.parse_dir_structure(all_cells,level=0,pattern_dict=pattern_dict,fatherno='',pattern_last='')
+
+    def parse_dir_structure(self,cells,level,pattern_dict,fatherno,pattern_last):
         '''
         解析文件，生成目录索引对应的其实元素位置。
         :param cells: 该目录下所有的元素
@@ -382,9 +407,13 @@ class HtmlFile(object):
         :param exempt_next_ananlye_items: 不进行下一步解析的索引
         :return:
         '''
+        if self.market =='sz':
+            if level>=4:
+                return '解析完成'
+        elif self.market =='sh':
+            if level>=5:
+                return '解析完成'
 
-        if level>=4:
-            return '解析完成'
         if fatherno == '':
             pass
         else:
@@ -395,7 +424,45 @@ class HtmlFile(object):
         print(cells.id)
         cells_length = list(cells.id)[-1]
         #匹配当前目录的正则表达式
-        pattern = pattern_dict[level]
+        if self.market == 'sz':
+            pattern = pattern_dict[level]
+        elif self.market == 'sh':
+            if level == 1 or level == 2:
+                pattern = pattern_dict[level]
+            elif level == 3:
+                pattern = pattern_dict[3]
+                if len(cells.loc[cells.loc[:,'cellText'].str.match(pattern)])>0:
+                    pass
+                elif len(cells.loc[cells.loc[:,'cellText'].str.match(pattern_dict[4])])>0:
+                    pattern = pattern_dict[4]
+                else:
+                    print('level3匹配出差了')
+                    return
+            elif level == 4:
+                if pattern_last == pattern_dict[3]:
+                    pattern = pattern_dict[4]
+                elif pattern_last == pattern_dict[4]:
+                    pattern = pattern_dict[5]
+                else:
+                    print('level4匹配出差了')
+                    return
+
+                # if len(cells.loc[cells.loc[:, 'cellText'].str.match(pattern)]) > 0:
+                #     pass
+                # elif len(cells.loc[cells.loc[:, 'cellText'].str.match(pattern_dict[5])]) > 0:
+                #     pattern = pattern_dict[5]
+                # else:
+                #     print('level4匹配出差了')
+                #     return
+            elif level == 5:
+                if pattern_last == pattern_dict[4]:
+                    pattern = pattern_dict[5]
+                else:
+                    print('level5匹配出差了')
+                    return
+
+        print(pattern)
+
         #目录匹配结果
         df_index_level = cells.loc[cells.loc[:,'cellText'].str.match(pattern)]
         #如果没有匹配成功，则
@@ -429,7 +496,7 @@ class HtmlFile(object):
 
             # 信息按照标准索引进行修改
             #如果没有在标准表中找到索引，则检查是否近似相等
-            if not (models.StdContentIndex.objects.filter(level=level,name=indextext_content)
+            if not (models.StdContentIndex.objects.filter(market=self.market,level=level,name=indextext_content)
                     or models.StdCompareIndex.objects.filter(compare_name=indextext_content)):
                 raise NoFoundIndexException
 
@@ -439,22 +506,22 @@ class HtmlFile(object):
                 #         # df_index_level.loc[df_index_level.index_content == indextext_content].cellText = std_name_obj.no_name
                 #         indextext_content = std_name_obj.name
             else:
-                if models.StdContentIndex.objects.filter(level=level,name=indextext_content):
-                    objs = models.StdContentIndex.objects.filter(level=level,fatherno=fatherno,name=indextext_content)
+                if models.StdContentIndex.objects.filter(market=self.market,level=level,name=indextext_content):
+                    objs = models.StdContentIndex.objects.filter(market=self.market,level=level,fatherno=fatherno,name=indextext_content)
                     if len(objs) > 1:
                         if objs[0].name == '其他综合收益':
                             if '现金流量' in next_text:
-                                no = models.StdContentIndex.objects.filter(level=level, fatherno=fatherno,
+                                no = models.StdContentIndex.objects.filter(market=self.market,level=level, fatherno=fatherno,
                                                                            name=indextext_content)[1].no
                             else:
-                                no = models.StdContentIndex.objects.filter(level=level, fatherno=fatherno,
+                                no = models.StdContentIndex.objects.filter(market=self.market,level=level, fatherno=fatherno,
                                                                            name=indextext_content)[0].no
                         else:
                             print('出错了')
                     else:
                         print([(obj.name, obj.no) for obj in objs])
                         print(level, fatherno, indextext_content)
-                        no = models.StdContentIndex.objects.filter(level=level, fatherno=fatherno,
+                        no = models.StdContentIndex.objects.filter(market=self.market,level=level, fatherno=fatherno,
                                                               name=indextext_content)[0].no
                 else:
                     no = models.StdCompareIndex.objects.filter(compare_name=indextext_content)[0].index_name.no
@@ -466,16 +533,16 @@ class HtmlFile(object):
                 #增加改索引至临时索引表
                     models.TempIndexCellCount.objects.create(cell_text=index_text, name=indextext_content, no=no,start_id=start_id)
                 #如果该索引没有下一层索引，则继续改成的下一个索引
-                if len(models.StdContentIndex.objects.filter(level=level, fatherno=fatherno, name=indextext_content))>0:
-                    if models.StdContentIndex.objects.filter(level=level, fatherno=fatherno, name=indextext_content)[0].has_child=='0':
+                if len(models.StdContentIndex.objects.filter(market=self.market,level=level, fatherno=fatherno, name=indextext_content))>0:
+                    if models.StdContentIndex.objects.filter(market=self.market,level=level, fatherno=fatherno, name=indextext_content)[0].has_child=='0':
                         continue
                     else:
-                        self.parse_dir_structure(next_df, level, pattern_dict, no)
+                        self.parse_dir_structure(next_df, level, pattern_dict, no,pattern)
                 elif len(models.StdCompareIndex.objects.filter(compare_name=indextext_content))>0:
                     if models.StdCompareIndex.objects.filter(compare_name=indextext_content)[0].index_name.has_child == '0':
                         continue
                     else:
-                        self.parse_dir_structure(next_df, level, pattern_dict, no)
+                        self.parse_dir_structure(next_df, level, pattern_dict, no,pattern)
                 else:
                     raise Exception
                     #如果该索引有下一层索引，则继续下一层索引
@@ -539,9 +606,9 @@ class HtmlFile(object):
                     #取剩下的索引与唯一索引的交集
                     single_indextexts_remain = list(set(single_indextexts) & set(celltexts_compare_with_std_remain_comp))
                     single_indextexts_remain_content = list(map(lambda x: pattern.match(x).groups()[1],list(single_indextexts_remain)))
-                    print(single_indextexts_remain_content)
+                    print('单一索引内容：',single_indextexts_remain_content)
                     temp = self.compare_similar_with_std_and_comp(
-                        cellstexts=single_indextexts_remain_content,
+                        cellstexts=single_indextexts_remain,
                         origin_index_names_remain=origin_index_names_remain,
                         compare_index_name_remain=compare_index_name_remain,
                         pattern=pattern,
@@ -564,7 +631,7 @@ class HtmlFile(object):
                         remain_celltexts_content = list(map(lambda x: pattern.match(x).groups()[1],
                                                                list(remain_celltexts)))
                         remain_celltexts_content_new = self.compare_similar_with_std_and_comp(
-                            cellstexts=remain_celltexts_content,
+                            cellstexts=list(remain_celltexts),
                             origin_index_names_remain=origin_index_names_remain,
                             compare_index_name_remain=compare_index_name_remain,
                             pattern=pattern,
@@ -572,7 +639,7 @@ class HtmlFile(object):
                             fatherno=fatherno
                         )
                         #第六步：去除重复后，将去除重复的数据增加到索引中
-                        if len(remain_celltexts_content_new)>0:
+                        if remain_celltexts_content_new!=None and len(remain_celltexts_content_new)>0:
                             drop_duplicted_celltexts = self.drop_dumplicate_index_base_length(remain_celltexts_content_new, pattern)
                             self.comput_new_index(drop_duplicted_celltexts, pattern, level, fatherno)
                         else:
@@ -629,7 +696,7 @@ class HtmlFile(object):
         :return:与标准库匹配的列表索引和不匹配的列表索引
         '''
         # 获取数据库中已经存储的标准索引信息
-        origin_indexes = models.StdContentIndex.objects.filter(level=level, fatherno=fatherno)
+        origin_indexes = models.StdContentIndex.objects.filter(market=self.market,level=level, fatherno=fatherno)
         origin_index_names = [origin_index.name for origin_index in origin_indexes]
         indextext_contents = list(map(lambda x: pattern.match(x).groups()[1],celltexts))
 
@@ -662,7 +729,7 @@ class HtmlFile(object):
         :return:
         '''
         indextext_contents = list(map(lambda x: pattern.match(x).groups()[1], celltexts))
-        origin_indexes = models.StdContentIndex.objects.filter(level=level, fatherno=fatherno)
+        origin_indexes = models.StdContentIndex.objects.filter(market=self.market,level=level, fatherno=fatherno)
         all_compare_index_quereyset = [origin_index.stdcompareindex_set for origin_index in origin_indexes]
         all_compare_index_objects = []
         for qureyset in all_compare_index_quereyset:
@@ -682,14 +749,16 @@ class HtmlFile(object):
         return comm_index, diff_index,compare_index_name_remain
 
     def compare_similar_with_std_and_comp(self,cellstexts,origin_index_names_remain,compare_index_name_remain,pattern,level,fatherno):
-        temp = cellstexts[:]
-        print('相似性检验项目：',cellstexts)
-        for single_index in cellstexts:
+
+        indextexts_content = list(map(lambda x: pattern.match(x).groups()[1], cellstexts))
+        temp = indextexts_content[:]
+        print('相似性检验项目：',indextexts_content)
+        for single_index in indextexts_content:
             similar_std_index = mytools.similar_item_with_list(single_index, origin_index_names_remain)
             if similar_std_index != None:
                 models.StdCompareIndex.objects.create(
                     compare_name=single_index,
-                    index_name_id=models.StdContentIndex.objects.filter(level=level, fatherno=fatherno, name=similar_std_index)[0].id
+                    index_name_id=models.StdContentIndex.objects.filter(market=self.market,level=level, fatherno=fatherno, name=similar_std_index)[0].id
                 )
                 temp.remove(single_index)
             else:
@@ -704,7 +773,7 @@ class HtmlFile(object):
                 else:
                     choice = input('是否增加到标准库{}'.format(single_index))
                     if choice == 'yes':
-                        self.comput_new_index([single_index, ], pattern, level, fatherno)
+                        self.comput_new_index([cellstexts[indextexts_content.index(single_index)], ], pattern, level, fatherno)
                         temp.remove(single_index)
                     else:
                         choice1 = input('是否增加到对照库{}'.format(single_index))
@@ -735,7 +804,7 @@ class HtmlFile(object):
         '''
         #第一步
         #获取数据库中已经存储的标准索引信息
-        origin_index_df = models.StdContentIndex.objects.filter(level=level,fatherno=fatherno)
+        origin_index_df = models.StdContentIndex.objects.filter(market=self.market,level=level,fatherno=fatherno)
         #已经存储的索引名称
         origin_index_name = [origin_index.name for origin_index in origin_index_df]
         origin_index_no_name = [origin_index.no_name for origin_index in origin_index_df]
@@ -755,7 +824,7 @@ class HtmlFile(object):
             for add_name in add_index_name:
                 for i,origin_name in enumerate(origin_index_name):
                     if mytools.similar(origin_name, add_name):
-                        origin_obj_id = models.StdContentIndex.objects.filter(level=level,fatherno=fatherno,name=origin_name)[0].id
+                        origin_obj_id = models.StdContentIndex.objects.filter(market=self.market,level=level,fatherno=fatherno,name=origin_name)[0].id
                         if not models.StdCompareIndex.objects.filter(compare_name=add_name,index_name_id=origin_obj_id):
                             self.add_compare_index(add_name,origin_obj_id)
                         # df_index_level.loc[df_index_level.index_content==add_name].cellText=origin_index_no_name[i]
@@ -787,11 +856,18 @@ class HtmlFile(object):
             # 2、父级别编号+自己的编号
             whole_num = [fatherno + num for num in self_num_fixed_length]
             #将编号补成8位数
-            whole_num_fixed_length = [num+''.join(['0' for i in range(8-len(num))]) for num in whole_num]
+            if self.market == 'sh':
+                num_len = 10
+            elif self.market ==  'sz':
+                num_len = 8
+            else:
+                raise Exception
+            whole_num_fixed_length = [num+''.join(['0' for i in range(num_len-len(num))]) for num in whole_num]
             names = add_index_name
             no_names = [new_no_name[new_index_name.index(name)] for name in names]
             selfnos = self_num_fixed_length
             confirm = input('是否输入下列信息：{}'.format(add_index_name))
+            # confirm='yes'
             if confirm == 'yes':
                 for name,no_name,selfno,no in zip(names,no_names,selfnos,whole_num_fixed_length):
                     print(name,no_name,fatherno,selfno,no)
@@ -802,7 +878,8 @@ class HtmlFile(object):
                         fatherno=fatherno,
                         level=level,
                         selfno=selfno,
-                        no=no
+                        no=no,
+                        has_child='1'
                     )
             else:
                 raise Exception
@@ -815,34 +892,49 @@ class HtmlTable(object):
     pass
 
 
+def get_std_dir_sh():
+    objs = models.StdContentIndex.objects.filter(market='sh')
+    objs.delete()
+    path = r'H:\data_extract\utils\stdcom1.xlsx'
+    io = open(path, 'rb')
+    df = pd.read_excel(io, sheetname='Sheet2')
+    new_df = pd.DataFrame()
+    new_df['id'] = list(df.id)
+    new_df['cellText'] = list(df.no_name)
+    filepath = r'H:\data_extract\report\shanghai\sh_600312_20171231.html'
+    file = HtmlFile(filepath)
+    file.parse_all_dir(new_df)
+
+    objs = models.StdContentIndex.objects.filter(market='sh')
+    fathernos = [obj.fatherno for obj in objs]
+    for obj in objs:
+        sts = str(obj.fatherno) + str(obj.selfno)
+        print(sts)
+        if sts in fathernos:
+            pass
+        else:
+            obj.has_child = '0'
+            obj.save()
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
-    # origin_index_df = models.StdContentIndex.objects.filter(level=1, fatherno='')
-    # qs = [df.stdcompareindex_set for df in origin_index_df]
-    # for q in qs:
-    #     if q.all():
-    #         print(q.all())
-    #     for s in q.all():
-    #         print('s',s.compare_name)
-    # print(qs)
-
-
-    # origin_index_df = pd.read_sql('report_data_extract_contentindex', engine)
-    # origin_index_df = origin_index_df[origin_index_df.id==1]
-    # origin_index_df.to_sql('report_data_extract_contentindex',engine,if_exists='replace',index=False)
-    # print(origin_index_df)
-    # print('df_index_level_1',df_index_level_1)
-    #
-
+    # get_std_dir_sh()
 
     # # # #第一步：保存文件到数据库
     # filepath = r'H:\data_extract\report\shenzhen\sz_002085_20171231.html'
-    filepath = r'H:\data_extract\report\shenzhen\sz_000878_20171231.html'
-    # filepath = r'H:\data_extract\report\shenzhen\sz_000701_20171231.html'
+    filepath = r'H:\data_extract\report\shanghai\sh_600312_20171231.html'
+    # # filepath = r'H:\data_extract\report\shenzhen\sz_000701_20171231.html'
     file = HtmlFile(filepath)
-    # root = file.soup.find('div',id='outline')
-    # file.get_std_dir(root=root,market='sz')
     file.clearTempIndexCellCount()
-    # # file.get_dir_pos_base_index(root, market='sz', layer=0, fatherno='')
+    # print(file.df_all_cells)
+    # page = HtmlPage(file,1)
+    # pgcontent = page.get_page_content()
+    # print(pgcontent)
     file.parse_all_dir()
-
+    #
