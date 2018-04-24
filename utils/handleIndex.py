@@ -2,19 +2,20 @@
 # date : 2018/4/7
 from bs4 import BeautifulSoup
 import pandas as pd
+pd.set_option('mode.chained_assignment','raise')
 import re
 import datetime
 from sqlalchemy import create_engine
+engine = create_engine(r'sqlite:///H:\data_extract\db.sqlite3')
 from collections import OrderedDict
 import os,django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "data_extract.settings")
 django.setup()
 from utils import mytools
-from itertools import chain
-pd.set_option('mode.chained_assignment','raise')
 from collections import Counter
-engine = create_engine(r'sqlite:///H:\data_extract\db.sqlite3')   #临时数据库
-from utils.tools import del_same_item_from_list
+  #临时数据库
+from utils.mytools import del_same_item_from_list
+from utils.mytools import cnToArab
 from report_data_extract import models
 
 class NoIntegrityException(Exception):
@@ -29,31 +30,7 @@ class FilenameErrorException(Exception):
     def __init__(self,err='文件名解析错误'):
         Exception.__init__(self,err)
 
-def cnToArab(x):
-    '''
-    将大写汉字转换为数字
-    :param x: 汉字数字，只转换一到九十九
-    :return: 阿拉伯数字
-    '''
-    comparison_sheet= {'一':'1','二':'2','三':'3','四':'4','五':'5','六':'6','七':'7','八':'8','九':'9','十':'10'}
-    comparison_sheet1 = {'一': '1', '二': '2', '三': '3', '四': '4', '五': '5', '六': '6', '七': '7', '八': '8', '九': '9',
-                        '十': '1'}
-    comparison_sheet2 = {'一': '1', '二': '2', '三': '3', '四': '4', '五': '5', '六': '6', '七': '7', '八': '8', '九': '9',
-                         '十': '0'}
-    if re.match('\d+',x):
-        return int(x)
-    else:
-        if len(x)==1:
-            return int(comparison_sheet[x])
-        elif len(x)==2:
-            if x not in ['二十','三十','四十','五十','六十','七十','八十','九十',] :
-                return int(comparison_sheet1[x[0]]+comparison_sheet1[x[1]])
-            else:
-                return int(comparison_sheet2[x[0]] + comparison_sheet2[x[1]])
-        elif len(x)==3:
-            return int(comparison_sheet1[x[0]]+comparison_sheet1[x[2]])
-        else:
-            raise Exception
+
 
 class HtmlPage(object):
 
@@ -79,10 +56,7 @@ class HtmlPage(object):
                 break
             else:
                 tags.append(child)
-        # img = pc.img
-        # title = img.next_sibling
-        # origin_page_number = title.next_sibling
-        # tags = [img,title,origin_page_number]
+
         for tag in tags:
             tag.decompose()
 
@@ -120,7 +94,9 @@ class HtmlFile(object):
         #将真实页码与其页面文件内容对应起来
         self.page_contents_base_pgCount = OrderedDict(zip(range(1, self.pageCount + 1), self.pfs))
         #将页码(页码，元素内容，元素分类）存储到df中
+        self.file_cells = []
         self.df_all_cells = self.all_cells_to_df()
+
 
 
     def get_market_code_accper(self):
@@ -152,19 +128,19 @@ class HtmlFile(object):
         :return:
         '''
         page_num = []
-        file_cells = []
         cells_text = []
         cells_category = []
         cells_class = []
 
-        for pageNum in range(1,self.pageCount+1):
+        # for pageNum in range(1,self.pageCount+1):
+        for pageNum in range(29,33):
             page = HtmlPage(self,pageNum)
             page_content = page.get_page_content()
             page_content_length = len(page_content)
             page_num.extend([pageNum for i in range(page_content_length)])
-            file_cells.extend(page_content)
+            self.file_cells.extend(page_content)
         # print(file_cells)
-        for cell in file_cells:
+        for cell in self.file_cells:
             cells_text.append(re.sub('\s+','',cell.get_text()))
             cells_class.append(cell['class'])
             cells_category.append(cell['class'][0])
@@ -237,9 +213,6 @@ class HtmlFile(object):
                 else:
                     models.StdContentIndex.objects.create(market=market,name=name,no_name=no_name,fatherno=fatherid,level=layer,\
                                         selfno=k,no=last_num,has_child='0')
-
-
-
 
     def clearTempIndexCellCount(self):
         # 清空数据库TempIndexCellCount
@@ -887,10 +860,6 @@ class HtmlFile(object):
             pass
 
 
-class HtmlTable(object):
-
-    pass
-
 
 def get_std_dir_sh():
     objs = models.StdContentIndex.objects.filter(market='sh')
@@ -915,26 +884,3 @@ def get_std_dir_sh():
         else:
             obj.has_child = '0'
             obj.save()
-
-
-
-
-
-
-
-
-if __name__ == '__main__':
-    # get_std_dir_sh()
-
-    # # # #第一步：保存文件到数据库
-    # filepath = r'H:\data_extract\report\shenzhen\sz_002085_20171231.html'
-    filepath = r'H:\data_extract\report\shanghai\sh_600312_20171231.html'
-    # # filepath = r'H:\data_extract\report\shenzhen\sz_000701_20171231.html'
-    file = HtmlFile(filepath)
-    file.clearTempIndexCellCount()
-    # print(file.df_all_cells)
-    # page = HtmlPage(file,1)
-    # pgcontent = page.get_page_content()
-    # print(pgcontent)
-    file.parse_all_dir()
-    #

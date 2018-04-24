@@ -7,7 +7,7 @@ from collections import OrderedDict
 from itertools import groupby
 import re
 from collections import OrderedDict
-from utils.pandas_text_process import *
+from utils.mytools import *
 
 def handle_more_talbe_in_one_page(pf_id):
 
@@ -90,9 +90,6 @@ def break_cell_to_text(soup,texts=None,previous_sibling=False ):
                     tag_special.attrs['class'][0] = 't'
                     tag_special_previous = tag_special.previous_sibling
                     tag_special_previous.attrs['class'][0] = 't'
-
-
-
 
 def get_all_pc_children(filepath):
     '''
@@ -190,19 +187,7 @@ def get_pc_children(pf):
     pc_children = del_same_item_from_list(list(pc.children),'\n')
     return pc_children
 
-def del_same_item_from_list(alist,item):
-    '''
-    删除列表中相同的元素
-    :param alist: 列表
-    :param item: 元素
-    :return: alist
-    '''
-    for i in range(len(alist)-1,-1,-1):
-        # 倒序循环，从最后一个元素循环到第一个元素。不能用正序循环，因为正序循环删除元素后后续的列表的长度和元素下标同时也跟着变了，len(alist)是动态的。
-        if alist[i] == item:
-            alist.pop(i)  # 将index=i处的元素删除并return该元素。如果不想保存这个被删除的值只要不把alist.pop(i)赋值给变量就好，不影响程序运行。
 
-    return alist
 
 def get_table_cells(pc_children):
     '''

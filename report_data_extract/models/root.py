@@ -7,9 +7,9 @@ from django.db import models
 class RootTableDesc(models.Model):
     tablename = models.CharField(verbose_name='表英文名',max_length=100,blank=True)
     table_cn_name = models.CharField(verbose_name='表中文名',max_length=100,blank=True)
-    class_str = models.CharField(verbose_name='表文件描述',max_length=200,blank=True)
-    functions = models.TextField(verbose_name='表内函数',blank=True)
-    meta= models.TextField(verbose_name='表相关信息',blank=True)
+    class_str = models.CharField(verbose_name='表文件描述',max_length=200,blank=True,default='')
+    functions = models.TextField(verbose_name='表内函数',blank=True,default='')
+    meta= models.TextField(verbose_name='表相关信息',blank=True,default='')
 
 class RootTables(models.Model):
     TABLE_CLASS = (

@@ -4,20 +4,13 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import re
 from collections import OrderedDict
-from utils.tools import del_same_item_from_list
+from utils.tools import del_same_item_from_list,check_if_pure_digital
 from itertools import chain
 
 class NotFoundLongestRowException(Exception):
     def __init__(self,err='未在表格中发现最大的行'):
         Exception.__init__(self,err)
 
-def check_if_pure_digital(s):
-    pattern = re.compile('^\-?\(?(\d+,?)+\.?\d*%?\)?$')
-    ret = pattern.match(s)
-    if ret:
-        return True
-    else:
-        return False
 
 class HtmlFile(object):
     '''
@@ -41,11 +34,11 @@ class HtmlFile(object):
 
         #文件的所有内容
         self.file_content = []
-        #文件中所有的表格单元格列表
-        # self.file_page_tables = self.get_all_page_tables()
-        # self.spreed_file_tables = self.spreed_all_page_tables()
-        # self.cells_text_dict = self.get_file_cells_text()
-        # self.cells_text_keys = list(self.cells_text_dict.keys())
+        # 文件中所有的表格单元格列表
+        self.file_page_tables = self.get_all_page_tables()
+        self.spreed_file_tables = self.spreed_all_page_tables()
+        self.cells_text_dict = self.get_file_cells_text()
+        self.cells_text_keys = list(self.cells_text_dict.keys())
 
 
 
@@ -264,13 +257,13 @@ class HtmlPage(object):
         self.file = file
         self.pgNum = pgNum
         self.pgContent = self.get_page_content()
-        # self.pgHaveTableNum = len(self.get_tables_cells())
-        # self.pg_tables_cells_dict = OrderedDict(zip(range(1, self.pgHaveTableNum + 1), \
-        #                                          [self.create_cells_dict(table_cells) for table_cells in\
-        #                                           self.get_tables_cells()])) if self.pgHaveTableNum>0 else None
-        # self.pg_ordered_table_list =self.create_pg_ordered_table_cells_list() if self.pgHaveTableNum>0 else None
-        # self.pg_split_tables = self.create_pg_split_table_list() if self.pgHaveTableNum>0 else None
-        # self.pg_fill_merge_tables = self.create_pg_fill_merge_tables() if self.pgHaveTableNum>0 else None
+        self.pgHaveTableNum = len(self.get_tables_cells())
+        self.pg_tables_cells_dict = OrderedDict(zip(range(1, self.pgHaveTableNum + 1), \
+                                                 [self.create_cells_dict(table_cells) for table_cells in\
+                                                  self.get_tables_cells()])) if self.pgHaveTableNum>0 else None
+        self.pg_ordered_table_list =self.create_pg_ordered_table_cells_list() if self.pgHaveTableNum>0 else None
+        self.pg_split_tables = self.create_pg_split_table_list() if self.pgHaveTableNum>0 else None
+        self.pg_fill_merge_tables = self.create_pg_fill_merge_tables() if self.pgHaveTableNum>0 else None
 
     def get_origin_page_num(self):
         '''

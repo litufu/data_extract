@@ -21,3 +21,4 @@ class TempIndexCellCount(models.Model):
     no = models.CharField(verbose_name='索引编号',max_length=10,unique=True)
     start_id = models.IntegerField(verbose_name='元素开始位置')
     # end_id = models.IntegerField(verbose_name='元素结束位置',blank=True,null=True)
+
