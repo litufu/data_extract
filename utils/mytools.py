@@ -288,7 +288,7 @@ def registr_table(tablename,table_cn_name):
 if __name__ == '__main__':
     # registr('0205000000','pass')
     #新增索引及对应的处理类
-    registr('05030000','pass')
+    registr('05030100','CommitSZ')
     # print(toClassname(cnToEn('可分配利润')))
     # print(toFiledname(cnToEn('现金分红占利润分配总额的比例')))
     #新增表记录，每当新增一个标准表时使用

@@ -11,6 +11,7 @@ class HtmlTable(object):
     def __init__(self,table_cells):
         self.table_cells = table_cells
         self.table_cells_dict = self.create_cells_dict(table_cells)
+        self.table_cells_dict_keys = [item[0] for item in self.table_cells_dict]
         self.longest_row_x = self.get_longest_row_x()
         self.longest_row_w = self.get_longest_row_w()
         self.ordered_table = self.order_table_cell_by_longest_row() if self.longest_row_x != None \
@@ -19,7 +20,13 @@ class HtmlTable(object):
         self.ordered_table_cells = self.get_ordered_table_cells()
         self.split_or_not = self.need_splittable_or_not()
         self.split_tables = self.splitAndCombine()
+        # self.split_tables = self.splittable()
         self.fill_merge_cells_table =[self.fill_merge_cells(table) for table in self.split_tables]
+
+    def get_cell_by_pos(self,pos):
+        for item,value in self.table_cells_dict:
+            if item == pos:
+                return value
 
     def create_cells_dict(self, table_cells):
         '''
@@ -29,9 +36,14 @@ class HtmlTable(object):
         {('x16', 'y85', 'w17', 'h1d')：cell1，('x28', 'y88', 'w18', 'h14')：cell2,\
         ('x29', 'y88', 'w19', 'h14'):cell3,('x28', 'y89', 'w18', 'h14'):cell4...}
         '''
-        cells_dict = OrderedDict()
+        # cells_dict = OrderedDict()
+        # for cell in table_cells:
+        #     cells_dict[tuple(cell.attrs['class'][1:])] = cell
+        # return cells_dict
+
+        cells_dict = []
         for cell in table_cells:
-            cells_dict[tuple(cell.attrs['class'][1:])] = cell
+            cells_dict.append((tuple(cell.attrs['class'][1:]),cell))
         return cells_dict
 
 
@@ -43,7 +55,7 @@ class HtmlTable(object):
         :param table: cells list
         :return: 表格各列对应的x坐标[x1,x2,x3]
         '''
-        table_cells_pos_x = [cell_pos[0] for cell_pos in self.table_cells_dict.keys()]
+        table_cells_pos_x = [cell_pos[0] for cell_pos in self.table_cells_dict_keys]
         columns = set(table_cells_pos_x)
         col_len = len(columns)
         test_cell_items = table_cells_pos_x[:]
@@ -73,8 +85,8 @@ class HtmlTable(object):
         :param table: cells list
         :return: 表格各列对应的x坐标[w1,w2,w3]
         '''
-        table_cells_pos_x = [cell_pos[0] for cell_pos in self.table_cells_dict.keys()]
-        table_cells_pos_w = [cell_pos[2] for cell_pos in self.table_cells_dict.keys()]
+        table_cells_pos_x = [cell_pos[0] for cell_pos in self.table_cells_dict_keys]
+        table_cells_pos_w = [cell_pos[2] for cell_pos in self.table_cells_dict_keys]
         columns = set(table_cells_pos_x)
         col_len = len(columns)
         test_cell_items = table_cells_pos_x[:]
@@ -108,7 +120,7 @@ class HtmlTable(object):
         :return: 按照最长行排序后的所有单元格坐标信息
         '''
         # 零散的单元格信息
-        cell_items = [td for td in self.table_cells_dict]
+        cell_items = [td for td in self.table_cells_dict_keys]
         # 按照信息最全的行排列零散的单元格信息，做成初始表格
         ordered_table = []
         # 代表一行数据
@@ -130,7 +142,7 @@ class HtmlTable(object):
     def order_table_cell_by_experience(self):
 
         # 零散的单元格信息
-        cell_items = [td for td in self.table_cells_dict]
+        cell_items = [td for td in self.table_cells_dict_keys]
         # 按照信息最全的行排列零散的单元格信息，做成初始表格
         ordered_table = []
         # 代表一行数据
@@ -168,7 +180,7 @@ class HtmlTable(object):
         for tr_pos in self.ordered_table:
             tr_cells = []
             for td_pos in tr_pos:
-                td = self.table_cells_dict[td_pos]
+                td = self.get_cell_by_pos(td_pos)
                 tr_cells.append(td)
             table_cells.append(tr_cells[:])
         return table_cells
@@ -244,29 +256,39 @@ class HtmlTable(object):
         after_splite_table = self.ordered_table_cells[:]
         row_length = [len(tr) for tr in self.ordered_table_cells]
         #检查是否存在一行只有一个单元格的情况,求出该行的索引
-        row_have_1_cell = [i for i,length in enumerate(row_length) if length==1]
+
+        row_have_1_cell = sorted([i for i,length in enumerate(row_length) if length==1],reverse=True)
         columns_max_length = max(row_length)
         temp_tables = []
         temp = []
         if columns_max_length > 1 and len(row_have_1_cell)>=1:
             for i in row_have_1_cell:
-                if i+1 <len(self.ordered_table_cells) and i-1>=0:
+                if i+1 <=len(self.ordered_table_cells) and i-1>=0:
                     last_row = self.ordered_table_cells[i-1]
-                    next_row = self.ordered_table_cells[i+1]
+                    if i+1<len(self.ordered_table_cells):
+                        next_row = self.ordered_table_cells[i+1]
+                    else:
+                        next_row = None
                     curr_row = self.ordered_table_cells[i]
                     if type(last_row) is not int and curr_row[0].attrs['class'][3] in [td.attrs['class'][3] for td in last_row]:
                         for td in last_row:
                             if td.attrs['class'][3] == curr_row[0].attrs['class'][3] and td.attrs['class'][1] == curr_row[0].attrs['class'][1]:
                                 td.string = td.get_text()+ curr_row[0].get_text()
+                                # combine_list.append(i)
                                 self.ordered_table_cells.pop(i)
                                 break
                     else:
-                        if self.check_row_have_pure_digital(next_row):
-                            self.ordered_table_cells[i] =1
+                        if next_row is None:
+                            pass
                         else:
-                            self.ordered_table_cells[i] =1
+                            if self.check_row_have_pure_digital(next_row):
+                                self.ordered_table_cells[i] = 1
+                            else:
+                                self.ordered_table_cells[i] = 1
                 else:
-                    self.ordered_table_cells[i] = 1
+                    pass
+                    # self.ordered_table_cells[i] = 1
+
             for tr in self.ordered_table_cells:
                 if tr == 1:
                     if len(temp)>0:

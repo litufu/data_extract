@@ -22,7 +22,6 @@ def extract(filepath):
     #第一步，解析页面元素，并按照索引对元素进行分离
     file = HtmlFile(filepath)
     file_all_cells = file.file_cells
-    produce_table(file_all_cells)
     # file.clearTempIndexCellCount()
     # file.parse_all_dir()
     cells_length = len(file_all_cells)
@@ -137,7 +136,7 @@ if __name__ == '__main__':
             #     print('尚未进行处理',indexno)
             #     exit()
 
-            #
+
             for content in indexcontents:
                 for classify,item in content.items():
                     if classify =='t':

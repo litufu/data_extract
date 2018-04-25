@@ -132,8 +132,8 @@ class HtmlFile(object):
         cells_category = []
         cells_class = []
 
-        # for pageNum in range(1,self.pageCount+1):
-        for pageNum in range(29,33):
+        for pageNum in range(1,self.pageCount+1):
+        # for pageNum in range(1,6):
             page = HtmlPage(self,pageNum)
             page_content = page.get_page_content()
             page_content_length = len(page_content)

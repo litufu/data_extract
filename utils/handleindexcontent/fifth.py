@@ -508,7 +508,7 @@ class CommitSZ(HandleIndexContent):
             deadline_pos = list(np.where((df.iloc[0, :].str.contains('承诺期限')))[0])
             perform_pos = list(np.where((df.iloc[0, :].str.contains('履行情况')))[0])
 
-            df = df.drop([0])
+            df = df.drop([0,len(df)-1])
 
             backgrounds = list(df.iloc[:, background_pos[0]])
             types = list(df.iloc[:, type_pos[0]])

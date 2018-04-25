@@ -2159,6 +2159,7 @@ class SellMajorAsset(HandleIndexContent):
                     obj.trade_partner = trade_partner
                     obj.asset_sold = asset_sold
                     obj.sale_day = sale_day
+                    print(trade_price,unit1)
                     obj.trade_price = Decimal(re.sub(',', '', str(trade_price))) * unit_change[unit1]
                     obj.before_net_profit = Decimal(re.sub(',', '', str(before_net_profit))) * unit_change[unit2]
                     obj.impact_of_sale = impact_of_sale
@@ -2173,6 +2174,7 @@ class SellMajorAsset(HandleIndexContent):
                     obj.disclosur_index = disclosur_index
                     obj.save()
                 else:
+                    print(trade_price,unit1)
                     models.SellMajorAsset.objects.create(
                         stk_cd_id=self.stk_cd_id,
                         acc_per=self.acc_per,
