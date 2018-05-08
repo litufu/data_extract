@@ -43,7 +43,10 @@ class HtmlTable(object):
 
         cells_dict = []
         for cell in table_cells:
-            cells_dict.append((tuple(cell.attrs['class'][1:]),cell))
+            pg = cell.parent.parent['id']
+            pos = cell.attrs['class'][1:]
+            pos.append(pg)
+            cells_dict.append((tuple(pos),cell))
         return cells_dict
 
 
@@ -244,6 +247,8 @@ class HtmlTable(object):
         将表格进行拆分或合并：
         如果一行有一个单元格，且该单元格的w不在最长的单元格列表中，则分表
         如果一行只有一个单元格，但该单元格w在最长的单元格列表中，则该单元格合并到上一行相同位置的单元格中。
+        如果一行中的单元格不连续，则该行大概率要合并
+        如果一行中的单元格没有第一个也没有最后一个，则该行大概率要合并
 
         :param table:
         #第一种情况：如果有一行，占满了所有的列
@@ -255,12 +260,58 @@ class HtmlTable(object):
         #取得每一行的长度
         after_splite_table = self.ordered_table_cells[:]
         row_length = [len(tr) for tr in self.ordered_table_cells]
-        #检查是否存在一行只有一个单元格的情况,求出该行的索引
+        #检查单元格中存在空单元格的情况：
+        row_have_space = []
+        if self.longest_row_x is not None:
+            for i in range(1,len(row_length)):
+                if row_length[i]<row_length[i-1]:
+                    # last_row = self.ordered_table_cells[i - 1]
+                    curr_row = self.ordered_table_cells[i]
+                    curr_row_index = [self.longest_row_x.index(td.attrs['class'][1]) for td in curr_row]
+                    for j in range(1,len(curr_row_index)):
+                        if curr_row_index[j]- curr_row_index[j-1]>1:
+                            row_have_space.append(i)
 
-        row_have_1_cell = sorted([i for i,length in enumerate(row_length) if length==1],reverse=True)
+        #检查单元格是否没有第一个和最后一个
+        row_have_no_start_end = []
+        if self.longest_row_x is not None:
+            for i in range(1,len(row_length)):
+                if row_length[i]<row_length[i-1]:
+                    curr_row = self.ordered_table_cells[i]
+                    curr_row_index = [self.longest_row_x.index(td.attrs['class'][1]) for td in curr_row]
+                    if (0 not in curr_row_index) and ((len(self.longest_row_x)-1) not in curr_row_index):
+                        row_have_no_start_end.append(i)
+        else:
+            for i in range(1,len(row_length)):
+                if row_length[i]<row_length[i-1]:
+                    last_row = self.ordered_table_cells[i-1]
+                    last_row_td = [td.attrs['class'][1] for td in last_row]
+                    curr_row = self.ordered_table_cells[i]
+                    # curr_row_index = [last_row_td.index(td.attrs['class'][1]) for td in curr_row]
+                    if ((curr_row[0].attrs['class'][1] in last_row_td) and (last_row_td.index(curr_row[0].attrs['class'][1])!=0)  and
+                         ((curr_row[len(curr_row)-1].attrs['class'][1] in last_row_td) and (last_row_td.index(curr_row[len(curr_row)-1].attrs['class'][1])!=(len(last_row_td)-1)))):
+                        row_have_no_start_end.append(i)
+
+        #检查是否存在一行只有一个单元格的情况,求出该行的索引
+        row_have_1_cell = [i for i,length in enumerate(row_length) if length==1]
         columns_max_length = max(row_length)
         temp_tables = []
         temp = []
+        row_have_no_start_end.extend(row_have_space)
+
+        #检查单元格是否在不同的页面
+        diff_page = []
+        if columns_max_length > 1 and len(row_have_no_start_end)>=1:
+            for i in row_have_no_start_end:
+                if i+1 <=len(self.ordered_table_cells) and i-1>=0:
+                    last_row = self.ordered_table_cells[i-1]
+                    curr_row = self.ordered_table_cells[i]
+                    if last_row[0].parent['class'] != curr_row[0].parent['class']:
+                        diff_page.append(i)
+
+        row_have_1_cell.extend(diff_page)
+        row_have_1_cell = sorted(list(set(row_have_1_cell)),reverse=True)
+
         if columns_max_length > 1 and len(row_have_1_cell)>=1:
             for i in row_have_1_cell:
                 if i+1 <=len(self.ordered_table_cells) and i-1>=0:
@@ -270,24 +321,54 @@ class HtmlTable(object):
                     else:
                         next_row = None
                     curr_row = self.ordered_table_cells[i]
-                    if type(last_row) is not int and curr_row[0].attrs['class'][3] in [td.attrs['class'][3] for td in last_row]:
-                        for td in last_row:
-                            if td.attrs['class'][3] == curr_row[0].attrs['class'][3] and td.attrs['class'][1] == curr_row[0].attrs['class'][1]:
-                                td.string = td.get_text()+ curr_row[0].get_text()
-                                # combine_list.append(i)
-                                self.ordered_table_cells.pop(i)
-                                break
+
+                    is_combin = []
+                    for curr_td in curr_row:
+                        if type(last_row) is not int:
+                            flag = curr_td.attrs['class'][3] in [td.attrs['class'][3] for td in last_row]
+                            is_combin.append(flag)
+
+                    if len(set(is_combin))==1 and list(set(is_combin))[0] == True:
+                        for curr_td in curr_row:
+                            for td in last_row:
+                                if td.attrs['class'][3] == curr_td.attrs['class'][3] and td.attrs['class'][1] == \
+                                        curr_td.attrs['class'][1] :
+                                    td.string = td.get_text() + curr_td.get_text()
+                                    # combine_list.append(i)
+                        self.ordered_table_cells.pop(i)
                     else:
                         if next_row is None:
                             pass
                         else:
-                            if self.check_row_have_pure_digital(next_row):
-                                self.ordered_table_cells[i] = 1
-                            else:
-                                self.ordered_table_cells[i] = 1
+                            if len(curr_row) == 1 :
+                                if self.check_row_have_pure_digital(next_row):
+                                    self.ordered_table_cells[i] = 1
+                                else:
+                                    self.ordered_table_cells[i] = 1
+
+
+                    # if type(last_row) is not int and curr_row[0].attrs['class'][3] in [td.attrs['class'][3] for td in last_row]:
+                    #     for td in last_row:
+                    #         if td.attrs['class'][3] == curr_row[0].attrs['class'][3] and td.attrs['class'][1] == curr_row[0].attrs['class'][1]:
+                    #             td.string = td.get_text()+ curr_row[0].get_text()
+                    #             # combine_list.append(i)
+                    #             self.ordered_table_cells.pop(i)
+                    #             break
+                    # else:
+                    #     if next_row is None:
+                    #         pass
+                    #     else:
+                    #         if self.check_row_have_pure_digital(next_row):
+                    #             self.ordered_table_cells[i] = 1
+                    #         else:
+                    #             self.ordered_table_cells[i] = 1
                 else:
-                    pass
-                    # self.ordered_table_cells[i] = 1
+                    if i == 0:
+                        self.ordered_table_cells[i] = 1
+                    elif i == len(self.ordered_table_cells):
+                        self.ordered_table_cells[i] = 1
+                    else:
+                        pass
 
             for tr in self.ordered_table_cells:
                 if tr == 1:

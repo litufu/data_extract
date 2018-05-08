@@ -14,10 +14,12 @@ class ImportMatter(CommonInfo):
     relat_transact_desc = models.TextField(verbose_name='关联交易情况',default='')
     big_sale_return_rt = models.TextField(verbose_name='关联交易中大额销货退回的详细情况',default='')
     perf_agre_rt = models.TextField(verbose_name='关联股权收购交易中的业绩约定实现情况',default='')
+    other_relat_trade = models.TextField(verbose_name='其他重大关联交易',default='')
     other_major_issu = models.TextField(verbose_name='其他重大事项的说明',default='')
     social_respons_work = models.TextField(verbose_name='社会责任工作情况',default='')
     outsid_of_key_emitt = models.TextField(verbose_name='重点排污单位之外的公司',default='')
     posit_profit_no_divi= models.TextField(verbose_name='报告期内盈利且母公司可供普通股股东分配利润为正但未提出普通股现金红利分配预案的原因',default='')
+    purpos_of_profit= models.TextField(verbose_name='公司未分配利润的用途和使用计划',default='')
 
 
     class Meta:
@@ -38,7 +40,7 @@ class CashDividendPolici(CommonInfo):
 
 class Commit(CommonInfo):
     background = models.TextField(verbose_name='承诺背景',default='')
-    type = models.CharField(verbose_name='承诺类型',max_length=150,default='')
+    commit_type = models.CharField(verbose_name='承诺类型',max_length=150,default='')
     parti = models.CharField(verbose_name='承诺方',max_length=500,default='')
     content = models.TextField(verbose_name='承诺内容',default='')
     time_and_deadline = models.CharField(verbose_name='承诺时间和期限',max_length=150,default='')
@@ -51,7 +53,7 @@ class Commit(CommonInfo):
     perform = models.TextField(verbose_name='履行情况',default='')
 
     class Meta:
-        unique_together = ('stk_cd', 'acc_per','background','type','parti','content')
+        unique_together = ('stk_cd', 'acc_per','background','commit_type','parti','content')
 
 class ProfitPredict(CommonInfo):
     asset_or_project_nam = models.CharField(verbose_name='盈利预测资产或项目名称',max_length=300,default='')
@@ -101,6 +103,26 @@ class RelatTransact(CommonInfo):
 
     class Meta:
         unique_together = ('stk_cd', 'acc_per','dealer','transact_type','transact_content')
+
+class OtherMajorContract(CommonInfo):
+    compani_parti_name = models.CharField(verbose_name='合同订立公司方名称',max_length=150,default='')
+    other_side_name = models.CharField(verbose_name='合同订立对方名称',max_length=150,default='')
+    subject = models.CharField(verbose_name='合同标的',max_length=300,default='')
+    date = models.CharField(verbose_name='合同签订日期',max_length=300,default='')
+    book_valu_of_asset = models.CharField(verbose_name='合同涉及资产的账面价值',max_length=300,default='')
+    evalu_of_asset = models.CharField(verbose_name='合同涉及资产的评估价值',max_length=300,default='')
+    evalu_agenc_name = models.CharField(verbose_name='评估机构名称',max_length=150,default='')
+    base_date_of_assess = models.CharField(verbose_name='评估基准日',max_length=150,default='')
+    price_principl = models.CharField(verbose_name='定价原则',max_length=150,default='')
+    price = models.CharField(verbose_name='交易价格',max_length=150,default='')
+    is_relat_trade = models.CharField(verbose_name='是否关联交易',max_length=150,default='')
+    relationship = models.CharField(verbose_name='关联关系',max_length=150,default='')
+    progress = models.CharField(verbose_name='截至报告期末的执行情况',max_length=300,default='')
+    date_of_disclosur = models.CharField(verbose_name='披露日期',max_length=150,default='')
+    disclosur_index = models.CharField(verbose_name='披露索引',max_length=150,default='')
+
+    class Meta:
+        unique_together = ('stk_cd', 'acc_per','compani_parti_name','other_side_name','subject')
 
 
 

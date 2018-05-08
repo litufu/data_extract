@@ -281,16 +281,22 @@ def registr_table(tablename,table_cn_name):
     else:
         models.StandardTables.objects.create(tablename=tablename,table_cn_name=table_cn_name)
 
-
+def is_num(s):
+    s = str(s)
+    pattern = re.compile('^.*?\d+.*?$')
+    if pattern.match(s):
+        return True
+    else:
+        return False
 
 
 
 if __name__ == '__main__':
     # registr('0205000000','pass')
     #新增索引及对应的处理类
-    registr('05030100','CommitSZ')
-    # print(toClassname(cnToEn('可分配利润')))
-    # print(toFiledname(cnToEn('现金分红占利润分配总额的比例')))
+    registr('0b07250000','pass')
+    # print(toClassname(cnToEn('设定提存计划列示 ')))
+    # print(toFiledname(cnToEn('结算与完工差额 ')))
     #新增表记录，每当新增一个标准表时使用
     # registr_table('MajorOverseaAsset','公司主要境外资产')
 

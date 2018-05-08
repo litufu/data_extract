@@ -215,7 +215,7 @@ class SellMajorAsset(CommonInfo):
 
 class MajorHoldCompani(CommonInfo):
     name = models.CharField(verbose_name='公司名称', default='', max_length=150)
-    type = models.CharField(verbose_name='公司类型', default='', max_length=150)
+    company_type = models.CharField(verbose_name='公司类型', default='', max_length=150)
     main_bussi = models.CharField(verbose_name='主营业务', default='', max_length=500)
     regist_capit = models.DecimalField(verbose_name='注册资本', default=0.00, max_digits=22, decimal_places=2)
     total_asset = models.DecimalField(verbose_name='总资产', default=0.00, max_digits=22, decimal_places=2)

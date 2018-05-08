@@ -239,6 +239,8 @@ class MainBusiSubIndustryProduRegion(HandleIndexContent):
                         obj.cost = Decimal(re.sub(',','',str(cost)))*unit_change[unit]
                         obj.save()
                     else:
+                        print(income)
+                        print(unit)
                         models.MainBusiSubIndustry.objects.create(
                             stk_cd_id=self.stk_cd_id,
                             acc_per=self.acc_per,
@@ -692,7 +694,6 @@ class CostAnalysi(HandleIndexContent):
 
     def save(self):
         dfs, unit, instructi = self.recognize()
-        print('unit', unit)
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if len(dfs) > 0:
             df_industri = dfs.get('分行业')
@@ -2310,7 +2311,7 @@ class MajorHoldCompaniAnalysiSZ(HandleIndexContent):
                 unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
 
                 name_pos = list(np.where((df.iloc[0, :] == '公司名称'))[0])
-                type_pos = list(np.where((df.iloc[0, :].str.contains('公司类型')))[0])
+                company_type_pos = list(np.where((df.iloc[0, :].str.contains('公司类型')))[0])
                 main_bussi_pos = list(np.where((df.iloc[0, :] == '主要业务'))[0])
                 regist_capit_pos = list(np.where((df.iloc[0, :].str.contains('注册资本') ))[0])
                 total_asset_pos = list(np.where((df.iloc[0, :].str.contains('总资产')))[0])
@@ -2322,7 +2323,7 @@ class MajorHoldCompaniAnalysiSZ(HandleIndexContent):
                 df = df.drop([0])
 
                 names = list(df.iloc[:, name_pos[0]])
-                types = list(df.iloc[:, type_pos[0]])
+                company_types = list(df.iloc[:, company_type_pos[0]])
                 main_bussis = list(df.iloc[:, main_bussi_pos[0]])
                 regist_capits = list(df.iloc[:, regist_capit_pos[0]])
                 total_assets = list(df.iloc[:, total_asset_pos[0]])
@@ -2332,16 +2333,16 @@ class MajorHoldCompaniAnalysiSZ(HandleIndexContent):
                 net_profits = list(df.iloc[:, net_profit_pos[0]])
 
 
-                for (name,type,main_bussi,regist_capit,total_asset,net_asset,oper_incom, \
+                for (name,company_type,main_bussi,regist_capit,total_asset,net_asset,oper_incom, \
                                oper_profit,net_profit ) \
-                        in zip(names,types,main_bussis,regist_capits,total_assets,net_assets,oper_incoms, \
+                        in zip(names,company_types,main_bussis,regist_capits,total_assets,net_assets,oper_incoms, \
                                oper_profits,net_profits ):
                     if models.MajorHoldCompani.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
                                                             name=name):
                         obj = models.MajorHoldCompani.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
                                                                 name=name)
                         obj.name = name
-                        obj.type = type
+                        obj.company_type = company_type
                         obj.main_bussi = main_bussi
                         obj.regist_capit = Decimal(re.sub(',', '', str(regist_capit))) * unit_change[unit]
                         obj.total_asset = Decimal(re.sub(',', '', str(total_asset))) * unit_change[unit]
@@ -2355,7 +2356,7 @@ class MajorHoldCompaniAnalysiSZ(HandleIndexContent):
                             stk_cd_id=self.stk_cd_id,
                             acc_per=self.acc_per,
                             name=name,
-                            type=type,
+                            company_type=company_type,
                             main_bussi=main_bussi,
                             regist_capit=Decimal(re.sub(',', '', str(regist_capit))) * unit_change[unit],
                             total_asset=Decimal(re.sub(',', '', str(total_asset))) * unit_change[unit],
