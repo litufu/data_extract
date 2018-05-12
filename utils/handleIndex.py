@@ -63,7 +63,7 @@ class HtmlPage(object):
         all_text_tags = pc.find_all('div', class_='t')
         if all_text_tags != None:
             for tag in all_text_tags:
-                if re.sub('\s+', '', tag.get_text()) == '':
+                if re.sub('\s+', '', tag.get_text()) == '' and tag.previous_sibling is None:
                     tag.decompose()
         # 查找pc所有的子元素
         # 获取当前页的pc_children,并删除换行符

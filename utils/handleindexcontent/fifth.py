@@ -686,7 +686,7 @@ class AppointAndDismissOfAccountFirm(HandleIndexContent):
         super(AppointAndDismissOfAccountFirm, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
+        dfs = {}
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
@@ -694,7 +694,16 @@ class AppointAndDismissOfAccountFirm(HandleIndexContent):
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
-                        df = remove_per_from_df(remove_space_from_df(item[0][0]))
+                        for tables in item:
+                            for table in tables:
+                                if table.iloc[:, 0].str.contains('境内会计师事务所名称').any():
+                                    df = remove_space_from_df(table)
+                                    dfs['first'] = df
+                                elif table.iloc[:, 0].str.contains('内部控制审计会计师事务所').any():
+                                    df = remove_space_from_df(table)
+                                    dfs['second'] = df
+                                else:
+                                    pass
                     elif classify == 't' and len(item) > 0:
                         if pattern0.match(item):
                             unit = pattern0.match(item).groups()[0]
@@ -707,7 +716,7 @@ class AppointAndDismissOfAccountFirm(HandleIndexContent):
         else:
             pass
 
-        return df, unit, ''.join(instructi)
+        return dfs, unit, ''.join(instructi)
 
     def converse(self):
 
@@ -718,20 +727,23 @@ class AppointAndDismissOfAccountFirm(HandleIndexContent):
 
     def save(self):
 
-        df, unit, instructi = self.recognize()
+        dfs, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
-        if df is not None and len(df) > 0:
-            value_pos = list(np.where((df.iloc[0, :].str.contains('现聘任')))[0])
-            name_pos = list(np.where((df.iloc[:, 0].str.contains('境内会计师事务所名称')))[0])
-            remuner_pos = list(np.where((df.iloc[:, 0].str.contains('境内会计师事务所报酬')))[0])
-            audit_period_pos = list(np.where((df.iloc[:, 0].str.contains('境内会计师事务所审计年限')))[0])
-            intern_control_audit_pos = list(np.where((df.iloc[:, 0].str.contains('内部控制审计会计师事务所')))[0])
+        if dfs.get('first') is not None and dfs.get('second') is not None:
+            df_first = dfs['first']
+            value_pos = list(np.where((df_first.iloc[0, :].str.contains('现聘任')))[0])
+            name_pos = list(np.where((df_first.iloc[:, 0].str.contains('境内会计师事务所名称')))[0])
+            remuner_pos = list(np.where((df_first.iloc[:, 0].str.contains('境内会计师事务所报酬')))[0])
+            audit_period_pos = list(np.where((df_first.iloc[:, 0].str.contains('境内会计师事务所审计年限')))[0])
 
-            name = df.iloc[name_pos[0],value_pos[0]]
-            remuner = df.iloc[remuner_pos[0],value_pos[0]]
-            audit_period = df.iloc[audit_period_pos[0],value_pos[0]]
-            intern_control_name = df.iloc[intern_control_audit_pos[0],1]
-            intern_control_remuner = df.iloc[intern_control_audit_pos[0],2]
+            name = df_first.iloc[name_pos[0],value_pos[0]]
+            remuner = df_first.iloc[remuner_pos[0],value_pos[0]]
+            audit_period = df_first.iloc[audit_period_pos[0],value_pos[0]]
+
+            df_second = dfs['second']
+            intern_control_audit_pos = list(np.where((df_second.iloc[:, 0].str.contains('内部控制审计会计师事务所')))[0])
+            intern_control_name = df_second.iloc[intern_control_audit_pos[0],1]
+            intern_control_remuner = df_second.iloc[intern_control_audit_pos[0],2]
 
             if models.AccountFirm.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
                 obj = models.AccountFirm.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,)

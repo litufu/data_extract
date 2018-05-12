@@ -21,6 +21,7 @@ from  utils.handleindexcontent.sixth import *
 from  utils.handleindexcontent.eighth import *
 from  utils.handleindexcontent.tenth import *
 from  utils.handleindexcontent.eleventh import *
+from  utils.handleindexcontent.twelve import *
 
 def extract(filepath):
     #第一步，解析页面元素，并按照索引对元素进行分离
@@ -127,8 +128,8 @@ if __name__ == '__main__':
     for contents in indexcontents:
         for indexno,indexcontents in contents.items():
             print('--------{}开始----------'.format(indexno))
-            # if indexno != '0b07250300':
-            #     continue
+            if indexno != '0b11020500':
+                continue
             indexno_id = models.StdContentIndex.objects.get(no=indexno).id
             handle_classname = models.IndexHandleMethod.objects.filter(indexno_id=indexno_id)
             if len(handle_classname)>0 and handle_classname[0].handle_classname != 'pass':

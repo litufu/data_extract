@@ -294,9 +294,9 @@ def is_num(s):
 if __name__ == '__main__':
     # registr('0205000000','pass')
     #新增索引及对应的处理类
-    registr('0b07250000','pass')
-    # print(toClassname(cnToEn('设定提存计划列示 ')))
-    # print(toFiledname(cnToEn('结算与完工差额 ')))
+    registr('0b11020800','pass')
+    # print(toClassname(cnToEn('或有事项	 ')))
+    # print(toFiledname(cnToEn('坏账准备')))
     #新增表记录，每当新增一个标准表时使用
     # registr_table('MajorOverseaAsset','公司主要境外资产')
 

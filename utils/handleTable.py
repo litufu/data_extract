@@ -409,6 +409,7 @@ class HtmlTable(object):
         max_len_row_in_line = line_lengths.index(maxlength)
         # 找到最大的单元格所在的行
         max_tr = table[max_len_row_in_line]
+        max_row_col = [td.attrs['class'][1] for td in max_tr]
 
         # 单元格向下填充
         for i, tr in enumerate(table):
@@ -426,10 +427,12 @@ class HtmlTable(object):
                     now_row_col = [td.attrs['class'][1] for td in now_row]
                     pre_row_set_col = set(pre_row_col)
                     now_row_set_col = set(now_row_col)
-                    pre_now_diff = pre_row_set_col.difference(now_row_set_col)
+                    pre_now_diff = list(pre_row_set_col.difference(now_row_set_col))
+                    pre_now_diff.sort(key=lambda x:pre_row_col.index(x))
                     for x in pre_now_diff:
                         diff_col_num = pre_row_col.index(x)
-                        now_row.insert(diff_col_num, pre_row[diff_col_num])
+                        max_col_num = max_row_col.index(x) if x in max_row_col else diff_col_num
+                        now_row.insert(max_col_num, pre_row[diff_col_num])
 
         # 单元格想左填充
         for i, tr in enumerate(table):
