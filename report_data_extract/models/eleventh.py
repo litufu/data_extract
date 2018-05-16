@@ -907,7 +907,9 @@ class CommonBeforeAndEndName(models.Model):
         ('interest_receiv', 'interest_receiv'),  # 应收利息
         ('dividend_receiv', 'dividend_receiv'),  # 应收股利
         ('other_receiv_natur', 'other_receiv_natur'),  # 其他应收款性质
+        ('noncurr_asset_due_within_one_year', 'noncurr_asset_due_within_one_year'),  # 一年内到期的非流动资产
         ('other_current_asset', 'other_current_asset'),  # 其他流动资产
+        ('construct_in_progres', 'construct_in_progres'),  # 在建工程
         ('engin_materi', 'engin_materi'),  # 工程物资
         ('fix_asset_clean_up', 'fix_asset_clean_up'),  # 固定资产清理
         ('unconfirm_defer_incom_tax', 'unconfirm_defer_incom_tax'),  # 未确认递延所得税资产明细
@@ -915,26 +917,32 @@ class CommonBeforeAndEndName(models.Model):
         ('other_noncurr_asset', 'other_noncurr_asset'),  # 其他非流动资产
         ('shortterm_loan', 'shortterm_loan'),  # 短期借款
         ('financi_liabil_measur_at_fair_valu', 'financi_liabil_measur_at_fair_valu'),  # 以公允价值计量且其变动计入当期损益的金融负债
-        ('bill_payabl', 'bill_payabl'),  # 以公允价值计量且其变动计入当期损益的金融负债
+        ('bill_payabl', 'bill_payabl'),  # 应付票据
         ('account_payabl', 'account_payabl'),  # 应付账款
         ('advanc_receipt', 'advanc_receipt'),  # 预收款项
         ('tax_payabl', 'tax_payabl'),  # 应交税费
         ('interest_payabl', 'interest_payabl'),  # 应付利息
         ('other_payabl', 'other_payabl'),  # 其他应付款
+        ('liabil_held_for_sale', 'liabil_held_for_sale'),  # 持有待售负债
         ('noncurr_liabil_due_within_one_year', 'noncurr_liabil_due_within_one_year'),  # 1 年内到期的非流动负债
+        ('long_term_loan', 'long_term_loan'),  # 长期借款
         ('bond_payabl', 'bond_payabl'),  # 应付债券
+        ('longterm_payabl', 'longterm_payabl'),  # 长期应付款
+        ('estim_liabil', 'estim_liabil'),  # 预计负债
+        ('other_noncurr_liabi', 'other_noncurr_liabi'),  # 其他非流动负债
         ('undistributed_profit', 'undistributed_profit'),  # 未分配利润
         ('tax_and_surcharg', 'tax_and_surcharg'),  # 税金及附加
         ('sale_expens', 'sale_expens'),  # 销售费用
         ('manag_cost', 'manag_cost'),  # 管理费用
-        ('financi_expens', 'financi_expens'),  # 管理费用
+        ('financi_expens', 'financi_expens'),  # 财务费用
         ('asset_impair_loss', 'asset_impair_loss'),  # 资产减值损失
         ('chang_in_fair_valu', 'chang_in_fair_valu'),  # 公允价值变动损益
         ('invest_incom', 'invest_incom'),  # 投资收益
+        ('asset_dispos_incom', 'asset_dispos_incom'),  # 资产处置收益
+        ('other_incom', 'other_incom'),  # 其他收益
         ('nonoper_incom', 'nonoper_incom'),  # 营业外收入
         ('nonoper_expens', 'nonoper_expens'),  # 营业外支出
         ('incom_tax_expens', 'incom_tax_expens'),  # 所得税费用
-        ('profit_to_incometax', 'profit_to_incometax'),  # 利润到所得税费用
         ('receipt_other_busi', 'receipt_other_busi'),  # 收到的其他与经营活动有关的现金
         ('payment_other_busi', 'payment_other_busi'),  # 支付的其他与经营活动有关的现金
         ('receipt_other_invest', 'receipt_other_invest'),  # 收到的其他与投资活动有关的现金
@@ -945,6 +953,7 @@ class CommonBeforeAndEndName(models.Model):
         ('composit_of_cash_and_cash_equival', 'composit_of_cash_and_cash_equival'),  # 现金和现金等价物的构成
         ('asset_with_limit_ownership', 'asset_with_limit_ownership'),  # 所有权或使用权受到限制的资产
         ('govern_subsidi', 'govern_subsidi'),  # 政府补助
+        ('nonrecur_gain_and_loss', 'nonrecur_gain_and_loss'),  # 非经常性损益
     )
     subject = models.CharField(verbose_name='科目名称', max_length=30, choices=SUBJECT, default='')
     name = models.CharField(verbose_name='项目名称', max_length=150, default='')
@@ -970,9 +979,12 @@ class CommonBeforeAndEnd(CommonInfo):
 
 class CommonBICEName(models.Model):
     SUBJECT = (
-        ('defer_incom', 'defer_incom'),  # 递延收益
+        ('goodwil_impair', 'goodwil_impair'),  # 商誉减值准备
+        ('special_payabl', 'special_payabl'),  # 专项应付款
         ('capit_reserv', 'capit_reserv'),  # 资本公积
+        ('stock', 'stock'),  # 库存股
         ('other_comprehens_incom', 'other_comprehens_incom'),  # 其他综合收益
+        ('special_reserv', 'special_reserv'),  # 专项储备
         ('surplu_reserv', 'surplu_reserv'),  # 盈余公积
 
 
@@ -1034,8 +1046,12 @@ class CommonBalancImpairNet(CommonInfo):
         ('end', 'end'),
     )
     SUBJECT = (
-        ('inventori', 'inventori'),
-        ('construct_in_progress', 'construct_in_progress'),
+        ('inventori', 'inventori'),#存货
+        ('construct_in_progress', 'construct_in_progress'),#在建工程
+        ('longterm_equiti_invest', 'longterm_equiti_invest'),#长期股权投资
+        ('avail_for_sale_financi_asset', 'avail_for_sale_financi_asset'),#可供出售金融资产
+        ('held_to_matur_invest', 'held_to_matur_invest'),#持有至到期投资
+        ('longterm_receiv', 'longterm_receiv'),#长期应收款
     )
 
     before_end = models.CharField(verbose_name='期初期末', max_length=30, choices=BEFORE_END, default='end')
@@ -1055,6 +1071,23 @@ class CommonBalancImpairNet(CommonInfo):
 
     def __str__(self):
         return '项目期初期末：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
+
+class SignificHeldToMaturInvest(CommonInfo):
+    typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
+    name = models.CharField(verbose_name='债券项目', max_length=150, default='')
+    book_value = models.DecimalField(verbose_name='面值', decimal_places=2, max_digits=22,
+                                  default=0.00)
+    book_rate = models.DecimalField(verbose_name='票面利率', decimal_places=2, max_digits=22,
+                                 default=0.00)
+    real_rate = models.DecimalField(verbose_name='实际利率', decimal_places=2, max_digits=22,
+                              default=0.00)
+    expiri_date = models.CharField(verbose_name='到期日', max_length=300, default='')
+
+    class Meta:
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+
+    def __str__(self):
+        return '期末重要的持有至到期投资：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
 
 class OverduInterest(CommonInfo):
     SUBJECT = (
@@ -1098,6 +1131,76 @@ class InventoriImpairPrepar(CommonInfo):
     def __str__(self):
         return '存货跌价准备：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
 
+class AvailForSaleFinanciAssetFair(CommonInfo):
+    typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
+    name = models.CharField(verbose_name='项目分类', max_length=150, default='')
+    cost = models.DecimalField(verbose_name='权益工具的成本/债务工具的摊余成本', decimal_places=2, max_digits=22,
+                                 default=0.00)
+    fair_value = models.DecimalField(verbose_name='公允价值', decimal_places=2, max_digits=22,
+                                  default=0.00)
+    accumul_into_other_comprehens_incom = models.DecimalField(verbose_name='累计计入其他综合收益的公允价值变动金额', decimal_places=2, max_digits=22,
+                                        default=0.00)
+    impair = models.DecimalField(verbose_name='已计提减值金额', decimal_places=2, max_digits=22,
+                                             default=0.00)
+
+    class Meta:
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+
+    def __str__(self):
+        return '按公允价值计量的可供出售金融资产：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
+
+class AvailForSaleFinanciAssetCost(CommonInfo):
+    typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
+    name = models.CharField(verbose_name='被投资单位', max_length=150, default='')
+    b_book_balance = models.DecimalField(verbose_name='账面余额期初', decimal_places=2, max_digits=22,default=0.00)
+    i_book_balance = models.DecimalField(verbose_name='账面余额本期增加', decimal_places=2, max_digits=22,default=0.00)
+    c_book_balance = models.DecimalField(verbose_name='账面余额本期减少', decimal_places=2, max_digits=22,default=0.00)
+    e_book_balance = models.DecimalField(verbose_name='账面余额期末', decimal_places=2, max_digits=22,default=0.00)
+    b_impair = models.DecimalField(verbose_name='减值准备年初', decimal_places=2, max_digits=22,default=0.00)
+    i_impair = models.DecimalField(verbose_name='减值准备本期增加', decimal_places=2, max_digits=22,default=0.00)
+    c_impair = models.DecimalField(verbose_name='减值准备本期减少', decimal_places=2, max_digits=22,default=0.00)
+    e_impair = models.DecimalField(verbose_name='减值准备期末', decimal_places=2, max_digits=22,default=0.00)
+    proport_of_share_held = models.DecimalField(verbose_name='在被投资单位持股比例', decimal_places=2, max_digits=22,default=0.00)
+    cash_bonu = models.DecimalField(verbose_name='本年现金红利', decimal_places=2, max_digits=22,default=0.00)
+
+    class Meta:
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+
+    def __str__(self):
+        return '按成本计量的可供出售金融资产：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
+
+class AvailForSaleFinanciAssetImpair(CommonInfo):
+    typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
+    name = models.CharField(verbose_name='可供出售金融资产分类', max_length=150, default='')
+    before = models.DecimalField(verbose_name='年初已计提减值余额', decimal_places=2, max_digits=22, default=0.00)
+    accrual = models.DecimalField(verbose_name='本年计提', decimal_places=2, max_digits=22, default=0.00)
+    transfer_from_other_comprehens_incom = models.DecimalField(verbose_name='其中：从其他综合收益转入', decimal_places=2, max_digits=22, default=0.00)
+    cut_back = models.DecimalField(verbose_name='本年减少', decimal_places=2, max_digits=22, default=0.00)
+    fair_valu_rebound = models.DecimalField(verbose_name='其中：期后公允价值回升转回', decimal_places=2, max_digits=22, default=0.00)
+    end = models.DecimalField(verbose_name='年末已计提减值余额', decimal_places=2, max_digits=22, default=0.00)
+
+    class Meta:
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+
+    def __str__(self):
+        return '可供出售金融资产减值情况：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
+
+class AvailForSaleFinanciAssetNoImpairDesc(CommonInfo):
+    typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
+    name = models.CharField(verbose_name='可供出售权益工具项目', max_length=150, default='')
+    cost = models.DecimalField(verbose_name='投资成本', decimal_places=2, max_digits=22, default=0.00)
+    fair_value = models.DecimalField(verbose_name='年末公允价值', decimal_places=2, max_digits=22, default=0.00)
+    fall_rate = models.DecimalField(verbose_name='公允价值相对于成本的下跌幅度', decimal_places=2, max_digits=22, default=0.00)
+    continu_fall_time = models.DecimalField(verbose_name='持续下跌时间', decimal_places=2,max_digits=22, default=0.00)
+    impair = models.DecimalField(verbose_name='已计提减值金额', decimal_places=2,max_digits=22, default=0.00)
+    reason = models.TextField(verbose_name='未计提减值准备原因',default='')
+
+    class Meta:
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+
+    def __str__(self):
+        return '可供出售权益工具年末公允价值严重下跌或非暂时性下跌但未计提减值准备相关说明：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
+
 class ComprehensNote(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
     name = models.CharField(verbose_name='项目名称', max_length=150, default='')
@@ -1116,8 +1219,13 @@ class ComprehensNote(CommonInfo):
     relat_parti_commit = models.TextField(verbose_name='关联方承诺',default='' )
     import_commit = models.TextField(verbose_name='重要承诺事项',default='' )
     conting = models.TextField(verbose_name='或有事项',default='' )
-
-
+    consolid_cost_and_goodwil = models.TextField(verbose_name='非同一控制下企业合并:合并成本和商誉',default='' )
+    consolid_cost = models.TextField(verbose_name='同一控制下企业合并:合并成本',default='' )
+    revers_purchas = models.TextField(verbose_name='反向购买',default='' )
+    chang_in_consolid_scope_with_other_reason = models.TextField(verbose_name='其他原因的合并范围变动',default='' )
+    chang_share_of_owner_equiti_in_subsidiari = models.TextField(verbose_name='在子公司所有者权益份额发生变化的情况说明',default='' )
+    determin_basi_and_account_report_divis = models.TextField(verbose_name='报告分部的确定依据与会计政策',default='' )
+    other_import_transact_and_event = models.TextField(verbose_name='其他对投资者决策有影响的重要事项',default='' )
 
     class Meta:
         unique_together = ("stk_cd", "acc_per", "typ_rep")
@@ -1144,6 +1252,20 @@ class ConstructContract(CommonInfo):
 
     def __str__(self):
         return '建造合同形成的完工与结算差额情况：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
+
+class AssetHeldForSale(CommonInfo):
+    typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
+    name = models.CharField(verbose_name='项目名称', max_length=150, default='')
+    book_value = models.DecimalField(verbose_name='期末账面价值', decimal_places=2, max_digits=22, default=0.00)
+    fair_valu = models.DecimalField(verbose_name='公允价值', decimal_places=2, max_digits=22, default=0.00)
+    estim_dispos_cost = models.DecimalField(verbose_name='预计处置费用', decimal_places=2, max_digits=22, default=0.00)
+    estim_dispos_time = models.CharField(verbose_name='预计处置时间', max_length=150,default='')
+
+    class Meta:
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+
+    def __str__(self):
+        return '持有待售的资产：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
 
 class LongtermEquitiInvest(CommonInfo):
 
@@ -1386,6 +1508,20 @@ class MajorLiabilAgeOver1Year(CommonInfo):
     def __str__(self):
         return '账龄超过1年的重要负债或逾期利息：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
 
+class OverduShorttermBorrow(CommonInfo):
+    typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
+    name = models.CharField(verbose_name='借款单位', max_length=150, default='')
+    amount = models.DecimalField(verbose_name='期末金额', decimal_places=2, max_digits=22, default=0.00)
+    rate = models.DecimalField(verbose_name='借款利率', decimal_places=2, max_digits=22, default=0.00)
+    overdu_rate = models.DecimalField(verbose_name='逾期利率', decimal_places=2, max_digits=22, default=0.00)
+    overdu_time = models.CharField(verbose_name='逾期时间',max_length=150, default='')
+
+    class Meta:
+        unique_together = ("stk_cd", "acc_per", "typ_rep",  'name')
+
+    def __str__(self):
+        return '已逾期未偿还的短期借款情况：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
+
 class ChangInBondPayabl(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
     name = models.CharField(verbose_name='债券名称', max_length=150, default='')
@@ -1572,6 +1708,8 @@ class CompanyName(models.Model):
     )
     natur_of_the_unit = models.CharField(verbose_name='单位性质', max_length=30, choices=NATURE, default='s')
     name = models.CharField(verbose_name='公司名称', max_length=150, default='',unique=True)
+
+
 
 
 

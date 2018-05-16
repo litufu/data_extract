@@ -185,8 +185,8 @@ def toFiledname(name):
     # lancaster = LancasterStemmer()
     # ret = '_'.join([lancaster.stem(w) for w in re.split('\s+',result.lower())])
     ret = '_'.join([porter.stem(w) for w in re.split('\s+', name.lower())])
-    if len(ret)>20:
-        ret = ret[:20]
+    if len(ret)>30:
+        ret = ret[:30]
     return ret
 
 def toClassname(name):
@@ -289,15 +289,30 @@ def is_num(s):
     else:
         return False
 
+def get_item_in_df_pos(item,df,similar=True):
+    if similar == True:
+        for i in range(len(df)):
+            for j,value in enumerate(list(df.iloc[i,:])):
+                if item in value:
+                    return i,j
+    else:
+        for i in range(len(df)):
+            for j, value in enumerate(list(df.iloc[i, :])):
+                if item == value:
+                    return i, j
+    return None
+
+
+
 
 
 if __name__ == '__main__':
     # registr('0205000000','pass')
     #新增索引及对应的处理类
-    registr('0b11020800','pass')
-    # print(toClassname(cnToEn('或有事项	 ')))
-    # print(toFiledname(cnToEn('坏账准备')))
-    #新增表记录，每当新增一个标准表时使用
+    registr('0b090100','pass')
+    # print(toClassname(cnToEn('其他对投资者决策有影响的重要交易和事项')))
+    # print(toFiledname(cnToEn('报告分部的财务信息')))
+    # 新增表记录，每当新增一个标准表时使用
     # registr_table('MajorOverseaAsset','公司主要境外资产')
 
 

@@ -6,7 +6,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "data_extract.settings")
 django.setup()
 import re
 import numpy as np
-from utils.mytools import HandleIndexContent,remove_space_from_df,remove_per_from_df,similar,is_num
+from utils.mytools import HandleIndexContent,remove_space_from_df,remove_per_from_df,similar,is_num,get_item_in_df_pos
 from report_data_extract import models
 from decimal import Decimal
 from config.fs import manage_config
@@ -1545,7 +1545,7 @@ class BillReceivList(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07040100']:
+        if self.indexno in ['0b07040100','0b070401']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -1653,7 +1653,7 @@ class BillReceivPledg(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07040200']:
+        if self.indexno in ['0b07040200','0b070402']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -1746,7 +1746,7 @@ class EndorsOrDiscount(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07040300']:
+        if self.indexno in ['0b07040300','0b070403']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -1862,7 +1862,7 @@ class TransferReceiv(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07040400']:
+        if self.indexno in ['0b07040400','0b070404']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -1956,16 +1956,17 @@ class ReceivClassifDisclosur(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07050100','0b07090100','0b11010100','0b11020100']:
+        if self.indexno in ['0b07050100','0b07090100','0b11010100','0b11020100','0b070501',
+                            '0b070901','0b110101','0b110201']:
             for k,content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
                         for tables in item:
                             for table in tables:
-                                if table.iloc[:,0].str.contains('单项金额重大').any():
+                                if table.iloc[:,0].str.contains('类别').any():
                                     df = remove_per_from_df(remove_space_from_df(table))
                                     dfs['summari'] = df
-                                elif table.iloc[:,0].str.contains('账龄').any():
+                                elif table.iloc[:,0].str.contains('账龄').any() or table.iloc[:,0].str.contains('年以内').any():
                                     df = remove_per_from_df(remove_space_from_df(table))
                                     dfs['age'].append(df)
                                 elif table.iloc[:,0].str.contains('按单位').any():
@@ -2003,7 +2004,9 @@ class ReceivClassifDisclosur(HandleIndexContent):
 
     def save(self):
         accounts = {'0b07050100':('A','account'),'0b07090100':('A','other'),
-                    '0b11010100':('B','account'),'0b11020100':('B','other')}
+                    '0b11010100':('B','account'),'0b11020100':('B','other'),
+                    '0b070501':('A','account'),'0b070901':('A','other'),
+                    '0b110101':('B','account'),'0b110201':('B','other')}
         pattern_num = re.compile('^.*?\d+.*?$')
         dfs, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
@@ -2071,22 +2074,27 @@ class ReceivClassifDisclosur(HandleIndexContent):
                     for subject, value in zip(subjects, values):
                         setattr(obj, subject, value)
                     obj.save()
+
+            obj_before = models.Receiv.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                   before_end='before', subject=accounts[self.indexno][1],
+                                                   typ_rep_id=accounts[self.indexno][0])
+            if obj_before.check_logic():
+                pass
+            else:
+                raise Exception
+
+            obj_end = models.Receiv.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                before_end='end', subject=accounts[self.indexno][1],
+                                                typ_rep_id=accounts[self.indexno][0])
+            if obj_end.check_logic():
+                pass
+            else:
+                raise Exception
+
         else:
             pass
 
-        obj_before = models.Receiv.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                            before_end='before', subject=accounts[self.indexno][1], typ_rep_id=accounts[self.indexno][0])
-        if obj_before.check_logic():
-            pass
-        else:
-            raise Exception
 
-        obj_end = models.Receiv.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                before_end='end', subject=accounts[self.indexno][1],typ_rep_id=accounts[self.indexno][0])
-        if obj_end.check_logic():
-            pass
-        else:
-            raise Exception
 
 
         if dfs.get('signi') is not None and len(dfs['signi'])>1:
@@ -2122,24 +2130,28 @@ class ReceivClassifDisclosur(HandleIndexContent):
                         bad_debt_prepar = bad_debt_prepar,
                         reason = reason,
                     )
-        else:
-            pass
-
-        obj_end = models.SignificReceiv.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                            before_end='end', subject=accounts[self.indexno][1], typ_rep_id=accounts[self.indexno][0])
-        if len(obj_end)>0:
-            if obj_end[0].check_logic():
-                pass
+            obj_end = models.SignificReceiv.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                           before_end='end', subject=accounts[self.indexno][1],
+                                                           typ_rep_id=accounts[self.indexno][0])
+            if len(obj_end) > 0:
+                if obj_end[0].check_logic():
+                    pass
+                else:
+                    raise Exception
             else:
-                raise Exception
+                pass
         else:
             pass
 
-        if dfs.get('age') is not None:
+
+
+        if dfs.get('age') is not None and len(dfs['age'])>=1:
             if len(dfs['age']) == 1:
                 df = dfs['age'][0]
-            else:
+            elif len(dfs['age'])>1:
                 df = pd.concat(dfs['age'],ignore_index=True)
+            else:
+                pass
 
             one_year_pos = list(np.where(df.iloc[:, 0].str.contains('1年以内小计'))[0])
             two_year_pos = list(np.where(df.iloc[:, 0].str.match(r'^.*?1.*?2.*?年.*?$')|df.iloc[:, 0].str.match(r'^.*?1.*?年.*?以上.*?$'))[0])
@@ -2188,18 +2200,22 @@ class ReceivClassifDisclosur(HandleIndexContent):
                     for subject, value in zip(subjects, values):
                         setattr(obj, subject, value)
                     obj.save()
+
+            obj_end = models.ReceivAge.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                      before_end='end', subject=accounts[self.indexno][1],
+                                                      typ_rep_id=accounts[self.indexno][0])
+            if len(obj_end) > 0:
+                if obj_end[0].check_logic():
+                    pass
+                else:
+                    raise Exception
+            else:
+                pass
+
         else:
             pass
 
-        obj_end = models.ReceivAge.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                            before_end='end', subject=accounts[self.indexno][1], typ_rep_id=accounts[self.indexno][0])
-        if len(obj_end)>0:
-            if obj_end[0].check_logic():
-                pass
-            else:
-                raise Exception
-        else:
-            pass
+
 
         if dfs.get('other') is not None:
             df = dfs['other']
@@ -2230,18 +2246,22 @@ class ReceivClassifDisclosur(HandleIndexContent):
                         balanc=Decimal(re.sub(',', '', str(balanc))) * unit_change[unit] if pattern_num.match(balanc) else 0.00,
                         bad_debt_prepar=Decimal(re.sub(',', '', str(bad_debt_prepar))) * unit_change[unit] if pattern_num.match(bad_debt_prepar) else 0.00,
                     )
+
+            obj_end = models.ReceivOtherCombin.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                              before_end='end', subject=accounts[self.indexno][1],
+                                                              typ_rep_id=accounts[self.indexno][0], name='合计')
+            if len(obj_end) > 0:
+                if obj_end[0].check_logic():
+                    pass
+                else:
+                    raise Exception
+            else:
+                pass
+
         else:
             pass
 
-        obj_end = models.ReceivOtherCombin.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                  before_end='end', subject=accounts[self.indexno][1], typ_rep_id=accounts[self.indexno][0],name='合计')
-        if len(obj_end) > 0:
-            if obj_end[0].check_logic():
-                pass
-            else:
-                raise Exception
-        else:
-            pass
+
 
 class WithdrawOrReturnBadDebtPrepar(HandleIndexContent):
     '''
@@ -2256,7 +2276,8 @@ class WithdrawOrReturnBadDebtPrepar(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0b07050200','0b07090200','0b11010200','0b11020200']:
+        if self.indexno in ['0b07050200','0b07090200','0b11010200','0b070502',
+                            '0b070902','0b110102','0b110202']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -2266,10 +2287,10 @@ class WithdrawOrReturnBadDebtPrepar(HandleIndexContent):
                     elif classify == 't' and len(item) > 0:
                         if pattern0.match(item):
                             unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
+                        ret = re.sub('适用.不适用', '', item)
+                        ret = re.sub('单位.*?元', '', item)
+                        if ret != '':
+                            instructi.append(ret)
                     else:
                         pass
         else:
@@ -2287,9 +2308,11 @@ class WithdrawOrReturnBadDebtPrepar(HandleIndexContent):
     def save(self):
         df, unit, instructi = self.recognize()
         accounts={'0b07050200':('A','account'),'0b07090200':('A','other'),
-                  '0b11010200':('B','account'),'0b11020200':('B','other')}
-        pattern = re.compile('^.*?计提坏账准备金额(.*\d\.{0,1}\d*?)(.*?元).*?收回或转回坏账准备金额(.*\d?\.{0,1}\d*?)(.*?元).*?$')
-        if len(instructi) > 0:
+                  '0b11010200':('B','account'),'0b11020200':('B','other'),
+                  '0b070502':('A','account'),'0b070902':('A','other'),
+                  '0b110102':('B','account'),'0b110202':('B','other')}
+        pattern = re.compile('^.*?计提坏账准备金额(.*\d\.{0,1}\d*?)(\D*?元).*?收回或转回坏账准备金额(.*\d?\.{0,1}\d*?)(\D*?元).*?$')
+        if len(instructi) > 0 and pattern.match(instructi):
             unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
             withdraw = pattern.match(instructi).groups()[0]
             unit = pattern.match(instructi).groups()[1]
@@ -2361,7 +2384,8 @@ class WriteOffReceiv(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07050300','0b07090300','0b11010300','0b11020300']:
+        if self.indexno in ['0b07050300','0b07090300','0b11010300','0b11020300','0b070503',
+                            '0b070903','0b110103','0b110203']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -2398,7 +2422,9 @@ class WriteOffReceiv(HandleIndexContent):
 
     def save(self):
         accounts = {'0b07050300':('A','account'),'0b07090300':('A','other'),
-                    '0b11010300':('A','account'),'0b11020300':('B','other')}
+                    '0b11010300':('B','account'),'0b11020300':('B','other'),
+                    '0b070503':('A','account'),'0b070903':('A','other'),
+                    '0b110103':('B','account'),'0b110203':('B','other')}
         dfs, unit, instructi = self.recognize()
         if dfs.get('sum') is not None and len(dfs['sum']) > 1:
             df = dfs['sum']
@@ -2487,7 +2513,8 @@ class Top5Receiv(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07050400','0b07060200','0b07090500','0b11010400','0b11020500']:
+        if self.indexno in ['0b07050400','0b07060200','0b07090500','0b11010400','0b11020500','0b070504',\
+                            '0b070602','0b070905','0b110104','0b110205']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -2518,8 +2545,11 @@ class Top5Receiv(HandleIndexContent):
     def save(self):
         accounts = {'0b07050400':('A','account'),'0b07060200':('A','prepay'),
                     '0b07090500':('A','other'),'0b11010400':('B','account'),
-                    '0b11020500':('B','other')}
+                    '0b11020500':('B','other'),'0b070504':('A','account'),
+                    '0b070602':('A','prepay'),'0b070905':('A','other'),
+                    '0b110104':('B','account'),'0b110205':('B','other')}
         df, unit, instructi = self.recognize()
+        print(df)
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df) > 1:
 
@@ -2533,16 +2563,19 @@ class Top5Receiv(HandleIndexContent):
             related_pos = list(np.where(df.iloc[0, :].str.contains('关系'))[0])
             reason_pos = list(np.where(df.iloc[0, :].str.contains('原因'))[0])
 
-            start_row_pos = list(np.where(df.iloc[:,ratio_pos[0]].str.match(r'.*?\d+.*?'))[0])
+            balanc_pos = balanc_pos if len(balanc_pos)!=0 else [get_item_in_df_pos('金额',df,similar=False)[1]]
+            bad_debt_prepar_pos = bad_debt_prepar_pos if len(bad_debt_prepar_pos)!=0 else [get_item_in_df_pos('坏账准备',df)[1]]
+            ratio_pos = ratio_pos if len(ratio_pos)!=0 else [get_item_in_df_pos('比例',df)[1]]
+
+            start_row_pos = list(np.where(df.iloc[:,ratio_pos[0]].str.match(r'^[^年]*?\d+[^年]*?$'))[0])
             data_length = len(df.iloc[start_row_pos[0]:,:])
-            names = list(df.iloc[start_row_pos[0]:, name_pos[0]]) if len(name_pos)>0 else ['' for i in range(data_length)]
+            names = list(df.iloc[start_row_pos[0]:, name_pos[0]]) if len(name_pos)>0 else ['合计' for i in range(data_length)]
             naturs = list(df.iloc[start_row_pos[0]:, natur_pos[0]]) if len(natur_pos)>0 else ['' for i in range(data_length)]
             balancs = list(df.iloc[start_row_pos[0]:, balanc_pos[0]]) if len(balanc_pos)>0 else [0.00 for i in range(data_length)]
             bad_debt_prepars = list(df.iloc[start_row_pos[0]:, bad_debt_prepar_pos[0]]) if len(bad_debt_prepar_pos)>0 else [0.00 for i in range(data_length)]
             ages = list(df.iloc[start_row_pos[0]:, age_pos[0]]) if len(age_pos)>0 else ['' for i in range(data_length)]
             relateds = list(df.iloc[start_row_pos[0]:, related_pos[0]]) if len(related_pos)>0 else ['' for i in range(data_length)]
             reasons = list(df.iloc[start_row_pos[0]:, reason_pos[0]]) if len(reason_pos)>0 else ['' for i in range(data_length)]
-
             for (name, natur, balanc, bad_debt_prepar,age, related,reason) in \
                     zip(names, naturs, balancs, bad_debt_prepars,ages, relateds,reasons):
                 if models.Top5Receiv.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
@@ -2591,7 +2624,7 @@ class PrepayAge(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07060100']:
+        if self.indexno in ['0b07060100','0b070601']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -2713,13 +2746,23 @@ class CommonBeforeAndEnd(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07070100','0b07080100','0b07090400','0b070d0000','0b07150000',\
-                            '0b07160000','0b071d0400','0b071d0500','0b071e0000','0b071f0100','0b07200000',\
-                            '0b07220000','0b07230100','0b07240100','0b07260000','0b07290100','0b072b0000',\
-                            '0b072e0100','0b073c0000','0b073e0000','0b073f0000','0b07400000','0b07410000',\
-                            '0b07420000','0b07430000','0b07440000','0b07470100','0b07480100','0b07480200',\
-                            '0b07480300','0b07480400','0b07480500','0b07480600','0b07490100','0b07490400',\
-                            '0b11020400'
+        if self.indexno in ['0b07070100','0b07080100','0b07090400','0b070d0000','0b07150000',
+                            '0b07160000','0b071d0400','0b071d0500','0b071e0000','0b071f0100','0b07200000',
+                            '0b07220000','0b07230100','0b07240100','0b07260000','0b07290100','0b072b0000',
+                            '0b072e0100','0b073c0000','0b073e0000','0b073f0000','0b07400000','0b07410000',
+                            '0b07420000','0b07430000','0b07440000','0b07470100','0b07480100','0b07480200',
+                            '0b07480300','0b07480400','0b07480500','0b07480600','0b07490100','0b07490400',
+                            '0b11020400','0b070701','0b070800','0b070904','0b070c00','0b070c0000','0b070d00',
+                            '0b071500','0b071600','0b071d04','0b071d05','0b071e00','0b071f01','0b072000',
+                            '0b072200','0b072301','0b072401','0b072600','0b072901','0b072a00','0b072a0000'
+                            '0b072b00','0b072d01','0b072e01','0b072f01','0b072f0100','0b07320000','0b073200',
+                            '0b073400','0b073c00','0b073e00','0b073f00','0b074000','0b074100','0b074200'
+                            '0b074300','0b074400','0b074500','0b074600','0b074901','0b074b01','0b074b02',
+                            '0b074b03','0b074b04','0b074b05','0b074b06','0b074c01','0b074c04','0b074e00',
+                            '0b110204',
+
+
+
         ]:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
@@ -2752,7 +2795,7 @@ class CommonBeforeAndEnd(HandleIndexContent):
 
     def save(self):
         df, unit, instructi = self.recognize()
-        parent_company = ['0b11020400',]
+        parent_company = ['0b11020400','0b110204']
         if self.indexno in parent_company:
             typ_rep_id = 'B'
         else:
@@ -2775,14 +2818,41 @@ class CommonBeforeAndEnd(HandleIndexContent):
                     '0b07480200':'payment_other_busi','0b07480300':'receipt_other_invest',\
                     '0b07480400':'payment_other_invest','0b07480500':'receipt_other_financ',\
                     '0b07480600':'payment_other_financ','0b07490100':'addit_materi',\
-                    '0b07490400':'composit_of_cash_and_cash_equival','0b11020400':'other_receiv_natur'}
+                    '0b07490400':'composit_of_cash_and_cash_equival','0b11020400':'other_receiv_natur',
+                    '0b070701':'interest_receiv','0b070800':'dividend_receiv',
+                    '0b070904':'other_receiv_natur','0b070c00':'noncurr_asset_due_within_one_year',
+                    '0b070c0000':'noncurr_asset_due_within_one_year','0b070d00':'other_current_asset',
+                    '0b071500':'engin_materi','0b071600':'fix_asset_clean_up',
+                    '0b071d04':'unconfirm_defer_incom_tax','0b071d05':'expir_in_the_follow_year',
+                    '0b071e00':'other_noncurr_asset','0b071f01':'shortterm_loan',
+                    '0b072000':'financi_liabil_measur_at_fair_valu','0b072200':'bill_payabl',
+                    '0b072301':'account_payabl','0b072401':'advanc_receipt',
+                    '0b072600':'tax_payabl','0b072901':'other_payabl',
+                    '0b072a00':'liabil_held_for_sale','0b072a0000':'liabil_held_for_sale',
+                    '0b072b00':'noncurr_liabil_due_within_one_year','0b072d01':'long_term_loan',
+                    '0b072e01':'bond_payabl','0b072f01':'longterm_payabl','0b072f0100':'longterm_payabl',
+                    '0b073200':'estim_liabil','0b07320000':'estim_liabil','0b073400':"other_noncurr_liabi",
+                    '0b073c00':'undistributed_profit','0b073e00':'tax_and_surcharg',
+                    '0b073f00':'sale_expens','0b074000':'manag_cost','0b074100':'financi_expens',
+                    '0b074200':'asset_impair_loss','0b074300':'chang_in_fair_valu',
+                    '0b074400':'invest_incom','0b074500':'asset_dispos_incom',
+                    '0b074600':'other_incom','0b074901':'incom_tax_expens',
+                    '0b074b01':'receipt_other_busi','0b074b02':'payment_other_busi',
+                    '0b074b03':'receipt_other_invest','0b074b04':'payment_other_invest',
+                    '0b074b05':'receipt_other_financ','0b074b06':'payment_other_financ',
+                    '0b074c01':'addit_materi','0b074c04':'composit_of_cash_and_cash_equival',
+                    '0b074e00':'asset_with_limit_ownership','0b110204':'other_receiv_natur'
+
+
+        }
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df) > 1:
             end_pos = list(np.where(df.iloc[0, :].str.contains('期末')|df.iloc[0, :].str.contains('年末')|
                                     df.iloc[0, :].str.contains('本期') | df.iloc[0, :].str.contains('本年'))[0])
             before_pos = list(np.where(df.iloc[0, :].str.contains('期初')|df.iloc[0, :].str.contains('年初')|
                                        df.iloc[0, :].str.contains('上期') | df.iloc[0, :].str.contains('上年'))[0])
-            instruct_pos = list(np.where(df.iloc[0, :].str.contains('备注') | df.iloc[0, :].str.contains('说明'))[0])
+            instruct_pos = list(np.where(df.iloc[0, :].str.contains('备注') | df.iloc[0, :].str.contains('说明')|
+                                         df.iloc[0, :].str.contains('原因'))[0])
             names = list(df.iloc[1:,0])
             ends = list(df.iloc[1:,end_pos[0]])
             befores = list(df.iloc[1:,before_pos[0]])
@@ -2850,7 +2920,9 @@ class CommonBalancImpairNet(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b070a0100','0b07140100']:
+        if self.indexno in ['0b070a0100','0b07140100','0b11030000','0b070a01','0b070e01',
+                            '0b070e0100','0b070f01','0b070f0100','0b071001','0b07100100',
+                            '0b071401','0b110300']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -2881,7 +2953,13 @@ class CommonBalancImpairNet(HandleIndexContent):
 
     def save(self):
         df, unit, instructi = self.recognize()
-        accounts = {'0b070a0100': 'inventori','0b07140100':'construct_in_progress'}
+        print(df)
+        accounts = {'0b070a0100': ('A','inventori'),'0b07140100':('A','construct_in_progress'),
+                    '0b11030000':('B','longterm_equiti_invest'),'0b070a01':('A','inventori'),
+                    '0b070e01':('A','avail_for_sale_financi_asset'),'0b070e0100':('A','avail_for_sale_financi_asset'),
+                    '0b070f01':('A','held_to_matur_invest'),'0b070f0100':('A','held_to_matur_invest'),
+                    '0b071001':('A','longterm_receiv'),'0b07100100':('A','longterm_receiv'),
+                    '0b071401':('A','construct_in_progress'),'0b110300':('B','longterm_equiti_invest')}
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
 
         if df is not None and len(df) > 1:
@@ -2902,11 +2980,11 @@ class CommonBalancImpairNet(HandleIndexContent):
                     impair = Decimal(re.sub(',', '', str(impair))) * unit_change[unit] if is_num(impair) else 0.00
                     net = Decimal(re.sub(',', '', str(net))) * unit_change[unit] if is_num(net) else 0.00
                     if models.CommonBalancImpairNet.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                before_end=item, subject=accounts[self.indexno],
-                                                                typ_rep_id='A', name=name):
+                                                                before_end=item, subject=accounts[self.indexno][1],
+                                                                typ_rep_id=accounts[self.indexno][0], name=name):
                         obj = models.CommonBalancImpairNet.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                    before_end=item, subject=accounts[self.indexno],
-                                                                    typ_rep_id='A', name=name)
+                                                                    before_end=item, subject=accounts[self.indexno][1],
+                                                                    typ_rep_id=accounts[self.indexno][0], name=name)
 
                         obj.balance = balance
                         obj.impair = impair
@@ -2917,8 +2995,8 @@ class CommonBalancImpairNet(HandleIndexContent):
                             stk_cd_id=self.stk_cd_id,
                             acc_per=self.acc_per,
                             before_end=item,
-                            subject=accounts[self.indexno],
-                            typ_rep_id='A',
+                            subject=accounts[self.indexno][1],
+                            typ_rep_id=accounts[self.indexno][0],
                             name=name,
                             balance=balance,
                             impair=impair,
@@ -2926,6 +3004,500 @@ class CommonBalancImpairNet(HandleIndexContent):
                         )
         else:
             pass
+
+class AvailForSaleFinanciAssetFair(HandleIndexContent):
+    '''
+                   按公允价值计量的可供出售金融资产
+               '''
+
+    def __init__(self, stk_cd_id, acc_per, indexno, indexcontent):
+        super(AvailForSaleFinanciAssetFair, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
+
+    def recognize(self):
+        df = None
+        instructi = []
+        unit = '元'
+        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
+        if self.indexno in ['0b070e02','0b070e0200']:
+            for content in self.indexcontent:
+                for classify, item in content.items():
+                    if classify == 'c' and len(item) > 0:
+                        for tables in item:
+                            for table in tables:
+                                df = remove_space_from_df(table)
+                    elif classify == 't' and len(item) > 0:
+                        if pattern0.match(item):
+                            unit = pattern0.match(item).groups()[0]
+                        else:
+                            ret = re.sub('适用.不适用', '', item)
+                            if ret != '':
+                                instructi.append(ret)
+                    else:
+                        pass
+        else:
+            pass
+
+        return df, unit, ''.join(instructi)
+
+    def converse(self):
+
+        pass
+
+    def logic(self):
+        pass
+
+    def save(self):
+        df, unit, instructi = self.recognize()
+        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        if df is not None and len(df) > 1:
+            df = df.T
+            name_pos = list(np.where(df.iloc[0, :].str.contains('分类'))[0])
+            cost_pos = list(np.where(df.iloc[0, :].str.contains('成本'))[0])
+            fair_value_pos = list(np.where(df.iloc[0, :]=='公允价值')[0])
+            accumul_into_other_comprehens_incom_pos = list(np.where(df.iloc[0, :].str.contains('累计计入其他综合收益'))[0])
+            impair_pos = list(np.where(df.iloc[0, :].str.contains('减值'))[0])
+
+            start_row_pos = list(np.where(df.iloc[:, cost_pos[0]].str.match(r'^[^年]*?\d+[^年]*?$'))[0])
+            data_length = len(df.iloc[start_row_pos[0]:, :])
+            names = list(df.iloc[start_row_pos[0]:, name_pos[0]]) if len(name_pos) > 0 else ['' for i in
+                                                                                             range(data_length)]
+            costs = list(df.iloc[start_row_pos[0]:, cost_pos[0]]) if len(cost_pos) > 0 else [0.00 for i in
+                                                                                                   range(data_length)]
+            fair_values = list(df.iloc[start_row_pos[0]:, fair_value_pos[0]]) if len(fair_value_pos) > 0 else [0.00 for i in range(data_length)]
+            accumul_into_other_comprehens_incoms = list(df.iloc[start_row_pos[0]:, accumul_into_other_comprehens_incom_pos[0]]) if len(
+                accumul_into_other_comprehens_incom_pos) > 0 else [0.00 for i in range(data_length)]
+            impairs = list(df.iloc[start_row_pos[0]:, impair_pos[0]]) if len(impair_pos) > 0 else ['' for i in
+                                                                                                   range(data_length)]
+
+            for (name, cost, fair_value, accumul_into_other_comprehens_incom, impair) in \
+                    zip(names, costs, fair_values, accumul_into_other_comprehens_incoms, impairs):
+                if models.AvailForSaleFinanciAssetFair.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                         typ_rep_id='A', name=name):
+
+                    obj = models.AvailForSaleFinanciAssetFair.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                             typ_rep_id='A', name=name)
+                    obj.cost = Decimal(re.sub(',', '', str(cost))) * unit_change[unit] if is_num(cost) else 0.00
+                    obj.fair_value = Decimal(re.sub(',', '', str(fair_value))) * unit_change[unit] if is_num(fair_value) else 0.00
+                    obj.accumul_into_other_comprehens_incom = Decimal(re.sub(',', '', str(accumul_into_other_comprehens_incom))) * unit_change[unit] if is_num(accumul_into_other_comprehens_incom) else 0.00
+                    obj.impair = Decimal(re.sub(',', '', str(impair))) * unit_change[unit] if is_num(impair) else 0.00
+
+                    obj.save()
+                else:
+                    obj = models.AvailForSaleFinanciAssetFair.objects.create(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        name=name,
+                        cost=Decimal(re.sub(',', '', str(cost))) * unit_change[
+                            unit] if is_num(cost) else 0.00,
+                        fair_value=Decimal(re.sub(',', '', str(fair_value))) * unit_change[
+                            unit] if is_num(fair_value) else 0.00,
+                        accumul_into_other_comprehens_incom=Decimal(re.sub(',', '', str(accumul_into_other_comprehens_incom))) * unit_change[
+                            unit] if is_num(accumul_into_other_comprehens_incom) else 0.00,
+                        impair=Decimal(re.sub(',', '', str(impair))) * unit_change[
+                            unit] if is_num(impair) else 0.00,
+                    )
+
+class AvailForSaleFinanciAssetCost(HandleIndexContent):
+    '''
+                       按成本计量的可供出售金融资产
+                   '''
+
+    def __init__(self, stk_cd_id, acc_per, indexno, indexcontent):
+        super(AvailForSaleFinanciAssetCost, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
+
+    def recognize(self):
+        df = None
+        instructi = []
+        unit = '元'
+        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
+        if self.indexno in ['0b070e03','0b070e0300']:
+            for content in self.indexcontent:
+                for classify, item in content.items():
+                    if classify == 'c' and len(item) > 0:
+                        for tables in item:
+                            for table in tables:
+                                df = remove_space_from_df(table)
+                    elif classify == 't' and len(item) > 0:
+                        if pattern0.match(item):
+                            unit = pattern0.match(item).groups()[0]
+                        else:
+                            ret = re.sub('适用.不适用', '', item)
+                            if ret != '':
+                                instructi.append(ret)
+                    else:
+                        pass
+        else:
+            pass
+
+        return df, unit, ''.join(instructi)
+
+    def converse(self):
+
+        pass
+
+    def logic(self):
+        pass
+
+    def save(self):
+        df, unit, instructi = self.recognize()
+        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        if df is not None and len(df) > 1:
+            name_pos = list(np.where(df.iloc[0, :].str.contains('被投资单位'))[0])
+            b_book_balance_pos = list(np.where(df.iloc[0, :].str.contains('账面余额') & df.iloc[1, :].str.contains('初'))[0])
+            i_book_balance_pos = list(np.where(df.iloc[0, :].str.contains('账面余额') & df.iloc[1, :].str.contains('增加'))[0])
+            c_book_balance_pos = list(np.where(df.iloc[0, :].str.contains('账面余额') & df.iloc[1, :].str.contains('减少'))[0])
+            e_book_balance_pos = list(np.where(df.iloc[0, :].str.contains('账面余额') & df.iloc[1, :].str.contains('末'))[0])
+            b_impair_pos = list(np.where(df.iloc[0, :].str.contains('减值准备') & df.iloc[1, :].str.contains('初'))[0])
+            i_impair_pos = list(np.where(df.iloc[0, :].str.contains('减值准备') & df.iloc[1, :].str.contains('增加'))[0])
+            c_impair_pos = list(np.where(df.iloc[0, :].str.contains('减值准备') & df.iloc[1, :].str.contains('减少'))[0])
+            e_impair_pos = list(np.where(df.iloc[0, :].str.contains('减值准备') & df.iloc[1, :].str.contains('末'))[0])
+
+            proport_of_share_held_pos = list(np.where(df.iloc[0, :].str.contains('比例'))[0])
+            cash_bonu_pos = list(np.where(df.iloc[0, :].str.contains('分红'))[0])
+
+            start_row_pos = list(np.where(df.iloc[:, b_book_balance_pos[0]].str.match(r'^[^年]*?\d+[^年]*?$'))[0])
+            data_length = len(df.iloc[start_row_pos[0]:, :])
+            names = list(df.iloc[start_row_pos[0]:, name_pos[0]]) if len(name_pos) > 0 else ['' for i in range(data_length)]
+
+            b_book_balances = list(df.iloc[start_row_pos[0]:, b_book_balance_pos[0]]) if len(b_book_balance_pos) > 0 else [0.00 for i in range(data_length)]
+            i_book_balances = list(df.iloc[start_row_pos[0]:, i_book_balance_pos[0]]) if len(i_book_balance_pos) > 0 else [0.00 for i in range(data_length)]
+            c_book_balances = list(df.iloc[start_row_pos[0]:, c_book_balance_pos[0]]) if len(c_book_balance_pos) > 0 else [0.00 for i in range(data_length)]
+            e_book_balances = list(df.iloc[start_row_pos[0]:, e_book_balance_pos[0]]) if len(e_book_balance_pos) > 0 else [0.00 for i in range(data_length)]
+            b_impairs = list(df.iloc[start_row_pos[0]:, b_impair_pos[0]]) if len(b_impair_pos) > 0 else [0.00 for i in range(data_length)]
+            i_impairs = list(df.iloc[start_row_pos[0]:, i_impair_pos[0]]) if len(i_impair_pos) > 0 else [0.00 for i in range(data_length)]
+            c_impairs = list(df.iloc[start_row_pos[0]:, c_impair_pos[0]]) if len(c_impair_pos) > 0 else [0.00 for i in range(data_length)]
+            e_impairs = list(df.iloc[start_row_pos[0]:, e_impair_pos[0]]) if len(e_impair_pos) > 0 else [0.00 for i in range(data_length)]
+            proport_of_share_helds = list(df.iloc[start_row_pos[0]:, proport_of_share_held_pos[0]]) if len(proport_of_share_held_pos) > 0 else [0.00 for i in range(data_length)]
+            cash_bonus = list(df.iloc[start_row_pos[0]:, cash_bonu_pos[0]]) if len(cash_bonu_pos) > 0 else [0.00 for i in range(data_length)]
+
+            for (name, b_book_balance, i_book_balance, c_book_balance, e_book_balance,
+                        b_impair,i_impair,c_impair,e_impair,proport_of_share_held,cash_bonu) in \
+                    zip(names, b_book_balances, i_book_balances, c_book_balances, e_book_balances,
+                        b_impairs,i_impairs,c_impairs,e_impairs,proport_of_share_helds,cash_bonus):
+                if models.AvailForSaleFinanciAssetCost.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                                      typ_rep_id='A', name=name):
+
+                    obj = models.AvailForSaleFinanciAssetCost.objects.get(stk_cd_id=self.stk_cd_id,
+                                                                          acc_per=self.acc_per,
+                                                                          typ_rep_id='A', name=name)
+                    obj.b_book_balance = Decimal(re.sub(',', '', str(b_book_balance))) * unit_change[unit] if is_num(b_book_balance) else 0.00
+                    obj.i_book_balance = Decimal(re.sub(',', '', str(i_book_balance))) * unit_change[unit] if is_num(i_book_balance) else 0.00
+                    obj.c_book_balance = Decimal(re.sub(',', '', str(c_book_balance))) * unit_change[unit] if is_num(c_book_balance) else 0.00
+                    obj.e_book_balance = Decimal(re.sub(',', '', str(e_book_balance))) * unit_change[unit] if is_num(e_book_balance) else 0.00
+                    obj.b_impair = Decimal(re.sub(',', '', str(b_impair))) * unit_change[unit] if is_num(b_impair) else 0.00
+                    obj.i_impair = Decimal(re.sub(',', '', str(i_impair))) * unit_change[unit] if is_num(i_impair) else 0.00
+                    obj.c_impair = Decimal(re.sub(',', '', str(c_impair))) * unit_change[unit] if is_num(c_impair) else 0.00
+                    obj.e_impair = Decimal(re.sub(',', '', str(e_impair))) * unit_change[unit] if is_num(e_impair) else 0.00
+                    obj.proport_of_share_held = Decimal(re.sub(',', '', str(proport_of_share_held))) if is_num(proport_of_share_held) else 0.00
+                    obj.cash_bonu = Decimal(re.sub(',', '', str(cash_bonu))) * unit_change[unit] if is_num(cash_bonu) else 0.00
+
+                    obj.save()
+                else:
+                    obj = models.AvailForSaleFinanciAssetCost.objects.create(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        name=name,
+                        b_book_balance = Decimal(re.sub(',', '', str(b_book_balance))) * unit_change[unit] if is_num(b_book_balance) else 0.00,
+                        i_book_balance = Decimal(re.sub(',', '', str(i_book_balance))) * unit_change[unit] if is_num(i_book_balance) else 0.00,
+                        c_book_balance = Decimal(re.sub(',', '', str(c_book_balance))) * unit_change[unit] if is_num(c_book_balance) else 0.00,
+                        e_book_balance = Decimal(re.sub(',', '', str(e_book_balance))) * unit_change[unit] if is_num(e_book_balance) else 0.00,
+                        b_impair = Decimal(re.sub(',', '', str(b_impair))) * unit_change[unit] if is_num(b_impair) else 0.00,
+                        i_impair = Decimal(re.sub(',', '', str(i_impair))) * unit_change[unit] if is_num(i_impair) else 0.00,
+                        c_impair = Decimal(re.sub(',', '', str(c_impair))) * unit_change[unit] if is_num(c_impair) else 0.00,
+                        e_impair = Decimal(re.sub(',', '', str(e_impair))) * unit_change[unit] if is_num(e_impair) else 0.00,
+                        proport_of_share_held = Decimal(re.sub(',', '', str(proport_of_share_held))) * unit_change[unit] if is_num(proport_of_share_held) else 0.00,
+                        cash_bonu = Decimal(re.sub(',', '', str(cash_bonu))) * unit_change[unit] if is_num(cash_bonu) else 0.00,
+
+                    )
+
+class AvailForSaleFinanciAssetImpair(HandleIndexContent):
+    '''
+                   可供出售金融资产减值的变动情况
+               '''
+
+    def __init__(self, stk_cd_id, acc_per, indexno, indexcontent):
+        super(AvailForSaleFinanciAssetImpair, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
+
+    def recognize(self):
+        df = None
+        instructi = []
+        unit = '元'
+        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
+        if self.indexno in ['0b070e04','0b070e0400']:
+            for content in self.indexcontent:
+                for classify, item in content.items():
+                    if classify == 'c' and len(item) > 0:
+                        for tables in item:
+                            for table in tables:
+                                df = remove_space_from_df(table)
+                    elif classify == 't' and len(item) > 0:
+                        if pattern0.match(item):
+                            unit = pattern0.match(item).groups()[0]
+                        else:
+                            ret = re.sub('适用.不适用', '', item)
+                            if ret != '':
+                                instructi.append(ret)
+                    else:
+                        pass
+        else:
+            pass
+
+        return df, unit, ''.join(instructi)
+
+    def converse(self):
+
+        pass
+
+    def logic(self):
+        pass
+
+    def save(self):
+        df, unit, instructi = self.recognize()
+        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        if df is not None and len(df) > 1:
+            df = df.T
+            name_pos = list(np.where(df.iloc[0, :].str.contains('分类'))[0])
+            before_pos = list(np.where(df.iloc[0, :].str.contains('初已计提减值余额'))[0])
+            accrual_pos = list(np.where(df.iloc[0, :]=='计提')[0])
+            transfer_from_other_comprehens_incomm_pos = list(np.where(df.iloc[0, :].str.contains('从其他综合收益转入'))[0])
+            cut_back_pos = list(np.where(df.iloc[0, :].str.contains('本年减少'))[0])
+            fair_valu_rebound_pos = list(np.where(df.iloc[0, :].str.contains('公允价值回升'))[0])
+            end_pos = list(np.where(df.iloc[0, :].str.contains('末已计提减值余额'))[0])
+
+            start_row_pos = list(np.where(df.iloc[:, before_pos[0]].str.match(r'^[^年]*?\d+[^年]*?$'))[0])
+            data_length = len(df.iloc[start_row_pos[0]:, :])
+            names = list(df.iloc[start_row_pos[0]:, name_pos[0]]) if len(name_pos) > 0 else ['' for i in range(data_length)]
+            befores = list(df.iloc[start_row_pos[0]:, before_pos[0]]) if len(before_pos) > 0 else ['' for i in range(data_length)]
+            accruals = list(df.iloc[start_row_pos[0]:, accrual_pos[0]]) if len(accrual_pos) > 0 else ['' for i in range(data_length)]
+            transfer_from_other_comprehens_incomms = list(df.iloc[start_row_pos[0]:, transfer_from_other_comprehens_incomm_pos[0]]) if len(transfer_from_other_comprehens_incomm_pos) > 0 else ['' for i in range(data_length)]
+            cut_backs = list(df.iloc[start_row_pos[0]:, cut_back_pos[0]]) if len(cut_back_pos) > 0 else ['' for i in range(data_length)]
+            fair_valu_rebounds = list(df.iloc[start_row_pos[0]:, fair_valu_rebound_pos[0]]) if len(fair_valu_rebound_pos) > 0 else ['' for i in range(data_length)]
+            ends = list(df.iloc[start_row_pos[0]:, end_pos[0]]) if len(end_pos) > 0 else ['' for i in range(data_length)]
+
+
+
+            for (name, before, accrual, transfer_from_other_comprehens_incomm, cut_back,fair_valu_rebound,end) in \
+                    zip(names, befores, accruals, transfer_from_other_comprehens_incomms, cut_backs,fair_valu_rebounds,ends):
+                if models.AvailForSaleFinanciAssetImpair.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                         typ_rep_id='A', name=name):
+
+                    obj = models.AvailForSaleFinanciAssetImpair.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                             typ_rep_id='A', name=name)
+                    obj.before = Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(before) else 0.00
+                    obj.accrual = Decimal(re.sub(',', '', str(accrual))) * unit_change[unit] if is_num(accrual) else 0.00
+                    obj.transfer_from_other_comprehens_incomm = Decimal(re.sub(',', '', str(transfer_from_other_comprehens_incomm))) * unit_change[unit] if is_num(transfer_from_other_comprehens_incomm) else 0.00
+                    obj.cut_back = Decimal(re.sub(',', '', str(cut_back))) * unit_change[unit] if is_num(cut_back) else 0.00
+                    obj.fair_valu_rebound = Decimal(re.sub(',', '', str(fair_valu_rebound))) * unit_change[unit] if is_num(fair_valu_rebound) else 0.00
+                    obj.end = Decimal(re.sub(',', '', str(end))) * unit_change[unit] if is_num(end) else 0.00
+
+                    obj.save()
+                else:
+                    obj = models.AvailForSaleFinanciAssetImpair.objects.create(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        name=name,
+                        before=Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(before) else 0.00,
+                        accrual=Decimal(re.sub(',', '', str(accrual))) * unit_change[unit] if is_num(accrual) else 0.00,
+                        transfer_from_other_comprehens_incomm=Decimal(re.sub(',', '', str(transfer_from_other_comprehens_incomm))) * unit_change[unit] if is_num(transfer_from_other_comprehens_incomm) else 0.00,
+                        cut_back=Decimal(re.sub(',', '', str(cut_back))) * unit_change[unit] if is_num(cut_back) else 0.00,
+                        fair_valu_rebound=Decimal(re.sub(',', '', str(fair_valu_rebound))) * unit_change[unit] if is_num(fair_valu_rebound) else 0.00,
+                        end=Decimal(re.sub(',', '', str(end))) * unit_change[unit] if is_num(end) else 0.00,
+                    )
+
+class AvailForSaleFinanciAssetNoImpairDesc(HandleIndexContent):
+    '''
+                           可供出售权益工具年末公允价值严重下跌或非暂时性下跌但未计提减值准备相关说明
+                       '''
+
+    def __init__(self, stk_cd_id, acc_per, indexno, indexcontent):
+        super(AvailForSaleFinanciAssetNoImpairDesc, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
+
+    def recognize(self):
+        df = None
+        instructi = []
+        unit = '元'
+        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
+        if self.indexno in ['0b070e05','0b070e0500']:
+            for content in self.indexcontent:
+                for classify, item in content.items():
+                    if classify == 'c' and len(item) > 0:
+                        for tables in item:
+                            for table in tables:
+                                df = remove_space_from_df(table)
+                    elif classify == 't' and len(item) > 0:
+                        if pattern0.match(item):
+                            unit = pattern0.match(item).groups()[0]
+                        else:
+                            ret = re.sub('适用.不适用', '', item)
+                            if ret != '':
+                                instructi.append(ret)
+                    else:
+                        pass
+        else:
+            pass
+
+        return df, unit, ''.join(instructi)
+
+    def converse(self):
+
+        pass
+
+    def logic(self):
+        pass
+
+    def save(self):
+        df, unit, instructi = self.recognize()
+        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        if df is not None and len(df) > 1:
+            name_pos = list(np.where(df.iloc[0, :].str.contains('项目'))[0])
+            cost_pos = list(np.where(df.iloc[0, :].str.contains('投资成本'))[0])
+            fair_value_pos = list(np.where(df.iloc[0, :].str.contains('年末公允价值'))[0])
+            fall_rate_pos = list(np.where(df.iloc[0, :].str.contains('下跌幅度'))[0])
+            continu_fall_time_pos = list(np.where(df.iloc[0, :].str.contains('下跌时间'))[0])
+            impair_pos = list(np.where(df.iloc[0, :].str.contains('已计提减值金额'))[0])
+            reason_pos = list(np.where(df.iloc[0, :].str.contains('未计提减值准备原因'))[0])
+
+            start_row_pos = list(np.where(df.iloc[:, cost_pos[0]].str.match(r'^[^年]*?\d+[^年]*?$'))[0])
+            data_length = len(df.iloc[start_row_pos[0]:, :])
+            names = list(df.iloc[start_row_pos[0]:, name_pos[0]]) if len(name_pos) > 0 else ['' for i in range(data_length)]
+            costs = list(df.iloc[start_row_pos[0]:, cost_pos[0]]) if len(cost_pos) > 0 else ['' for i in range(data_length)]
+            fair_values = list(df.iloc[start_row_pos[0]:, fair_value_pos[0]]) if len(fair_value_pos) > 0 else ['' for i in range(data_length)]
+            fall_rates = list(df.iloc[start_row_pos[0]:, fall_rate_pos[0]]) if len(fall_rate_pos) > 0 else ['' for i in range(data_length)]
+            continu_fall_times = list(df.iloc[start_row_pos[0]:, continu_fall_time_pos[0]]) if len(continu_fall_time_pos) > 0 else ['' for i in range(data_length)]
+            impairs = list(df.iloc[start_row_pos[0]:, impair_pos[0]]) if len(impair_pos) > 0 else ['' for i in range(data_length)]
+            reasons = list(df.iloc[start_row_pos[0]:, reason_pos[0]]) if len(reason_pos) > 0 else ['' for i in range(data_length)]
+
+            for (name, cost, fair_value, fall_rate, continu_fall_time,impair,reason) in \
+                    zip(names, costs, fair_values, fall_rates, continu_fall_times,impairs,reasons):
+                if models.AvailForSaleFinanciAssetNoImpairDesc.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                                      typ_rep_id='A', name=name):
+                    obj = models.AvailForSaleFinanciAssetNoImpairDesc.objects.get(stk_cd_id=self.stk_cd_id,
+                                                                          acc_per=self.acc_per,
+                                                                          typ_rep_id='A', name=name)
+                    obj.cost = Decimal(re.sub(',', '', str(cost))) * unit_change[unit] if is_num(
+                        cost) else 0.00
+                    obj.fair_value = Decimal(re.sub(',', '', str(fair_value))) * unit_change[unit] if is_num(
+                        fair_value) else 0.00
+                    obj.fall_rate = Decimal(re.sub(',', '', str(fall_rate))) * unit_change[unit] if is_num(
+                        fall_rate) else 0.00
+                    obj.continu_fall_time = Decimal(re.sub(',', '', str(continu_fall_time))) * unit_change[unit] if is_num(
+                        continu_fall_time) else 0.00
+                    obj.impair = Decimal(re.sub(',', '', str(impair))) * unit_change[unit] if is_num(
+                        impair) else 0.00
+                    obj.reason = reason
+                    obj.save()
+                else:
+                    obj = models.AvailForSaleFinanciAssetNoImpairDesc.objects.create(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        name=name,
+                        cost=Decimal(re.sub(',', '', str(cost))) * unit_change[unit] if is_num(
+                            cost) else 0.00,
+                        fair_value=Decimal(re.sub(',', '', str(fair_value))) * unit_change[unit] if is_num(
+                            fair_value) else 0.00,
+                        fall_rate=Decimal(re.sub(',', '', str(fall_rate))) * unit_change[unit] if is_num(
+                            fall_rate) else 0.00,
+                        continu_fall_time=Decimal(re.sub(',', '', str(continu_fall_time))) * unit_change[unit] if is_num(
+                            continu_fall_time) else 0.00,
+                        impair=Decimal(re.sub(',', '', str(impair))) * unit_change[unit] if is_num(
+                            impair) else 0.00,
+                        reason=reason
+                    )
+
+class SignificHeldToMaturInvest(HandleIndexContent):
+    '''
+       年末重要的持有至到期投资
+    '''
+
+    def __init__(self, stk_cd_id, acc_per, indexno, indexcontent):
+        super(SignificHeldToMaturInvest, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
+
+    def recognize(self):
+        df = None
+        instructi = []
+        unit = '元'
+        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
+        if self.indexno in ['0b070f02', '0b070f0200']:
+            for content in self.indexcontent:
+                for classify, item in content.items():
+                    if classify == 'c' and len(item) > 0:
+                        for tables in item:
+                            for table in tables:
+                                df = remove_space_from_df(table)
+                    elif classify == 't' and len(item) > 0:
+                        if pattern0.match(item):
+                            unit = pattern0.match(item).groups()[0]
+                        else:
+                            ret = re.sub('适用.不适用', '', item)
+                            if ret != '':
+                                instructi.append(ret)
+                    else:
+                        pass
+        else:
+            pass
+
+        return df, unit, ''.join(instructi)
+
+    def converse(self):
+
+        pass
+
+    def logic(self):
+        pass
+
+    def save(self):
+        df, unit, instructi = self.recognize()
+        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        if df is not None and len(df) > 1:
+            name_pos = list(np.where(df.iloc[0, :].str.contains('项目'))[0])
+            book_value_pos = list(np.where(df.iloc[0, :].str.contains('面值'))[0])
+            book_rate_pos = list(np.where(df.iloc[0, :].str.contains('票面利率'))[0])
+            real_rate_pos = list(np.where(df.iloc[0, :].str.contains('实际利率'))[0])
+            expiri_date_pos = list(np.where(df.iloc[0, :].str.contains('到期日'))[0])
+
+            start_row_pos = list(np.where(df.iloc[:, book_value_pos[0]].str.match(r'^[^年]*?\d+[^年]*?$'))[0])
+            data_length = len(df.iloc[start_row_pos[0]:, :])
+            names = list(df.iloc[start_row_pos[0]:, name_pos[0]]) if len(name_pos) > 0 else ['' for i in range(data_length)]
+            book_values = list(df.iloc[start_row_pos[0]:, book_value_pos[0]]) if len(book_value_pos) > 0 else [0.00 for i in range(data_length)]
+            book_rates = list(df.iloc[start_row_pos[0]:, book_rate_pos[0]]) if len(book_rate_pos) > 0 else [0.00 for i in range(data_length)]
+            real_rates = list(df.iloc[start_row_pos[0]:, real_rate_pos[0]]) if len(real_rate_pos) > 0 else [0.00 for i in range(data_length)]
+            expiri_dates = list(df.iloc[start_row_pos[0]:, expiri_date_pos[0]]) if len(expiri_date_pos) > 0 else ['' for i in range(data_length)]
+
+            for (name, book_value, book_rate, real_rate, expiri_date) in \
+                    zip(names, book_values, book_rates, real_rates, expiri_dates):
+                if models.SignificHeldToMaturInvest.objects.filter(stk_cd_id=self.stk_cd_id,
+                                                                              acc_per=self.acc_per,
+                                                                              typ_rep_id='A', name=name):
+                    obj = models.SignificHeldToMaturInvest.objects.get(stk_cd_id=self.stk_cd_id,
+                                                                                  acc_per=self.acc_per,
+                                                                                  typ_rep_id='A', name=name)
+                    obj.book_value = Decimal(re.sub(',', '', str(book_value))) * unit_change[unit] if is_num(
+                        book_value) else 0.00
+                    obj.book_rate = Decimal(re.sub(',', '', str(book_rate))) * unit_change[unit] if is_num(
+                        book_rate) else 0.00
+                    obj.real_rate = Decimal(re.sub(',', '', str(real_rate))) * unit_change[unit] if is_num(
+                        real_rate) else 0.00
+                    obj.expiri_date = expiri_date
+                    obj.save()
+                else:
+                    obj = models.SignificHeldToMaturInvest.objects.create(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        name=name,
+                        book_value=Decimal(re.sub(',', '', str(book_value))) * unit_change[unit] if is_num(
+                            book_value) else 0.00,
+                        fair_value=Decimal(re.sub(',', '', str(fair_value))) * unit_change[unit] if is_num(
+                            fair_value) else 0.00,
+                        book_rate=Decimal(re.sub(',', '', str(book_rate))) * unit_change[unit] if is_num(
+                            book_rate) else 0.00,
+                        real_rate=Decimal(re.sub(',', '', str(real_rate))) * unit_change[unit] if is_num(real_rate) else 0.00,
+                        expiri_date=expiri_date
+                    )
 
 class MajorLiabilAgeOver1Year(HandleIndexContent):
     '''
@@ -2940,7 +3512,8 @@ class MajorLiabilAgeOver1Year(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07230200','0b07240200','0b07270000','0b07290200']:
+        if self.indexno in ['0b07230200','0b07240200','0b07270000','0b07290200',
+                           '0b072302','0b072402','0b072902']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -2971,7 +3544,8 @@ class MajorLiabilAgeOver1Year(HandleIndexContent):
 
     def save(self):
         df, unit, instructi = self.recognize()
-        accounts = {'0b07230200': 'ap','0b07240200':'ar','0b07270000':'ip','0b07290200':'op'}
+        accounts = {'0b07230200': 'ap','0b07240200':'ar','0b07270000':'ip','0b07290200':'op',
+                   '0b072302':'ap','0b072402':'ar' ,'0b072902':'op'}
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df) > 1:
             end_pos = list(np.where(df.iloc[0, :].str.contains('金额') | df.iloc[0, :].str.contains('余额'))[0])
@@ -3027,6 +3601,115 @@ class MajorLiabilAgeOver1Year(HandleIndexContent):
         else:
             pass
 
+class OverduShorttermBorrow(HandleIndexContent):
+    '''
+                已逾期未偿还的短期借款情况
+            '''
+
+    def __init__(self, stk_cd_id, acc_per, indexno, indexcontent):
+        super(OverduShorttermBorrow, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
+
+    def recognize(self):
+        df = None
+        instructi = []
+        unit = '元'
+        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
+        if self.indexno in ['0b071f02']:
+            for k, content in enumerate(self.indexcontent):
+                for classify, item in content.items():
+                    if classify == 'c' and len(item) > 0:
+                        for tables in item:
+                            for table in tables:
+                                if table.iloc[0, :].str.contains('原因').any():
+                                    df = remove_per_from_df(remove_space_from_df(table))
+                    elif classify == 't' and len(item) > 0:
+                        if pattern0.match(item):
+                            unit = pattern0.match(item).groups()[0]
+                        else:
+                            ret = re.sub('.*?.适用.不适用', '', item)
+                            if ret != '':
+                                instructi.append(ret)
+                    else:
+                        pass
+        else:
+            pass
+
+        return df, unit, ''.join(instructi)
+
+    def converse(self):
+
+        pass
+
+    def logic(self):
+        pass
+
+    def save(self):
+        df, unit, instructi = self.recognize()
+        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        if df is not None and len(df) > 1:
+            name_pos = list(np.where(df.iloc[0, :].str.contains('借款单位') )[0])
+            amount_pos = list(np.where(df.iloc[0, :].str.contains('余额') )[0])
+            rate_pos = list(np.where(df.iloc[0, :].str.contains('借款利率') )[0])
+            overdu_rate_pos = list(np.where(df.iloc[0, :].str.contains('逾期利率') )[0])
+            overdu_time_pos = list(np.where(df.iloc[0, :].str.contains('逾期时间') )[0])
+
+            pattern = re.compile('^.*?\d.*?$')
+            start_pos = list(
+                np.where(df.iloc[:, amount_pos[0]].str.match(pattern) | df.iloc[:, amount_pos[0]].str.match('nan'))[0])
+
+            names = list(df.iloc[start_pos[0]:, name_pos[0]])
+            amounts = list(df.iloc[start_pos[0]:, amount_pos[0]])
+            rates = list(df.iloc[start_pos[0]:, rate_pos[0]])
+            overdu_rates = list(df.iloc[start_pos[0]:, overdu_rate_pos[0]])
+            overdu_times = list(df.iloc[start_pos[0]:, overdu_time_pos[0]])
+
+
+            for ( name, amount, rate,overdu_rate,overdu_time) in \
+                    zip(names, amounts, rates,overdu_rates,overdu_times):
+                if models.OverduShorttermBorrow.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                                 typ_rep_id='A', name=name):
+                    obj = models.OverduShorttermBorrow.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                                     typ_rep_id='A', name=name)
+
+                    obj.amount = Decimal(re.sub(',', '', str(amount))) * unit_change[unit] if is_num(amount) else 0.00
+                    obj.rate = Decimal(re.sub(',', '', str(rate))) if is_num(rate) else 0.00
+                    obj.overdu_rate = Decimal(re.sub(',', '', str(overdu_rate))) if is_num(overdu_rate) else 0.00
+                    obj.overdu_time = Decimal(re.sub(',', '', str(overdu_time))) if is_num(overdu_time) else 0.00
+                    obj.save()
+                else:
+                    models.OverduShorttermBorrow.objects.create(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        name=name,
+                        amount=Decimal(re.sub(',', '', str(amount))) * unit_change[unit] if is_num(amount) else 0.00,
+                        rate=Decimal(re.sub(',', '', str(rate))) if is_num(rate) else 0.00,
+                        overdu_rate=Decimal(re.sub(',', '', str(overdu_rate))) if is_num(overdu_rate) else 0.00,
+                        overdu_time=Decimal(re.sub(',', '', str(overdu_time))) if is_num(overdu_time) else 0.00,
+                    )
+        else:
+            pass
+
+        comprehens_notes = {
+
+        }
+
+        if (self.indexno in comprehens_notes) and len(instructi) > 1:
+            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, typ_rep_id='A'):
+                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, typ_rep_id='A')
+                setattr(obj, comprehens_notes[self.indexno], instructi)
+                obj.save()
+            else:
+                obj = models.ComprehensNote.objects.create(
+                    stk_cd_id=self.stk_cd_id,
+                    acc_per=self.acc_per,
+                    typ_rep_id='A',
+                )
+                setattr(obj, comprehens_notes[self.indexno], instructi)
+                obj.save()
+        else:
+            pass
+
 class OverduInterest(HandleIndexContent):
     '''
                重要逾期利息
@@ -3040,7 +3723,7 @@ class OverduInterest(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07070200','0b07080200']:
+        if self.indexno in ['0b07070200','0b07080200','0b070702','0b070802']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -3069,7 +3752,8 @@ class OverduInterest(HandleIndexContent):
         pass
 
     def save(self):
-        accounts = {'0b07070200':'interest_receiv','0b07080200':'dividend_receiv'}
+        accounts = {'0b07070200':'interest_receiv','0b07080200':'dividend_receiv',
+                    '0b070702':'interest_receiv','0b070802':'dividend_receiv'}
         df, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df) > 1:
@@ -3132,7 +3816,7 @@ class InventoriImpairPrepar(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b070a0200']:
+        if self.indexno in ['0b070a0200','0b070a02']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -3214,7 +3898,7 @@ class InventoriCapitOfBorrowCost(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b070a0300']:
+        if self.indexno in ['0b070a0300','0b070a03']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -3280,7 +3964,7 @@ class ConstructContract(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b070a0400','0b07240300']:
+        if self.indexno in ['0b070a0400','0b07240300','0b070a04','0b072403']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -3309,7 +3993,8 @@ class ConstructContract(HandleIndexContent):
         pass
 
     def save(self):
-        accounts = {'0b070a0400':'i','0b07240300':'a'}
+        accounts = {'0b070a0400':'i','0b07240300':'a',
+                    '0b070a04':'i','0b072403':'a'}
         df, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df) > 1:
@@ -3356,6 +4041,94 @@ class ConstructContract(HandleIndexContent):
                         complet_settl) else 0.00,
                 )
 
+class AssetHeldForSale(HandleIndexContent):
+    '''
+                 持有待售资产
+             '''
+
+    def __init__(self, stk_cd_id, acc_per, indexno, indexcontent):
+        super(AssetHeldForSale, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
+
+    def recognize(self):
+        df = None
+        instructi = []
+        unit = '元'
+        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
+        if self.indexno in ['0b070b00','0b070b0000' ]:
+            for content in self.indexcontent:
+                for classify, item in content.items():
+                    if classify == 'c' and len(item) > 0:
+                        for tables in item:
+                            for table in tables:
+                                df = remove_space_from_df(table)
+                    elif classify == 't' and len(item) > 0:
+                        if pattern0.match(item):
+                            unit = pattern0.match(item).groups()[0]
+                        else:
+                            ret = re.sub('适用.不适用', '', item)
+                            if ret != '':
+                                instructi.append(ret)
+                    else:
+                        pass
+        else:
+            pass
+
+        return df, unit, ''.join(instructi)
+
+    def converse(self):
+
+        pass
+
+    def logic(self):
+        pass
+
+    def save(self):
+        df, unit, instructi = self.recognize()
+        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        if df is not None and len(df) > 1:
+            name_pos = list(np.where(df.iloc[0, :].str.contains('单位') | df.iloc[0, :].str.contains('对象')
+                                     | df.iloc[0, :].str.contains('项目'))[0])
+            book_value_pos = list(np.where(df.iloc[0, :].str.contains('账面价值'))[0])
+            fair_valu_pos = list(np.where(df.iloc[0, :].str.contains('公允价值'))[0])
+            estim_dispos_cost_pos = list(np.where(df.iloc[0, :].str.contains('预计处置费用'))[0])
+            estim_dispos_time_pos = list(np.where(df.iloc[0, :].str.contains('预计处置时间'))[0])
+
+
+            start_row_pos = list(np.where(df.iloc[:, book_value_pos[0]].str.match(r'.*?\d+.*?'))[0])
+            data_length = len(df.iloc[start_row_pos[0]:, :])
+            names = list(df.iloc[start_row_pos[0]:, name_pos[0]]) if len(name_pos) > 0 else ['' for i in
+                                                                                             range(data_length)]
+            book_values = list(df.iloc[start_row_pos[0]:, book_value_pos[0]]) if len(book_value_pos) > 0 else [0.00 for i in range(data_length)]
+            fair_valus = list(df.iloc[start_row_pos[0]:, fair_valu_pos[0]]) if len(fair_valu_pos) > 0 else [0.00 for i in range(data_length)]
+            estim_dispos_costs = list(df.iloc[start_row_pos[0]:, estim_dispos_cost_pos[0]]) if len(estim_dispos_cost_pos) > 0 else [0.00 for i in range(data_length)]
+            estim_dispos_times = list(df.iloc[start_row_pos[0]:, estim_dispos_time_pos[0]]) if len(estim_dispos_time_pos) > 0 else ['' for i in range(data_length)]
+
+            for (name, book_value, fair_valu, estim_dispos_cost, estim_dispos_time) in \
+                    zip(names, book_values, fair_valus, estim_dispos_costs, estim_dispos_times):
+                if models.AssetHeldForSale.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                         typ_rep_id='A', name=name):
+                    obj = models.AssetHeldForSale.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                             typ_rep_id='A', name=name)
+                    obj.book_value = Decimal(re.sub(',', '', str(book_value))) * unit_change[unit] if is_num(book_value) else 0.00
+                    obj.fair_valu = Decimal(re.sub(',', '', str(fair_valu))) * unit_change[unit] if is_num(fair_valu) else 0.00
+                    obj.estim_dispos_cost = Decimal(re.sub(',', '', str(estim_dispos_cost))) * unit_change[unit] if is_num(estim_dispos_cost) else 0.00
+                    obj.estim_dispos_time = estim_dispos_time
+                    obj.save()
+                else:
+                    obj = models.AssetHeldForSale.objects.create(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        name=name,
+                        book_value=Decimal(re.sub(',', '', str(book_value))) * unit_change[unit] if is_num(
+                            book_value) else 0.00,
+                        fair_valu=Decimal(re.sub(',', '', str(fair_valu))) * unit_change[unit] if is_num(
+                            fair_valu) else 0.00,
+                        estim_dispos_cost=Decimal(re.sub(',', '', str(estim_dispos_cost))) * unit_change[
+                            unit] if is_num(estim_dispos_cost) else 0.00,
+                        estim_dispos_time=estim_dispos_time,
+                    )
+
 class LongtermEquitiInvest(HandleIndexContent):
     '''
            长期股权投资
@@ -3369,7 +4142,7 @@ class LongtermEquitiInvest(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07110000']:
+        if self.indexno in ['0b07110000','0b071100']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -3474,7 +4247,8 @@ class LongtermEquitiInvest(HandleIndexContent):
                                 impair_balanc = Decimal(re.sub(',', '', str(impair_balanc))) * unit_change[unit] if is_num(impair_balanc) else 0.00,
                             )
         else:
-            pass
+            raise Exception
+
 
         if len(instructi) > 1:
             if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,typ_rep_id='A'):
@@ -3504,7 +4278,7 @@ class FixAsset(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07130100','0b07190100']:
+        if self.indexno in ['0b07130100','0b07190100','0b071301','0b071901']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -3533,7 +4307,7 @@ class FixAsset(HandleIndexContent):
         pass
 
     def save(self):
-        asset_types = {'0b07130100':'f','0b07190100':'i'}
+        asset_types = {'0b07130100':'f','0b07190100':'i','0b071301':'f','0b071901':'i'}
         df, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df)>0:
@@ -3712,7 +4486,7 @@ class FixAssetStatu(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b07130200','0b07130300','0b07130400']:
+        if self.indexno in ['0b07130200','0b07130300','0b07130400','0b071302','0b071303','0b071304']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -3741,7 +4515,8 @@ class FixAssetStatu(HandleIndexContent):
         pass
 
     def save(self):
-        status_dict = {'0b07130200':'i','0b07130300':'f','0b07130400':'b'}
+        status_dict = {'0b07130200':'i','0b07130300':'f','0b07130400':'b',
+                       '0b071302':'i','0b071303':'f','0b071304':'b'}
         df, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df) > 1:
@@ -3808,7 +4583,7 @@ class UnfinishProperti(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b07130500','0b07190200']:
+        if self.indexno in ['0b07130500','0b07190200','0b071305','0b071902']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -3837,7 +4612,7 @@ class UnfinishProperti(HandleIndexContent):
         pass
 
     def save(self):
-        asset_dict = {'0b07130500': 'f','0b07190200':'i'}
+        asset_dict = {'0b07130500': 'f','0b07190200':'i','0b071305':'f','0b071902':'i'}
         df, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df) > 1:
@@ -3887,7 +4662,7 @@ class ImportProjectChange(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b07140200']:
+        if self.indexno in ['0b07140200','0b071402']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -4013,7 +4788,7 @@ class DevelopExpenditur(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b071a0000']:
+        if self.indexno in ['0b071a0000','0b071a00']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -4108,7 +4883,7 @@ class Goodwil(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b071b0100']:
+        if self.indexno in ['0b071b0100','0b071b01']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -4203,7 +4978,7 @@ class LongtermPrepaidExpens(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b071c0000']:
+        if self.indexno in ['0b071c0000','0b071c00']:
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -4295,7 +5070,7 @@ class DeferIncomTax(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b071d0100','0b071d0200']:
+        if self.indexno in ['0b071d0100','0b071d0200','0b071d01','0b071d02']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -4326,10 +5101,10 @@ class DeferIncomTax(HandleIndexContent):
 
     def save(self):
         df, unit, instructi = self.recognize()
-        accounts = {'0b071d0100': 'a', '0b071d0200': 'd'}
+        accounts = {'0b071d0100': 'a', '0b071d0200': 'd','0b071d01':'a','0b071d02':'d'}
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
 
-        if df is not None and len(df) > 1:
+        if df is not None and len(df) > 2:
 
             end_pos = list(np.where(df.iloc[0, :].str.contains('期末'))[0])
             pattern = re.compile('^.*?\d.*?$')
@@ -4390,7 +5165,7 @@ class PayablEmployeCompens(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b07250100','0b07250200','0b07250300']:
+        if self.indexno in ['0b07250100','0b07250200','0b07250300','0b072501','0b072502','0b072503']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -4420,7 +5195,8 @@ class PayablEmployeCompens(HandleIndexContent):
         pass
 
     def save(self):
-        accounts = {'0b07250100':'p','0b07250200':'short','0b07250300':'set'}
+        accounts = {'0b07250100':'p','0b07250200':'short','0b07250300':'set',
+                    '0b072501':'p','0b072502':'short','0b072503':'set'}
         df, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
 
@@ -4489,7 +5265,7 @@ class InterestPayabl(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b07270000']:
+        if self.indexno in ['0b07270000','0b072700']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -4527,7 +5303,7 @@ class InterestPayabl(HandleIndexContent):
 
     def save(self):
         dfs, unit, instructi = self.recognize()
-        accounts = {'0b07270000':'interest_payabl'}
+        accounts = {'0b07270000':'interest_payabl','0b072700':'interest_payabl'}
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if dfs.get('ip') is not None :
             df = dfs['ip']
@@ -4618,7 +5394,7 @@ class ChangInBondPayabl(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b072e0200']:
+        if self.indexno in ['0b072e0200','0b072e02']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -4737,7 +5513,9 @@ class CommonBICE(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b07370000','0b073b0000']:
+        if self.indexno in ['0b07370000','0b073b0000','0b071b02','0b071b0200','0b073100',
+                            '0b07310000','0b073300','0b073700','0b073800','0b07380000',
+                            '0b073a00','0b073a0000']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -4767,11 +5545,16 @@ class CommonBICE(HandleIndexContent):
         pass
 
     def save(self):
-        accounts = {'0b07370000':'capit_reserv','0b073b0000':'surplu_reserv'}
+        accounts = {'0b07370000':'capit_reserv','0b073b0000':'surplu_reserv',
+                    '0b071b02':'goodwil_impair','0b071b0200':'goodwil_impair',
+                    '0b073100':'special_payabl','0b07310000':'special_payabl',
+                    '0b073700':'capit_reserv','0b073800':'stock','0b07380000':'stock',
+                    '0b073a00':'special_reserv','0b073a0000':'special_reserv',
+                    '0b073b00':'surplu_reserv'}
         df, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df) > 1:
-            name_pos = list(np.where(df.iloc[0, :].str.contains('项目'))[0])
+            name_pos = list(np.where(df.iloc[0, :].str.contains('项目')|df.iloc[0, :].str.contains('单位名称'))[0])
             before_pos = list(np.where(df.iloc[0, :].str.contains('期初'))[0])
             increase_pos = list(np.where(df.iloc[0, :].str.contains('增加'))[0])
             cut_back_pos = list(np.where(df.iloc[0, :].str.contains('减少'))[0])
@@ -4857,7 +5640,7 @@ class DeferIncom(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b07330000']:
+        if self.indexno in ['0b07330000','0b073300']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -4893,7 +5676,7 @@ class DeferIncom(HandleIndexContent):
         pass
 
     def save(self):
-        accounts = {'0b07330000': 'defer_incom', }
+        accounts = {'0b07330000': 'defer_incom','0b073300':'defer_incom' }
         dfs, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if dfs.get('di') is not None:
@@ -5027,7 +5810,7 @@ class OtherComprehensIncom(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07390000']:
+        if self.indexno in ['0b07390000','0b073900']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -5056,7 +5839,7 @@ class OtherComprehensIncom(HandleIndexContent):
         pass
 
     def save(self):
-        accounts = {'0b07390000':'other_comprehens_incom'}
+        accounts = {'0b07390000':'other_comprehens_incom','0b073900':'other_comprehens_incom'}
         df, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df)>1:
@@ -5140,7 +5923,7 @@ class OperIncomAndOperCost(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b073d0000']:
+        if self.indexno in ['0b073d0000','0b11040000','0b073d00','0b110400']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -5169,6 +5952,7 @@ class OperIncomAndOperCost(HandleIndexContent):
         pass
 
     def save(self):
+        typ_rep_dict = {'0b073d0000':'A','0b11040000':'B','0b073d00':'A','0b110400':'B'}
         df, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df) > 1:
@@ -5183,9 +5967,9 @@ class OperIncomAndOperCost(HandleIndexContent):
                     value = all_dict[servic_categori][categorie]
                     value = Decimal(re.sub(',', '', str(value))) * unit_change[unit] if is_num(value) else 0.00
                     if models.OperIncomAndOperCost.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,servic_categori=items[servic_categori],
-                                                                before_end=items[before_end], typ_rep_id='A', subject=items[subject]):
+                                                                before_end=items[before_end], typ_rep_id=typ_rep_dict[self.indexno], subject=items[subject]):
                         obj = models.OperIncomAndOperCost.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,servic_categori=items[servic_categori],
-                                                                      before_end=items[before_end], typ_rep_id='A',
+                                                                      before_end=items[before_end], typ_rep_id=typ_rep_dict[self.indexno],
                                                                       subject=items[subject])
 
                         obj.amount = value
@@ -5196,7 +5980,7 @@ class OperIncomAndOperCost(HandleIndexContent):
                             acc_per=self.acc_per,
                             servic_categori=items[servic_categori],
                             before_end=items[before_end],
-                            typ_rep_id='A',
+                            typ_rep_id=typ_rep_dict[self.indexno],
                             subject=items[subject],
                             amount=value,
                         )
@@ -5216,7 +6000,7 @@ class NonoperIncomExpens(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07450000', '0b07460000']:
+        if self.indexno in ['0b07450000', '0b07460000','0b074700','0b074800']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -5252,7 +6036,8 @@ class NonoperIncomExpens(HandleIndexContent):
         pass
 
     def save(self):
-        accounts = {'0b07450000': 'nonoper_incom', '0b07460000': 'nonoper_expens'}
+        accounts = {'0b07450000': 'nonoper_incom', '0b07460000': 'nonoper_expens',
+                    '0b074700':'nonoper_incom','0b074800':'nonoper_expens'}
         dfs, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if dfs.get('sum') is not None :
@@ -5377,7 +6162,8 @@ class ItemAmountReason(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b07470200','0b074b0000']:
+        if self.indexno in ['0b07470200','0b074b0000','0b12010000','0b071403','0b07140300',
+                            '0b074902','0b120100']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -5406,12 +6192,16 @@ class ItemAmountReason(HandleIndexContent):
         pass
 
     def save(self):
-        accounts = {'0b07470200': 'profit_to_incometax','0b074b0000':'asset_with_limit_ownership'}
+        accounts = {'0b07470200': 'profit_to_incometax','0b074b0000':'asset_with_limit_ownership',
+                    '0b12010000':'nonrecur_gain_and_loss','0b071403':'construct_in_progres',
+                    '0b07140300':'construct_in_progres','0b074902':'profit_to_incometax',
+                    '0b120100':'nonrecur_gain_and_loss'}
         df, unit, instructi = self.recognize()
         unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None and len(df)>1:
             name_pos = list(np.where(df.iloc[0, :].str.contains('项目'))[0])
-            amount_pos = list(np.where(df.iloc[0, :].str.contains('本期')|df.iloc[0, :].str.contains('期末'))[0])
+            amount_pos = list(np.where(df.iloc[0, :].str.contains('本期')|df.iloc[0, :].str.contains('期末')
+                                       | df.iloc[0, :].str.contains('金额'))[0])
             reason_pos = list(np.where(df.iloc[0, :].str.contains('说明')|df.iloc[0, :].str.contains('原因'))[0])
 
             pattern = re.compile('^.*?\d.*?$')
@@ -5461,7 +6251,7 @@ class ForeignCurrencItem(HandleIndexContent):
         instructi = []
         unit = '元'
         pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b074c0100']:
+        if self.indexno in ['0b074c0100','0b074f01','0b074f02']:
             for k, content in enumerate(self.indexcontent):
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
@@ -5649,5 +6439,7 @@ class AllGovernSubsidi(HandleIndexContent):
                         includ_profit=includ_profit)
         else:
             pass
+
+
 
 

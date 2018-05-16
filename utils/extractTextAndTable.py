@@ -118,43 +118,93 @@ def html_table_to_df(html_table):
     table = pd.read_html(html_table)
     return table
 
+def print_contents(indexno,indexcontents):
+    for content in indexcontents:
+        for classify,item in content.items():
+            if classify =='t':
+                print(classify,item)
+            elif classify == 'c' and len(item)>0:
+                # print('item',item)
+                for tables in item:
+                    # print('tables',tables)
+                    for table in tables:
+                        print(classify, remove_space_from_df(table))
+            else:
+                print('未统计')
+            print('-------------------')
+    print('--------{}结束----------'.format(indexno))
 
+def handle_content(indexno,indexcontents,stk_cd_id,acc_per):
+    indexno_id = models.StdContentIndex.objects.get(no=indexno).id
+    handle_classname = models.IndexHandleMethod.objects.filter(indexno_id=indexno_id)
+    if len(handle_classname) > 0 and handle_classname[0].handle_classname != 'pass':
+        Handleclass = eval(handle_classname[0].handle_classname)
+        obj = Handleclass(stk_cd_id, acc_per, indexno, indexcontents)
+        obj.save()
+    elif len(handle_classname) > 0 and handle_classname[0].handle_classname == 'pass':
+        print('无需处理', indexno)
+        pass
+    else:
+        print('尚未进行处理', indexno)
+        exit()
 
-if __name__ == '__main__':
-    filepath = r'H:\data_extract\report\shanghai\sh_600312_20171231.html'
-    # filepath = r'H:\data_extract\report\shenzhen\sz_000701_20171231.html'
+def handle_all_contents(filepath):
     stk_cd,acc_per,indexcontents = extract(filepath)
     stk_cd_id = models.CompanyList.objects.get(code=stk_cd).code
     for contents in indexcontents:
         for indexno,indexcontents in contents.items():
             print('--------{}开始----------'.format(indexno))
-            if indexno != '0b11020500':
+            if indexno != '08050200':
                 continue
-            indexno_id = models.StdContentIndex.objects.get(no=indexno).id
-            handle_classname = models.IndexHandleMethod.objects.filter(indexno_id=indexno_id)
-            if len(handle_classname)>0 and handle_classname[0].handle_classname != 'pass':
-                Handleclass = eval(handle_classname[0].handle_classname)
-                obj = Handleclass(stk_cd_id,acc_per,indexno,indexcontents)
-                obj.save()
-            elif len(handle_classname)>0 and handle_classname[0].handle_classname == 'pass':
-                print('无需处理',indexno)
-                pass
-            else:
-                print('尚未进行处理',indexno)
-                exit()
+            handle_content(indexno,indexcontents,stk_cd_id,acc_per)
+
+def print_all_contents(filepath):
+    stk_cd,acc_per,indexcontents = extract(filepath)
+    # stk_cd_id = models.CompanyList.objects.get(code=stk_cd).code
+    for contents in indexcontents:
+        for indexno,indexcontents in contents.items():
+            print('--------{}开始----------'.format(indexno))
+            print_contents(indexno,indexcontents)
+
+if __name__ == '__main__':
+    # filepath = r'H:\data_extract\report\shanghai\sh_600312_20171231.html'
+    filepath = r'H:\data_extract\report\shenzhen\sz_000701_20171231.html'
+    handle_all_contents(filepath)
+    # print_all_contents(filepath)
 
 
-            # for content in indexcontents:
-            #     for classify,item in content.items():
-            #         if classify =='t':
-            #             print(classify,item)
-            #         elif classify == 'c' and len(item)>0:
-            #             # print('item',item)
-            #             for tables in item:
-            #                 # print('tables',tables)
-            #                 for table in tables:
-            #                     print(classify, remove_space_from_df(table))
-            #         else:
-            #             print('未统计')
-            #         print('-------------------')
-            # print('--------{}结束----------'.format(indexno))
+    # stk_cd,acc_per,indexcontents = extract(filepath)
+    # stk_cd_id = models.CompanyList.objects.get(code=stk_cd).code
+    # for contents in indexcontents:
+    #     for indexno,indexcontents in contents.items():
+    #         print('--------{}开始----------'.format(indexno))
+    #         # if indexno != '0b11030000':
+    #         #     continue
+    #         indexno_id = models.StdContentIndex.objects.get(no=indexno).id
+    #         handle_classname = models.IndexHandleMethod.objects.filter(indexno_id=indexno_id)
+    #         if len(handle_classname)>0 and handle_classname[0].handle_classname != 'pass':
+    #             Handleclass = eval(handle_classname[0].handle_classname)
+    #             obj = Handleclass(stk_cd_id,acc_per,indexno,indexcontents)
+    #             obj.save()
+    #         elif len(handle_classname)>0 and handle_classname[0].handle_classname == 'pass':
+    #             print('无需处理',indexno)
+    #             pass
+    #         else:
+    #             print('尚未进行处理',indexno)
+    #             exit()
+    #
+    #
+    #         # for content in indexcontents:
+    #         #     for classify,item in content.items():
+    #         #         if classify =='t':
+    #         #             print(classify,item)
+    #         #         elif classify == 'c' and len(item)>0:
+    #         #             # print('item',item)
+    #         #             for tables in item:
+    #         #                 # print('tables',tables)
+    #         #                 for table in tables:
+    #         #                     print(classify, remove_space_from_df(table))
+    #         #         else:
+    #         #             print('未统计')
+    #         #         print('-------------------')
+    #         # print('--------{}结束----------'.format(indexno))

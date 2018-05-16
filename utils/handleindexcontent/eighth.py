@@ -13,6 +13,7 @@ import decimal
 from collections import OrderedDict
 from itertools import chain
 import pandas as pd
+from utils.handleindexcontent.commons import recognize_instucti,save_instructi
 
 
 class ChangInShareholdAndRemuner(HandleIndexContent):
@@ -946,28 +947,30 @@ class RemunerPolicy(HandleIndexContent):
         super(RemunerPolicy, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0806020000','08050200']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_space_from_df(item[0][0])
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
+        indexnos =  ('0806020000','08050200')
+        df, unit, instructi = recognize_instucti(self.indexno,self.indexcontent,indexnos)
+        # df = None
+        # instructi = []
+        # unit = '元'
+        # pattern0 = re.compile('^.*?单位：(.*?)$')
+        # if self.indexno in ['0806020000','08050200']:
+        #     for content in self.indexcontent:
+        #         for classify, item in content.items():
+        #             if classify == 'c' and len(item) > 0:
+        #                 for tables in item:
+        #                     for table in tables:
+        #                         df = remove_space_from_df(item[0][0])
+        #             elif classify == 't' and len(item) > 0:
+        #                 if pattern0.match(item):
+        #                     unit = pattern0.match(item).groups()[0]
+        #                 else:
+        #                     ret = re.sub('.*?.适用.不适用', '', item)
+        #                     if ret != '':
+        #                         instructi.append(ret)
+        #             else:
+        #                 pass
+        # else:
+        #     pass
 
         return df, unit, ''.join(instructi)
 
@@ -980,19 +983,21 @@ class RemunerPolicy(HandleIndexContent):
 
     def save(self):
         df, unit, instructi = self.recognize()
-        if len(instructi) > 0:
-            if models.NumberOfEmploye.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.NumberOfEmploye.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.remuner_polici = instructi
-                obj.save()
-            else:
-                models.NumberOfEmploye.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    remuner_polici=instructi
-                )
-        else:
-            pass
+        save_instructi(instructi,models.NumberOfEmploye,self.stk_cd_id,self.acc_per,'remuner_polici')
+
+        # if len(instructi) > 0:
+        #     if models.NumberOfEmploye.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
+        #         obj = models.NumberOfEmploye.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
+        #         obj.remuner_polici = instructi
+        #         obj.save()
+        #     else:
+        #         models.NumberOfEmploye.objects.create(
+        #             stk_cd_id=self.stk_cd_id,
+        #             acc_per=self.acc_per,
+        #             remuner_polici=instructi
+        #         )
+        # else:
+        #     pass
 
 class TrainPlan(HandleIndexContent):
     '''

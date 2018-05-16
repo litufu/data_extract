@@ -2475,7 +2475,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='compositofenterprisgroup',
-            unique_together={('stk_cd', 'acc_per', 'typ_rep', 'natur_of_the_unit', 'name')},
+            unique_together={('stk_cd', 'acc_per', 'typ_rep',  'name')},
         ),
         migrations.AlterUniqueTogether(
             name='companiprofil',
