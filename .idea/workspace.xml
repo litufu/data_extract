@@ -2,18 +2,60 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3e60a4fc-352a-4d30-94f3-d54b031b611f" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/utils/handleindexcontent/commons.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/download/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/download/get_report.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/log/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/log/lines_log" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/log/logging.json" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/log/logs.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/report_data_extract/models/download.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/temp/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/temp/ananly_table_attr.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/utils/autoGetIndexPattern.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/utils/detectTable.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/utils/getTableFields.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/utils/handleindexcontent/base.py" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/newsdata.sqlite3" afterPath="$PROJECT_DIR$/newsdata.sqlite3" />
-      <change beforePath="$PROJECT_DIR$/report_data_extract/migrations/0001_initial.py" afterPath="$PROJECT_DIR$/report_data_extract/migrations/0001_initial.py" />
+      <change beforePath="$PROJECT_DIR$/report/shanghai/sh_600312_20171231.html" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/report/shanghai/sh_601006_20141231.html" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/report/shenzhen/sz_000701_20171231.html" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/report/shenzhen/sz_000878_20171231.html" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/report/shenzhen/sz_002085_20171231.html" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/report/shenzhen/sz_300623_20171231.html" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/report/shenzhen/sz_300662_20171231.html" afterPath="" />
       <change beforePath="$PROJECT_DIR$/report_data_extract/models/__init__.py" afterPath="$PROJECT_DIR$/report_data_extract/models/__init__.py" />
+      <change beforePath="$PROJECT_DIR$/report_data_extract/models/business.py" afterPath="$PROJECT_DIR$/report_data_extract/models/business.py" />
+      <change beforePath="$PROJECT_DIR$/report_data_extract/models/eighth.py" afterPath="$PROJECT_DIR$/report_data_extract/models/eighth.py" />
       <change beforePath="$PROJECT_DIR$/report_data_extract/models/eleventh.py" afterPath="$PROJECT_DIR$/report_data_extract/models/eleventh.py" />
+      <change beforePath="$PROJECT_DIR$/report_data_extract/models/fifth.py" afterPath="$PROJECT_DIR$/report_data_extract/models/fifth.py" />
+      <change beforePath="$PROJECT_DIR$/report_data_extract/models/first.py" afterPath="$PROJECT_DIR$/report_data_extract/models/first.py" />
+      <change beforePath="$PROJECT_DIR$/report_data_extract/models/fourth.py" afterPath="$PROJECT_DIR$/report_data_extract/models/fourth.py" />
+      <change beforePath="$PROJECT_DIR$/report_data_extract/models/root.py" afterPath="$PROJECT_DIR$/report_data_extract/models/root.py" />
+      <change beforePath="$PROJECT_DIR$/report_data_extract/models/sixth.py" afterPath="$PROJECT_DIR$/report_data_extract/models/sixth.py" />
+      <change beforePath="$PROJECT_DIR$/report_data_extract/models/standard.py" afterPath="$PROJECT_DIR$/report_data_extract/models/standard.py" />
+      <change beforePath="$PROJECT_DIR$/report_data_extract/models/third.py" afterPath="$PROJECT_DIR$/report_data_extract/models/third.py" />
       <change beforePath="$PROJECT_DIR$/report_data_extract/models/twelve.py" afterPath="$PROJECT_DIR$/report_data_extract/models/twelve.py" />
       <change beforePath="$PROJECT_DIR$/utils/extractTextAndTable.py" afterPath="$PROJECT_DIR$/utils/extractTextAndTable.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleIndex.py" afterPath="$PROJECT_DIR$/utils/handleIndex.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleTable.py" afterPath="$PROJECT_DIR$/utils/handleTable.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/commons.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/commons.py" />
       <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/eighth.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/eighth.py" />
       <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/eleventh.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/eleventh.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/fifth.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/fifth.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/first.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/first.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/fourth.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/fourth.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/ninth.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/ninth.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/second.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/second.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/seventh.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/seventh.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/sixth.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/sixth.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/tenth.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/tenth.py" />
+      <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/third.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/third.py" />
       <change beforePath="$PROJECT_DIR$/utils/handleindexcontent/twelve.py" afterPath="$PROJECT_DIR$/utils/handleindexcontent/twelve.py" />
+      <change beforePath="$PROJECT_DIR$/utils/kana,csv" afterPath="" />
       <change beforePath="$PROJECT_DIR$/utils/mytools.py" afterPath="$PROJECT_DIR$/utils/mytools.py" />
+      <change beforePath="$PROJECT_DIR$/utils/op_db.py" afterPath="$PROJECT_DIR$/utils/op_db.py" />
+      <change beforePath="$PROJECT_DIR$/utils/tools.py" afterPath="$PROJECT_DIR$/utils/tools.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,13 +65,18 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/data_extract$detectTable.coverage" NAME="detectTable Coverage Results" MODIFIED="1527253146086" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_spreed_file_tables.coverage" NAME="py.test for parsehtml_tests.test_spreed_file_tables Coverage Results" MODIFIED="1523265469719" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_table_previous_text.coverage" NAME="py.test for parsehtml_tests.test_get_table_previous_text Coverage Results" MODIFIED="1523278350459" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
+    <SUITE FILE_PATH="coverage/data_extract$handleIndex.coverage" NAME="handleIndex Coverage Results" MODIFIED="1526710219604" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$fifth__1_.coverage" NAME="fifth (1) Coverage Results" MODIFIED="1524562537452" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/handleindexcontent" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_htmlpage.coverage" NAME="py.test for parsehtml_tests.test_htmlpage Coverage Results" MODIFIED="1523172783707" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
-    <SUITE FILE_PATH="coverage/data_extract$op_db.coverage" NAME="op_db Coverage Results" MODIFIED="1523764001533" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
+    <SUITE FILE_PATH="coverage/data_extract$op_db.coverage" NAME="op_db Coverage Results" MODIFIED="1526706206995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_in_parsehtmlnew_tests_py.coverage" NAME="py.test in parsehtmlnew_tests.py Coverage Results" MODIFIED="1523521482870" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests/.cache" />
+    <SUITE FILE_PATH="coverage/data_extract$getTableFields.coverage" NAME="getTableFields Coverage Results" MODIFIED="1527496420717" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$manage_config.coverage" NAME="manage_config Coverage Results" MODIFIED="1525257206353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/config" />
+    <SUITE FILE_PATH="coverage/data_extract$logs.coverage" NAME="logs Coverage Results" MODIFIED="1526642391823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/log" />
+    <SUITE FILE_PATH="coverage/data_extract$financialReport.coverage" NAME="financialReport Coverage Results" MODIFIED="1527049536707" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$get_companylist.coverage" NAME="get_companylist Coverage Results" MODIFIED="1524107079642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/getdata" />
     <SUITE FILE_PATH="coverage/data_extract$add_config.coverage" NAME="add_config Coverage Results" MODIFIED="1525232480715" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/config" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_spreedsheet.coverage" NAME="py.test for parsehtml_tests.test_spreedsheet Coverage Results" MODIFIED="1523194133782" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
@@ -40,40 +87,47 @@
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_create_cells_dict.coverage" NAME="py.test for parsehtml_tests.test_create_cells_dict Coverage Results" MODIFIED="1523159396674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_htmlpage_cells_dict.coverage" NAME="py.test for parsehtml_tests.test_htmlpage_cells_dict Coverage Results" MODIFIED="1523173360392" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_pg_ordered_table_list.coverage" NAME="py.test for parsehtml_tests.test_pg_ordered_table_list Coverage Results" MODIFIED="1523194119453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
-    <SUITE FILE_PATH="coverage/data_extract$eleventh.coverage" NAME="eleventh Coverage Results" MODIFIED="1526191527987" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/handleindexcontent" />
+    <SUITE FILE_PATH="coverage/data_extract$eleventh.coverage" NAME="eleventh Coverage Results" MODIFIED="1526478026840" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/handleindexcontent" />
     <SUITE FILE_PATH="coverage/data_extract$other_method.coverage" NAME="other_method Coverage Results" MODIFIED="1523152074704" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_check_if_pure_digital.coverage" NAME="py.test for parsehtml_tests.test_check_if_pure_digital Coverage Results" MODIFIED="1523241881840" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_longest_row_x.coverage" NAME="py.test for parsehtml_tests.test_get_longest_row_x Coverage Results" MODIFIED="1523163487897" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$handleTable.coverage" NAME="handleTable Coverage Results" MODIFIED="1524023770107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
+    <SUITE FILE_PATH="coverage/data_extract$eighth.coverage" NAME="eighth Coverage Results" MODIFIED="1526891622571" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/handleindexcontent" />
     <SUITE FILE_PATH="coverage/data_extract$second.coverage" NAME="second Coverage Results" MODIFIED="1524150948078" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/handleindexcontent" />
     <SUITE FILE_PATH="coverage/data_extract$tttt.coverage" NAME="tttt Coverage Results" MODIFIED="1523012367408" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_htmlfile.coverage" NAME="py.test for parsehtml_tests.test_htmlfile Coverage Results" MODIFIED="1523181546873" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$fourth.coverage" NAME="fourth Coverage Results" MODIFIED="1524300766199" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/handleindexcontent" />
     <SUITE FILE_PATH="coverage/data_extract$tools.coverage" NAME="tools Coverage Results" MODIFIED="1523116564021" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_all_pg_tables.coverage" NAME="py.test for parsehtml_tests.test_get_all_pg_tables Coverage Results" MODIFIED="1523264470380" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
+    <SUITE FILE_PATH="coverage/data_extract$business.coverage" NAME="business Coverage Results" MODIFIED="1527344115126" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/report_data_extract/models" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_order_table_cell_by_longest_row.coverage" NAME="py.test for parsehtml_tests.test_order_table_cell_by_longest_row Coverage Results" MODIFIED="1523176672846" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_page_content.coverage" NAME="py.test for parsehtml_tests.test_get_page_content Coverage Results" MODIFIED="1523156807720" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_table_cells.coverage" NAME="py.test for parsehtml_tests.test_get_table_cells Coverage Results" MODIFIED="1523158161170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
+    <SUITE FILE_PATH="coverage/data_extract$get_report.coverage" NAME="get_report Coverage Results" MODIFIED="1526794643802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/download" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_origin_page_num.coverage" NAME="py.test for parsehtml_tests.test_get_origin_page_num Coverage Results" MODIFIED="1523502900155" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$parsehtml_new.coverage" NAME="parsehtml_new Coverage Results" MODIFIED="1523973486527" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$parsehtml.coverage" NAME="parsehtml Coverage Results" MODIFIED="1523279356453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtmlnew_tests_test_file_to_database.coverage" NAME="py.test for parsehtmlnew_tests.test_file_to_database Coverage Results" MODIFIED="1523521715079" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests/.cache" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_tables_cells.coverage" NAME="py.test for parsehtml_tests.test_get_tables_cells Coverage Results" MODIFIED="1523162121337" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_all_table_previous_text2.coverage" NAME="py.test for parsehtml_tests.test_get_all_table_previous_text2 Coverage Results" MODIFIED="1523283102681" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
+    <SUITE FILE_PATH="coverage/data_extract$base.coverage" NAME="base Coverage Results" MODIFIED="1527209009629" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/handleindexcontent" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_dir.coverage" NAME="py.test for parsehtml_tests.test_get_dir Coverage Results" MODIFIED="1523512048704" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
+    <SUITE FILE_PATH="coverage/data_extract$twelve.coverage" NAME="twelve Coverage Results" MODIFIED="1526530111048" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/handleindexcontent" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_table_get_longest_row_x.coverage" NAME="py.test for parsehtml_tests.test_table_get_longest_row_x Coverage Results" MODIFIED="1523173760636" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_htmlreport.coverage" NAME="py.test for parsehtml_tests.test_htmlreport Coverage Results" MODIFIED="1523155901734" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_splittable.coverage" NAME="py.test for parsehtml_tests.test_splittable Coverage Results" MODIFIED="1523241597710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
+    <SUITE FILE_PATH="coverage/data_extract$autoGetIndexPattern.coverage" NAME="autoGetIndexPattern Coverage Results" MODIFIED="1527051009833" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$third.coverage" NAME="third Coverage Results" MODIFIED="1524198933320" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/handleindexcontent" />
-    <SUITE FILE_PATH="coverage/data_extract$extractTextAndTable.coverage" NAME="extractTextAndTable Coverage Results" MODIFIED="1526431175246" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
+    <SUITE FILE_PATH="coverage/data_extract$extractTextAndTable.coverage" NAME="extractTextAndTable Coverage Results" MODIFIED="1527516672816" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$fifth.coverage" NAME="fifth Coverage Results" MODIFIED="1524484635417" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/report_data_extract/models" />
     <SUITE FILE_PATH="coverage/data_extract$sixth.coverage" NAME="sixth Coverage Results" MODIFIED="1524568194189" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/handleindexcontent" />
     <SUITE FILE_PATH="coverage/data_extract$parse_html_report.coverage" NAME="parse_html_report Coverage Results" MODIFIED="1523116547207" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_in_parsehtml_tests_py.coverage" NAME="py.test in parsehtml_tests.py Coverage Results" MODIFIED="1523519693025" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_htmlpage_get_tables_cells.coverage" NAME="py.test for parsehtml_tests.test_htmlpage_get_tables_cells Coverage Results" MODIFIED="1523173052588" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_htmlpage_pgContent.coverage" NAME="py.test for parsehtml_tests.test_htmlpage_pgContent Coverage Results" MODIFIED="1523177852446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
+    <SUITE FILE_PATH="coverage/data_extract$ananly_table_attr.coverage" NAME="ananly_table_attr Coverage Results" MODIFIED="1527470875100" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/temp" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_get_all_table_previous_text.coverage" NAME="py.test for parsehtml_tests.test_get_all_table_previous_text Coverage Results" MODIFIED="1523283461205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
-    <SUITE FILE_PATH="coverage/data_extract$mytools.coverage" NAME="mytools Coverage Results" MODIFIED="1526305703446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
+    <SUITE FILE_PATH="coverage/data_extract$mytools.coverage" NAME="mytools Coverage Results" MODIFIED="1527516756234" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/data_extract$py_test_for_parsehtml_tests_test_spreed_table.coverage" NAME="py.test for parsehtml_tests.test_spreed_table Coverage Results" MODIFIED="1523268788066" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests" />
     <SUITE FILE_PATH="coverage/data_extract$parsehtmlnew_tests.coverage" NAME="parsehtmlnew_tests Coverage Results" MODIFIED="1523521551585" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils/tests/.cache" />
   </component>
@@ -92,215 +146,21 @@
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="data_extract" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="extractTextAndTable.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/utils/extractTextAndTable.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="153" column="34" lean-forward="false" selection-start-line="153" selection-start-column="34" selection-end-line="153" selection-end-column="34" />
-              <folding>
-                <element signature="e#38#57#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="commons.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/commons.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="295">
-              <caret line="39" column="43" lean-forward="false" selection-start-line="39" selection-start-column="43" selection-end-line="39" selection-end-column="43" />
+            <state relative-caret-position="1110">
+              <caret line="123" column="48" lean-forward="false" selection-start-line="123" selection-start-column="38" selection-end-line="123" selection-end-column="48" />
               <folding>
-                <element signature="e#38#47#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="eighth.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/eighth.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="366">
-              <caret line="994" column="47" lean-forward="false" selection-start-line="994" selection-start-column="47" selection-end-line="994" selection-end-column="47" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mytools.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/utils/mytools.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1005">
-              <caret line="308" column="26" lean-forward="false" selection-start-line="308" selection-start-column="26" selection-end-line="308" selection-end-column="26" />
-              <folding>
-                <element signature="e#416#489#0" expanded="false" />
-                <element signature="e#520#726#0" expanded="false" />
-                <element signature="e#763#1012#0" expanded="false" />
-                <element signature="e#1057#1250#0" expanded="false" />
-                <element signature="e#1489#1703#0" expanded="false" />
-                <element signature="e#1737#1870#0" expanded="false" />
-                <element signature="e#1917#2276#0" expanded="false" />
-                <element signature="e#2299#3303#0" expanded="false" />
-                <element signature="e#3339#3499#0" expanded="false" />
-                <element signature="e#3528#3693#0" expanded="false" />
-                <element signature="e#3767#4202#0" expanded="false" />
-                <element signature="e#4276#4712#0" expanded="false" />
-                <element signature="e#4742#5019#0" expanded="false" />
-                <element signature="e#5048#5340#0" expanded="false" />
-                <element signature="e#5380#5408#0" expanded="false" />
-                <element signature="e#5449#6397#0" expanded="false" />
-                <element signature="e#6426#6869#0" expanded="false" />
-                <element signature="e#6919#7097#0" expanded="false" />
-                <element signature="e#7118#7244#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="eleventh.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/eleventh.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6510">
-              <caret line="2147" column="61" lean-forward="false" selection-start-line="2147" selection-start-column="61" selection-end-line="2147" selection-end-column="61" />
-              <folding>
-                <element signature="e#550#9439#0" expanded="false" />
-                <element signature="e#9486#18502#0" expanded="false" />
-                <element signature="e#18538#28565#0" expanded="false" />
-                <element signature="e#28614#30586#0" expanded="false" />
-                <element signature="e#30633#32598#0" expanded="false" />
-                <element signature="e#30855#31877#0" expanded="false" />
-                <element signature="e#32646#34878#0" expanded="false" />
-                <element signature="e#34922#40586#0" expanded="false" />
-                <element signature="e#37058#37605#0" expanded="false" />
-                <element signature="e#40636#42901#0" expanded="false" />
-                <element signature="e#42958#46229#0" expanded="false" />
-                <element signature="e#46285#48304#0" expanded="false" />
-                <element signature="e#48357#50361#0" expanded="false" />
-                <element signature="e#50414#52428#0" expanded="false" />
-                <element signature="e#52479#56676#0" expanded="false" />
-                <element signature="e#54296#55487#0" expanded="false" />
-                <element signature="e#56719#58689#0" expanded="false" />
-                <element signature="e#58732#64664#0" expanded="false" />
-                <element signature="e#64712#69411#0" expanded="false" />
-                <element signature="e#69460#73372#0" expanded="false" />
-                <element signature="e#73422#78868#0" expanded="false" />
-                <element signature="e#78916#82878#0" expanded="false" />
-                <element signature="e#91406#93853#0" expanded="false" />
-                <element signature="e#92131#93337#0" expanded="false" />
-                <element signature="e#106489#113046#0" expanded="false" />
-                <element signature="e#113090#119437#0" expanded="false" />
-                <element signature="e#119480#125079#0" expanded="false" />
-                <element signature="e#125131#135560#0" expanded="false" />
-                <element signature="e#135615#140707#0" expanded="false" />
-                <element signature="e#140769#146108#0" expanded="false" />
-                <element signature="e#146170#154628#0" expanded="false" />
-                <element signature="e#154692#160679#0" expanded="false" />
-                <element signature="e#160749#166679#0" expanded="false" />
-                <element signature="e#166738#171738#0" expanded="false" />
-                <element signature="e#171795#176390#0" expanded="false" />
-                <element signature="e#176445#181561#0" expanded="false" />
-                <element signature="e#181609#186523#0" expanded="false" />
-                <element signature="e#186578#190901#0" expanded="false" />
-                <element signature="e#190961#193629#0" expanded="false" />
-                <element signature="e#193680#198233#0" expanded="false" />
-                <element signature="e#198283#203210#0" expanded="false" />
-                <element signature="e#203264#211469#0" expanded="false" />
-                <element signature="e#211511#222766#0" expanded="false" />
-                <element signature="e#222813#227778#0" expanded="false" />
-                <element signature="e#227828#231411#0" expanded="false" />
-                <element signature="e#231464#240125#0" expanded="false" />
-                <element signature="e#240176#245834#0" expanded="false" />
-                <element signature="e#245875#251294#0" expanded="false" />
-                <element signature="e#251349#256386#0" expanded="false" />
-                <element signature="e#256433#260674#0" expanded="false" />
-                <element signature="e#260728#265448#0" expanded="false" />
-                <element signature="e#265496#272261#0" expanded="false" />
-                <element signature="e#270285#272230#0" expanded="false" />
-                <element signature="e#272312#279796#0" expanded="false" />
-                <element signature="e#279840#286141#0" expanded="false" />
-                <element signature="e#286185#296187#0" expanded="false" />
-                <element signature="e#296241#303372#0" expanded="false" />
-                <element signature="e#303426#306934#0" expanded="false" />
-                <element signature="e#306986#316126#0" expanded="false" />
-                <element signature="e#320422#325622#0" expanded="false" />
-                <element signature="e#322002#325006#0" expanded="false" />
-                <element signature="e#325672#329904#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="eleventh.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/report_data_extract/models/eleventh.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5130">
-              <caret line="1583" column="0" lean-forward="false" selection-start-line="1583" selection-start-column="0" selection-end-line="1583" selection-end-column="0" />
-              <folding>
-                <element signature="e#136#590#0" expanded="false" />
-                <element signature="e#626#1007#0" expanded="false" />
-                <element signature="e#1045#1321#0" expanded="false" />
-                <element signature="e#1359#14391#0" expanded="false" />
-                <element signature="e#14432#21543#0" expanded="false" />
-                <element signature="e#21577#30238#0" expanded="false" />
-                <element signature="e#30282#31281#0" expanded="false" />
-                <element signature="e#31317#33261#0" expanded="false" />
-                <element signature="e#33310#33786#0" expanded="false" />
-                <element signature="e#33829#34125#0" expanded="false" />
-                <element signature="e#34163#34379#0" expanded="false" />
-                <element signature="e#34414#35869#0" expanded="false" />
-                <element signature="e#35871#35906#0" expanded="false" />
-                <element signature="e#38089#41240#0" expanded="false" />
-                <element signature="e#41272#45217#0" expanded="false" />
-                <element signature="e#45257#47114#0" expanded="false" />
-                <element signature="e#47149#50724#0" expanded="false" />
-                <element signature="e#50767#52944#0" expanded="false" />
-                <element signature="e#52999#54135#0" expanded="false" />
-                <element signature="e#54184#55167#0" expanded="false" />
-                <element signature="e#55207#56429#0" expanded="false" />
-                <element signature="e#56465#57849#0" expanded="false" />
-                <element signature="e#61374#62148#0" expanded="false" />
-                <element signature="e#62190#62756#0" expanded="false" />
-                <element signature="e#62792#63784#0" expanded="false" />
-                <element signature="e#63836#64172#0" expanded="false" />
-                <element signature="e#64218#65214#0" expanded="false" />
-                <element signature="e#65261#66791#0" expanded="false" />
-                <element signature="e#66842#67691#0" expanded="false" />
-                <element signature="e#67731#68706#0" expanded="false" />
-                <element signature="e#68753#69967#0" expanded="false" />
-                <element signature="e#70021#71001#0" expanded="false" />
-                <element signature="e#71055#72506#0" expanded="false" />
-                <element signature="e#72562#73600#0" expanded="false" />
-                <element signature="e#73662#74654#0" expanded="false" />
-                <element signature="e#74694#76959#0" expanded="false" />
-                <element signature="e#77002#78015#0" expanded="false" />
-                <element signature="e#78057#78826#0" expanded="false" />
-                <element signature="e#78873#80671#0" expanded="false" />
-                <element signature="e#80720#80856#0" expanded="false" />
-                <element signature="e#80906#81046#0" expanded="false" />
-                <element signature="e#81081#82400#0" expanded="false" />
-                <element signature="e#82439#83466#0" expanded="false" />
-                <element signature="e#83508#84246#0" expanded="false" />
-                <element signature="e#84291#85899#0" expanded="false" />
-                <element signature="e#85942#86992#0" expanded="false" />
-                <element signature="e#87025#88048#0" expanded="false" />
-                <element signature="e#88095#88957#0" expanded="false" />
-                <element signature="e#89002#89094#0" expanded="false" />
-                <element signature="e#89133#90113#0" expanded="false" />
-                <element signature="e#90162#90949#0" expanded="false" />
-                <element signature="e#90996#91745#0" expanded="false" />
-                <element signature="e#91788#93221#0" expanded="false" />
-                <element signature="e#93260#94371#0" expanded="false" />
-                <element signature="e#94413#95218#0" expanded="false" />
-                <element signature="e#95264#96500#0" expanded="false" />
-                <element signature="e#96546#97569#0" expanded="false" />
-                <element signature="e#97629#98817#0" expanded="false" />
-                <element signature="e#98861#99561#0" expanded="false" />
-                <element signature="e#99603#100153#0" expanded="false" />
-                <element signature="e#100192#100275#0" expanded="false" />
-                <element signature="e#100314#100397#0" expanded="false" />
-                <element signature="e#100441#101224#0" expanded="false" />
-                <element signature="e#101263#101571#0" expanded="false" />
+                <element signature="e#276#343#0" expanded="false" />
+                <element signature="e#387#1470#0" expanded="false" />
+                <element signature="e#1521#2790#0" expanded="false" />
+                <element signature="e#3454#4032#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -309,71 +169,61 @@
       <file leaf-file-name="twelve.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/twelve.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9810">
-              <caret line="2709" column="41" lean-forward="false" selection-start-line="2709" selection-start-column="41" selection-end-line="2709" selection-end-column="41" />
+            <state relative-caret-position="49620">
+              <caret line="1654" column="0" lean-forward="false" selection-start-line="1654" selection-start-column="0" selection-end-line="1654" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="extractTextAndTable.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/utils/extractTextAndTable.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="5040">
+              <caret line="172" column="36" lean-forward="false" selection-start-line="172" selection-start-column="36" selection-end-line="172" selection-end-column="36" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="base.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/base.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="900">
+              <caret line="168" column="43" lean-forward="false" selection-start-line="168" selection-start-column="43" selection-end-line="168" selection-end-column="43" />
               <folding>
-                <element signature="e#546#6983#0" expanded="false" />
-                <element signature="e#7043#12246#0" expanded="false" />
-                <element signature="e#12320#16602#0" expanded="false" />
-                <element signature="e#16658#21824#0" expanded="false" />
-                <element signature="e#21886#23935#0" expanded="false" />
-                <element signature="e#23998#28606#0" expanded="false" />
-                <element signature="e#28650#31375#0" expanded="false" />
-                <element signature="e#31423#37259#0" expanded="false" />
-                <element signature="e#42015#45884#0" expanded="false" />
-                <element signature="e#45950#49658#0" expanded="false" />
-                <element signature="e#49712#53104#0" expanded="false" />
-                <element signature="e#53156#55160#0" expanded="false" />
-                <element signature="e#55211#60394#0" expanded="false" />
-                <element signature="e#60444#62441#0" expanded="false" />
-                <element signature="e#62487#64471#0" expanded="false" />
-                <element signature="e#64512#66477#0" expanded="false" />
-                <element signature="e#66529#72400#0" expanded="false" />
-                <element signature="e#76570#82733#0" expanded="false" />
-                <element signature="e#82791#92331#0" expanded="false" />
-                <element signature="e#84377#91744#0" expanded="false" />
-                <element signature="e#92392#96789#0" expanded="false" />
-                <element signature="e#93971#96758#0" expanded="false" />
-                <element signature="e#94449#96758#0" expanded="false" />
-                <element signature="e#96852#103635#0" expanded="false" />
-                <element signature="e#103681#110441#0" expanded="false" />
-                <element signature="e#110499#115363#0" expanded="false" />
-                <element signature="e#115410#117452#0" expanded="false" />
-                <element signature="e#117521#119654#0" expanded="false" />
-                <element signature="e#119717#121845#0" expanded="false" />
-                <element signature="e#121918#125659#0" expanded="false" />
-                <element signature="e#125723#127751#0" expanded="false" />
-                <element signature="e#131569#133582#0" expanded="false" />
+                <element signature="e#473#1464#0" expanded="false" />
+                <element signature="e#1492#1935#0" expanded="false" />
+                <element signature="e#1985#2163#0" expanded="false" />
+                <element signature="e#2198#3148#0" expanded="false" />
+                <element signature="e#3204#4260#0" expanded="false" />
+                <element signature="e#4298#4407#0" expanded="false" />
+                <element signature="e#4450#4920#0" expanded="false" />
+                <element signature="e#4954#5175#0" expanded="false" />
+                <element signature="e#5225#7456#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="twelve.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/report_data_extract/models/twelve.py">
+      <file leaf-file-name="eleventh.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/eleventh.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2100">
-              <caret line="350" column="22" lean-forward="false" selection-start-line="350" selection-start-column="22" selection-end-line="350" selection-end-column="22" />
+            <state relative-caret-position="30">
+              <caret line="4559" column="63" lean-forward="false" selection-start-line="4559" selection-start-column="55" selection-end-line="4559" selection-end-column="63" />
               <folding>
-                <element signature="e#38#66#0" expanded="true" />
-                <element signature="e#214#1376#0" expanded="false" />
-                <element signature="e#2708#4266#0" expanded="false" />
-                <element signature="e#4304#5237#0" expanded="false" />
-                <element signature="e#5290#6069#0" expanded="false" />
-                <element signature="e#6119#6905#0" expanded="false" />
-                <element signature="e#6955#7832#0" expanded="false" />
-                <element signature="e#7884#8714#0" expanded="false" />
-                <element signature="e#8780#10856#0" expanded="false" />
-                <element signature="e#10911#11967#0" expanded="false" />
-                <element signature="e#12004#12454#0" expanded="false" />
-                <element signature="e#12494#13594#0" expanded="false" />
-                <element signature="e#13634#14486#0" expanded="false" />
-                <element signature="e#14521#15467#0" expanded="false" />
-                <element signature="e#15513#16075#0" expanded="false" />
-                <element signature="e#16118#17228#0" expanded="false" />
-                <element signature="e#17272#18258#0" expanded="false" />
-                <element signature="e#19238#19818#0" expanded="false" />
+                <element signature="e#19299#25251#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="eleventh.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/report_data_extract/models/eleventh.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="705">
+              <caret line="1024" column="29" lean-forward="false" selection-start-line="1024" selection-start-column="29" selection-end-line="1024" selection-end-column="29" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -390,36 +240,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>子公司</find>
-      <find>股权</find>
-      <find>pattern0</find>
-      <find>value</find>
-      <find>pos</find>
-      <find>Decim</find>
-      <find>unit_change</find>
-      <find>len(inst</find>
-      <find>sub</find>
-      <find>CompositOfEnterprisGroup</find>
-      <find>CommonBalancImpairNet</find>
-      <find>流动资产</find>
-      <find>impair</find>
-      <find>accounts</find>
-      <find>0b070504</find>
-      <find>0b09030200</find>
-      <find>0b070e01</find>
-      <find>start</find>
-      <find>overdu</find>
-      <find>1year</find>
-      <find>应付利息</find>
-      <find>递延收益</find>
-      <find>subjectname</find>
-      <find>OverduShorttermBorrow</find>
-      <find>对子公司投资</find>
-      <find>减值准备期末余额</find>
-      <find>ReportDivisFinanciInform</find>
-      <find>max_digits=10</find>
-      <find>0b11030100</find>
-      <find>len(ins</find>
+      <find>=1</find>
+      <find>splitAndCombine</find>
+      <find>c x9 y5a7 w136 h12</find>
+      <find>True</find>
+      <find>营业收入合计</find>
+      <find>04020201</find>
+      <find>fill_merge_cells_table</find>
+      <find>0b070501</find>
+      <find>print</find>
+      <find>c x9 y34e w13f h72</find>
+      <find>c x44 y780 wb5 h19</find>
+      <find>c x9 yd22 w13f hb</find>
+      <find>填充前表格</find>
+      <find>print(</find>
+      <find>04020300</find>
+      <find>choice</find>
+      <find>失败</find>
+      <find>是否输入下列信息到标准库</find>
+      <find>i_c</find>
+      <find>没有转换成功</find>
+      <find>get_part_class_text</find>
+      <find>TransactImpactInChangeShareOfSubsidiari</find>
+      <find>CommonBeforeAndEndName</find>
+      <find>productandsale</find>
+      <find>relatreceivpayabl</find>
+      <find>interpret</find>
+      <find>start_pos</find>
+      <find>companibasicsituat</find>
+      <find>ChangInShareholdAndRemuner</find>
+      <find>get_values</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -431,57 +281,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/utils/pandas_text_process.py" />
-        <option value="$PROJECT_DIR$/utils/tools.py" />
-        <option value="$PROJECT_DIR$/utils/parsehtml.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/temp.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/first.py" />
-        <option value="$PROJECT_DIR$/getdata/get_companylist.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/root.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/standard.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/business.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/second.py" />
-        <option value="$PROJECT_DIR$/utils/checkTableexist.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/third.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/second.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/first.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/third.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/sixth.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/migrations/0061_changinrestrictsaleofshare_restrict_sale_date.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/sixth.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/seventh.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/seventh.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/fifth.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/fourth.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/eighth.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/fourth.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/ninth.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/ninth.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/tenth.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/tenth.py" />
-        <option value="$PROJECT_DIR$/config/add_config.py" />
-        <option value="$PROJECT_DIR$/config/manage_config.py" />
-        <option value="$PROJECT_DIR$/config/fs/manage_config.py" />
-        <option value="$PROJECT_DIR$/utils/handleTable.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/migrations/0008_auto_20180509_1838.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/migrations/0009_auto_20180509_2131.py" />
-        <option value="$PROJECT_DIR$/utils/handleIndex.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/fifth.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/migrations/0014_auto_20180510_2029.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/migrations/0018_auto_20180511_0816.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/migrations/0013_auto_20180511_0822.py" />
-        <option value="$PROJECT_DIR$/data_extract/settings.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/migrations/0020_auto_20180512_0922.py" />
         <option value="$PROJECT_DIR$/report_data_extract/migrations/0001_initial.py" />
-        <option value="$PROJECT_DIR$/report_data_extract/models/eleventh.py" />
-        <option value="$PROJECT_DIR$/utils/mytools.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/migrations/0036_auto_20180517_0910.py" />
+        <option value="$PROJECT_DIR$/log/logging.json.py" />
+        <option value="$PROJECT_DIR$/log/logging.json" />
+        <option value="$PROJECT_DIR$/log/logs.py" />
+        <option value="$PROJECT_DIR$/utils/op_db.py" />
+        <option value="$PROJECT_DIR$/utils/tools.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/models/download.py" />
+        <option value="$PROJECT_DIR$/download/get_report.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/migrations/0047_auto_20180521_1636.py" />
+        <option value="$PROJECT_DIR$/utils/financialReport.py" />
+        <option value="$PROJECT_DIR$/utils/autoGetIndexPattern.py" />
+        <option value="$PROJECT_DIR$/utils/tests/getTableFields.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/models/third.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/migrations/0051_auto_20180523_2345.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/models/sixth.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/models/fifth.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/ninth.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/seventh.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/models/standard.py" />
+        <option value="$PROJECT_DIR$/utils/handleTable.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/models/business.py" />
+        <option value="$PROJECT_DIR$/log/info.log" />
+        <option value="$PROJECT_DIR$/log/warning.log" />
+        <option value="$PROJECT_DIR$/log/errors.log" />
+        <option value="$PROJECT_DIR$/utils/handleIndex.py" />
+        <option value="$PROJECT_DIR$/utils/detectTable.py" />
+        <option value="$PROJECT_DIR$/temp/ananly_table_attr.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/models/root.py" />
         <option value="$PROJECT_DIR$/report_data_extract/models/__init__.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/twelve.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/models/eleventh.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/models/first.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/models/fourth.py" />
         <option value="$PROJECT_DIR$/report_data_extract/models/twelve.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/eleventh.py" />
-        <option value="$PROJECT_DIR$/utils/extractTextAndTable.py" />
-        <option value="$PROJECT_DIR$/utils/handleindexcontent/eighth.py" />
+        <option value="$PROJECT_DIR$/utils/getTableFields.py" />
+        <option value="$PROJECT_DIR$/utils/mytools.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/first.py" />
         <option value="$PROJECT_DIR$/utils/handleindexcontent/commons.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/second.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/third.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/fourth.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/sixth.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/fifth.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/eighth.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/tenth.py" />
+        <option value="$PROJECT_DIR$/report_data_extract/models/eighth.py" />
+        <option value="$PROJECT_DIR$/utils/extractTextAndTable.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/twelve.py" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/base.py" />
+        <option value="$PROJECT_DIR$/log/lines_log" />
+        <option value="$PROJECT_DIR$/utils/handleindexcontent/eleventh.py" />
       </list>
     </option>
   </component>
@@ -515,6 +365,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -525,24 +377,7 @@
             <path>
               <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
               <item name="data_extract" type="462c0819:PsiDirectoryNode" />
-              <item name="data_extract" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
-              <item name="data_extract" type="462c0819:PsiDirectoryNode" />
-              <item name="report" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
-              <item name="data_extract" type="462c0819:PsiDirectoryNode" />
-              <item name="report" type="462c0819:PsiDirectoryNode" />
-              <item name="shanghai" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
-              <item name="data_extract" type="462c0819:PsiDirectoryNode" />
-              <item name="report" type="462c0819:PsiDirectoryNode" />
-              <item name="shenzhen" type="462c0819:PsiDirectoryNode" />
+              <item name="log" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
@@ -554,6 +389,16 @@
               <item name="data_extract" type="462c0819:PsiDirectoryNode" />
               <item name="report_data_extract" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
+              <item name="data_extract" type="462c0819:PsiDirectoryNode" />
+              <item name="reportRule" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
+              <item name="data_extract" type="462c0819:PsiDirectoryNode" />
+              <item name="temp" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="data_extract" type="b2602c69:ProjectViewProjectNode" />
@@ -570,8 +415,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -579,21 +422,21 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
-    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://H:/data_extract/report_data_extract/models/eleventh.py" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://H:/data_extract/utils/extractTextAndTable.py" />
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="PostgreSQL&#10;Sqlite (Xerial)" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="H:\data_extract\utils" />
+      <recent name="H:\data_extract\config\fs" />
+      <recent name="H:\data_extract\report_data_extract\models" />
+      <recent name="H:\data_extract\utils\tests" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="H:\data_extract\config" />
       <recent name="H:\data_extract\report\shanghai" />
       <recent name="H:\data_extract\utils" />
       <recent name="H:\data_extract\report\shenzhen" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="H:\data_extract\config\fs" />
-      <recent name="H:\data_extract\utils" />
-      <recent name="H:\data_extract\report_data_extract\models" />
-      <recent name="H:\data_extract\utils\tests" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -608,8 +451,27 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.extractTextAndTable">
-    <configuration name="eleventh (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.mytools">
+    <configuration name="ananly_table_attr" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/temp" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="data_extract" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/temp/ananly_table_attr.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="business" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -622,26 +484,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="data_extract" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/report_data_extract/models/eleventh.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration name="eleventh" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/utils/handleindexcontent" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="data_extract" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/utils/handleindexcontent/eleventh.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/report_data_extract/models/business.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -666,20 +509,20 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="manage_config" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="getTableFields" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/config" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/utils" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="data_extract" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="H:\data_extract\config\fs\manage_config.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/utils/getTableFields.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -728,19 +571,19 @@
     </configuration>
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Django server.data_extract" />
-      <item index="1" class="java.lang.String" itemvalue="Python.mytools" />
-      <item index="2" class="java.lang.String" itemvalue="Python.extractTextAndTable" />
-      <item index="3" class="java.lang.String" itemvalue="Python.manage_config" />
-      <item index="4" class="java.lang.String" itemvalue="Python.eleventh" />
-      <item index="5" class="java.lang.String" itemvalue="Python.eleventh (1)" />
+      <item index="1" class="java.lang.String" itemvalue="Python.extractTextAndTable" />
+      <item index="2" class="java.lang.String" itemvalue="Python.mytools" />
+      <item index="3" class="java.lang.String" itemvalue="Python.business" />
+      <item index="4" class="java.lang.String" itemvalue="Python.ananly_table_attr" />
+      <item index="5" class="java.lang.String" itemvalue="Python.getTableFields" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.extractTextAndTable" />
-        <item index="1" class="java.lang.String" itemvalue="Python.mytools" />
-        <item index="2" class="java.lang.String" itemvalue="Python.eleventh" />
-        <item index="3" class="java.lang.String" itemvalue="Python.eleventh (1)" />
-        <item index="4" class="java.lang.String" itemvalue="Python.manage_config" />
+        <item index="0" class="java.lang.String" itemvalue="Python.mytools" />
+        <item index="1" class="java.lang.String" itemvalue="Python.extractTextAndTable" />
+        <item index="2" class="java.lang.String" itemvalue="Python.getTableFields" />
+        <item index="3" class="java.lang.String" itemvalue="Python.ananly_table_attr" />
+        <item index="4" class="java.lang.String" itemvalue="Python.business" />
       </list>
     </recent_temporary>
   </component>
@@ -815,18 +658,18 @@
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32435596" sideWeight="0.50214595" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31381732" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28337237" sideWeight="0.49785408" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30472103" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20708154" sideWeight="0.50468385" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3299356" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17864807" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3299356" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17864807" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23887588" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16309012" sideWeight="0.49531615" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42857143" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -841,23 +684,23 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32435596" sideWeight="0.50214595" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31381732" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28337237" sideWeight="0.49785408" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26502147" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20439914" sideWeight="0.50468385" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3299356" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3299356" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290398" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17864807" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17864807" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23887588" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16309012" sideWeight="0.49531615" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42857143" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1006,1354 +849,503 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>397</line>
-          <option name="timeStamp" value="231" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>400</line>
-          <option name="timeStamp" value="232" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>439</line>
-          <option name="timeStamp" value="233" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>447</line>
-          <option name="timeStamp" value="234" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>450</line>
-          <option name="timeStamp" value="235" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>453</line>
-          <option name="timeStamp" value="237" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>455</line>
-          <option name="timeStamp" value="238" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>459</line>
-          <option name="timeStamp" value="239" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>461</line>
-          <option name="timeStamp" value="240" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>462</line>
-          <option name="timeStamp" value="241" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>464</line>
-          <option name="timeStamp" value="243" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>465</line>
-          <option name="timeStamp" value="244" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>467</line>
-          <option name="timeStamp" value="245" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>508</line>
-          <option name="timeStamp" value="248" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>781</line>
-          <option name="timeStamp" value="260" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>788</line>
-          <option name="timeStamp" value="261" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>789</line>
-          <option name="timeStamp" value="262" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>790</line>
-          <option name="timeStamp" value="263" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>792</line>
-          <option name="timeStamp" value="264" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>806</line>
-          <option name="timeStamp" value="265" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>808</line>
-          <option name="timeStamp" value="266" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>809</line>
-          <option name="timeStamp" value="267" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>814</line>
-          <option name="timeStamp" value="268" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>815</line>
-          <option name="timeStamp" value="269" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>816</line>
-          <option name="timeStamp" value="270" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>817</line>
-          <option name="timeStamp" value="271" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>818</line>
-          <option name="timeStamp" value="272" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>820</line>
-          <option name="timeStamp" value="273" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>822</line>
-          <option name="timeStamp" value="274" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>823</line>
-          <option name="timeStamp" value="275" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>824</line>
-          <option name="timeStamp" value="276" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>825</line>
-          <option name="timeStamp" value="277" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>826</line>
-          <option name="timeStamp" value="278" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>827</line>
-          <option name="timeStamp" value="279" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>829</line>
-          <option name="timeStamp" value="281" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>837</line>
-          <option name="timeStamp" value="282" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>838</line>
-          <option name="timeStamp" value="286" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>839</line>
-          <option name="timeStamp" value="287" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>840</line>
-          <option name="timeStamp" value="288" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>841</line>
-          <option name="timeStamp" value="292" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>843</line>
-          <option name="timeStamp" value="293" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>846</line>
-          <option name="timeStamp" value="294" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>856</line>
-          <option name="timeStamp" value="295" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>857</line>
-          <option name="timeStamp" value="296" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>501</line>
-          <option name="timeStamp" value="329" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>502</line>
-          <option name="timeStamp" value="330" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>506</line>
-          <option name="timeStamp" value="331" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>393</line>
-          <option name="timeStamp" value="339" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>441</line>
-          <option name="timeStamp" value="340" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>796</line>
-          <option name="timeStamp" value="341" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>797</line>
-          <option name="timeStamp" value="342" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>798</line>
-          <option name="timeStamp" value="343" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>803</line>
-          <option name="timeStamp" value="344" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>802</line>
-          <option name="timeStamp" value="347" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>392</line>
-          <option name="timeStamp" value="350" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>471</line>
-          <option name="timeStamp" value="351" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>475</line>
-          <option name="timeStamp" value="352" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>476</line>
-          <option name="timeStamp" value="353" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>477</line>
-          <option name="timeStamp" value="354" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>479</line>
-          <option name="timeStamp" value="355" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>482</line>
-          <option name="timeStamp" value="356" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>503</line>
-          <option name="timeStamp" value="369" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>504</line>
-          <option name="timeStamp" value="370" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>510</line>
-          <option name="timeStamp" value="371" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>622</line>
-          <option name="timeStamp" value="443" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>624</line>
-          <option name="timeStamp" value="444" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>629</line>
-          <option name="timeStamp" value="447" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>639</line>
+          <line>698</line>
           <option name="timeStamp" value="450" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>640</line>
+          <line>699</line>
           <option name="timeStamp" value="451" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>641</line>
+          <line>700</line>
           <option name="timeStamp" value="453" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>642</line>
+          <line>701</line>
           <option name="timeStamp" value="454" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>643</line>
+          <line>702</line>
           <option name="timeStamp" value="455" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>644</line>
+          <line>703</line>
           <option name="timeStamp" value="456" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>645</line>
+          <line>704</line>
           <option name="timeStamp" value="457" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>646</line>
+          <line>705</line>
           <option name="timeStamp" value="458" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>647</line>
+          <line>706</line>
           <option name="timeStamp" value="459" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>648</line>
+          <line>707</line>
           <option name="timeStamp" value="460" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>649</line>
+          <line>708</line>
           <option name="timeStamp" value="461" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>650</line>
+          <line>709</line>
           <option name="timeStamp" value="462" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>651</line>
+          <line>710</line>
           <option name="timeStamp" value="463" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>652</line>
+          <line>711</line>
           <option name="timeStamp" value="464" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>653</line>
+          <line>712</line>
           <option name="timeStamp" value="465" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>654</line>
+          <line>713</line>
           <option name="timeStamp" value="466" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>655</line>
+          <line>714</line>
           <option name="timeStamp" value="467" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>656</line>
+          <line>715</line>
           <option name="timeStamp" value="468" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>657</line>
+          <line>716</line>
           <option name="timeStamp" value="469" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>658</line>
+          <line>717</line>
           <option name="timeStamp" value="470" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>671</line>
-          <option name="timeStamp" value="473" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>672</line>
-          <option name="timeStamp" value="474" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>673</line>
-          <option name="timeStamp" value="475" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>677</line>
-          <option name="timeStamp" value="476" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>678</line>
-          <option name="timeStamp" value="477" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>679</line>
-          <option name="timeStamp" value="478" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>689</line>
-          <option name="timeStamp" value="479" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>690</line>
-          <option name="timeStamp" value="481" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>703</line>
-          <option name="timeStamp" value="484" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>704</line>
-          <option name="timeStamp" value="485" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>705</line>
-          <option name="timeStamp" value="486" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>706</line>
-          <option name="timeStamp" value="487" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>707</line>
-          <option name="timeStamp" value="488" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>708</line>
-          <option name="timeStamp" value="489" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>709</line>
-          <option name="timeStamp" value="490" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>711</line>
-          <option name="timeStamp" value="491" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>713</line>
-          <option name="timeStamp" value="492" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>714</line>
-          <option name="timeStamp" value="493" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>715</line>
-          <option name="timeStamp" value="494" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>719</line>
-          <option name="timeStamp" value="495" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>720</line>
-          <option name="timeStamp" value="496" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>724</line>
-          <option name="timeStamp" value="499" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>728</line>
-          <option name="timeStamp" value="500" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>729</line>
-          <option name="timeStamp" value="501" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>730</line>
-          <option name="timeStamp" value="502" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>731</line>
-          <option name="timeStamp" value="503" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>732</line>
-          <option name="timeStamp" value="504" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>733</line>
-          <option name="timeStamp" value="505" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>734</line>
-          <option name="timeStamp" value="507" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>735</line>
-          <option name="timeStamp" value="508" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>736</line>
-          <option name="timeStamp" value="509" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>737</line>
-          <option name="timeStamp" value="510" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>738</line>
-          <option name="timeStamp" value="511" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>739</line>
-          <option name="timeStamp" value="512" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>740</line>
-          <option name="timeStamp" value="513" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>741</line>
-          <option name="timeStamp" value="514" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>742</line>
-          <option name="timeStamp" value="515" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>743</line>
-          <option name="timeStamp" value="516" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>744</line>
-          <option name="timeStamp" value="517" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>745</line>
-          <option name="timeStamp" value="518" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>746</line>
-          <option name="timeStamp" value="519" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>747</line>
-          <option name="timeStamp" value="520" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>748</line>
-          <option name="timeStamp" value="521" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>749</line>
-          <option name="timeStamp" value="522" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>750</line>
-          <option name="timeStamp" value="523" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>751</line>
-          <option name="timeStamp" value="524" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>752</line>
-          <option name="timeStamp" value="525" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>753</line>
-          <option name="timeStamp" value="526" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>754</line>
-          <option name="timeStamp" value="527" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>755</line>
-          <option name="timeStamp" value="528" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>756</line>
-          <option name="timeStamp" value="529" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>757</line>
-          <option name="timeStamp" value="530" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>758</line>
-          <option name="timeStamp" value="531" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>759</line>
-          <option name="timeStamp" value="532" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>793</line>
-          <option name="timeStamp" value="534" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>794</line>
-          <option name="timeStamp" value="535" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>804</line>
-          <option name="timeStamp" value="536" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>847</line>
-          <option name="timeStamp" value="537" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>845</line>
-          <option name="timeStamp" value="538" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>844</line>
-          <option name="timeStamp" value="539" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>848</line>
-          <option name="timeStamp" value="540" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>850</line>
-          <option name="timeStamp" value="541" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>849</line>
-          <option name="timeStamp" value="542" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>851</line>
-          <option name="timeStamp" value="543" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>852</line>
-          <option name="timeStamp" value="544" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>853</line>
-          <option name="timeStamp" value="545" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>855</line>
-          <option name="timeStamp" value="546" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>858</line>
-          <option name="timeStamp" value="547" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>499</line>
-          <option name="timeStamp" value="549" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>496</line>
-          <option name="timeStamp" value="550" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>489</line>
-          <option name="timeStamp" value="552" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>486</line>
-          <option name="timeStamp" value="553" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>483</line>
-          <option name="timeStamp" value="554" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>484</line>
-          <option name="timeStamp" value="555" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>485</line>
-          <option name="timeStamp" value="556" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>488</line>
-          <option name="timeStamp" value="557" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>509</line>
-          <option name="timeStamp" value="564" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>513</line>
-          <option name="timeStamp" value="565" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>514</line>
-          <option name="timeStamp" value="566" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>515</line>
-          <option name="timeStamp" value="567" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>518</line>
-          <option name="timeStamp" value="568" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/handleIndex.py</url>
-          <line>436</line>
-          <option name="timeStamp" value="599" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="877" />
+      <option name="time" value="975" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0018_auto_20180511_0816.py" />
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0014_auto_20180510_2029.py" />
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0015_comprehensnote_composit_of_enterpris_group.py" />
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0016_auto_20180510_2147.py" />
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0017_auto_20180510_2233.py" />
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0018_auto_20180511_0819.py" />
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0009_auto_20180509_2131.py" />
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0010_remove_nonoperincomexpens_subject.py" />
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0011_auto_20180510_1206.py" />
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0013_auto_20180511_0822.py" />
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0012_comprehensnote_foreign_busi_entiti_desc.py" />
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0013_auto_20180511_0826.py" />
-    <entry file="file://$PROJECT_DIR$/data_extract/settings.py">
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/tseries/frequencies.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="79" column="47" lean-forward="false" selection-start-line="79" selection-start-column="47" selection-end-line="79" selection-end-column="47" />
-          <folding />
+        <state relative-caret-position="178">
+          <caret line="848" column="54" lean-forward="true" selection-start-line="848" selection-start-column="54" selection-end-line="848" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/indexes/interval.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3272">
+          <caret line="551" column="36" lean-forward="false" selection-start-line="551" selection-start-column="36" selection-end-line="551" selection-end-column="36" />
         </state>
       </provider>
     </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/frame.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="880" column="0" lean-forward="false" selection-start-line="880" selection-start-column="0" selection-end-line="880" selection-end-column="0" />
+        <state relative-caret-position="139">
+          <caret line="2985" column="30" lean-forward="false" selection-start-line="2985" selection-start-column="0" selection-end-line="2986" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/models/fifth.py">
+    <entry file="file://$PROJECT_DIR$/utils/handleTable.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1095">
+          <caret line="124" column="49" lean-forward="false" selection-start-line="124" selection-start-column="0" selection-end-line="125" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/json/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="230" column="0" lean-forward="false" selection-start-line="230" selection-start-column="0" selection-end-line="230" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/json/encoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="179" column="0" lean-forward="false" selection-start-line="179" selection-start-column="0" selection-end-line="179" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/models/fields/related_descriptors.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="196" column="0" lean-forward="false" selection-start-line="196" selection-start-column="0" selection-end-line="196" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/log/info.log">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0020_auto_20180512_0922.py">
+    <entry file="file://$PROJECT_DIR$/log/errors.log">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/log/warning.log">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3071">
+          <caret line="91" column="111" lean-forward="false" selection-start-line="91" selection-start-column="105" selection-end-line="91" selection-end-column="111" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleIndex.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
-          <caret line="33" column="10" lean-forward="false" selection-start-line="33" selection-start-column="10" selection-end-line="33" selection-end-column="10" />
+          <caret line="11" column="18" lean-forward="false" selection-start-line="11" selection-start-column="18" selection-end-line="11" selection-end-column="18" />
+          <folding>
+            <element signature="e#3802#4819#0" expanded="false" />
+            <element signature="e#4867#5696#0" expanded="false" />
+            <element signature="e#33228#34350#0" expanded="false" />
+            <element signature="e#34425#36046#0" expanded="false" />
+            <element signature="e#36126#37777#0" expanded="false" />
+            <element signature="e#37922#40956#0" expanded="false" />
+            <element signature="e#41042#41227#0" expanded="false" />
+            <element signature="e#46086#46834#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0019_comprehensnote_conting.py">
+    <entry file="file://$PROJECT_DIR$/report_data_extract/models/business.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="420">
+          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0018_comprehensnote_import_commit.py">
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/groupby.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="193">
+          <caret line="2689" column="0" lean-forward="false" selection-start-line="2689" selection-start-column="0" selection-end-line="2689" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0017_comprehensnote_relat_parti_commit.py">
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/reshape/pivot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="90">
+          <caret line="26" column="43" lean-forward="false" selection-start-line="26" selection-start-column="39" selection-end-line="26" selection-end-column="43" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0016_auto_20180511_2134.py">
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/generic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-540">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="90720">
+          <caret line="3080" column="0" lean-forward="false" selection-start-line="3080" selection-start-column="0" selection-end-line="3080" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0015_comprehensnote_other_relat_transact.py">
+    <entry file="file://$USER_HOME$/AppData/Roaming/Python/Python36/site-packages/numpy/core/numeric.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-180">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="-1607">
+          <caret line="382" column="0" lean-forward="true" selection-start-line="382" selection-start-column="0" selection-end-line="382" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0014_auto_20180511_1824.py">
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/series.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="163">
+          <caret line="1191" column="62" lean-forward="false" selection-start-line="1191" selection-start-column="44" selection-end-line="1191" selection-end-column="62" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0013_auto_20180511_1812.py">
+    <entry file="file://$PROJECT_DIR$/temp/ananly_table_attr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-180">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="2070">
+          <caret line="93" column="43" lean-forward="true" selection-start-line="93" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0006_comprehensnote_risk_relat_to_financi_instrument.py">
+    <entry file="file://$PROJECT_DIR$/utils/detectTable.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-206">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0007_auto_20180511_1621.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0009_auto_20180511_1702.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0010_auto_20180511_1717.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0011_auto_20180511_1751.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0012_auto_20180511_1800.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-176">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0002_remove_majornonwhollyownsubsidiaryfinanciinform_liquid_asset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-176">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0003_auto_20180511_1043.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-476">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0004_auto_20180511_1143.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-90">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0005_auto_20180511_1153.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-206">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/models/sql/query.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="1378" column="0" lean-forward="false" selection-start-line="1378" selection-start-column="0" selection-end-line="1378" selection-end-column="0" />
+        <state relative-caret-position="493">
+          <caret line="100" column="17" lean-forward="false" selection-start-line="100" selection-start-column="17" selection-end-line="100" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/models/base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="841" column="0" lean-forward="false" selection-start-line="841" selection-start-column="0" selection-end-line="841" selection-end-column="0" />
+        <state relative-caret-position="193">
+          <caret line="494" column="0" lean-forward="false" selection-start-line="494" selection-start-column="0" selection-end-line="494" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/migrations/0001_initial.py">
+    <entry file="file://$PROJECT_DIR$/report_data_extract/models/root.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="2485" column="52" lean-forward="true" selection-start-line="2485" selection-start-column="52" selection-end-line="2485" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/models/query.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="402" column="0" lean-forward="false" selection-start-line="402" selection-start-column="0" selection-end-line="402" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/models/manager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="81" column="0" lean-forward="false" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/backends/base/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="238" column="0" lean-forward="false" selection-start-line="238" selection-start-column="0" selection-end-line="238" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/backends/sqlite3/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="302" column="0" lean-forward="false" selection-start-line="302" selection-start-column="0" selection-end-line="302" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/report_data_extract/models/eleventh.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5130">
-          <caret line="1583" column="0" lean-forward="false" selection-start-line="1583" selection-start-column="0" selection-end-line="1583" selection-end-column="0" />
-          <folding>
-            <element signature="e#136#590#0" expanded="false" />
-            <element signature="e#626#1007#0" expanded="false" />
-            <element signature="e#1045#1321#0" expanded="false" />
-            <element signature="e#1359#14391#0" expanded="false" />
-            <element signature="e#14432#21543#0" expanded="false" />
-            <element signature="e#21577#30238#0" expanded="false" />
-            <element signature="e#30282#31281#0" expanded="false" />
-            <element signature="e#31317#33261#0" expanded="false" />
-            <element signature="e#33310#33786#0" expanded="false" />
-            <element signature="e#33829#34125#0" expanded="false" />
-            <element signature="e#34163#34379#0" expanded="false" />
-            <element signature="e#34414#35869#0" expanded="false" />
-            <element signature="e#35871#35906#0" expanded="false" />
-            <element signature="e#38089#41240#0" expanded="false" />
-            <element signature="e#41272#45217#0" expanded="false" />
-            <element signature="e#45257#47114#0" expanded="false" />
-            <element signature="e#47149#50724#0" expanded="false" />
-            <element signature="e#50767#52944#0" expanded="false" />
-            <element signature="e#52999#54135#0" expanded="false" />
-            <element signature="e#54184#55167#0" expanded="false" />
-            <element signature="e#55207#56429#0" expanded="false" />
-            <element signature="e#56465#57849#0" expanded="false" />
-            <element signature="e#61374#62148#0" expanded="false" />
-            <element signature="e#62190#62756#0" expanded="false" />
-            <element signature="e#62792#63784#0" expanded="false" />
-            <element signature="e#63836#64172#0" expanded="false" />
-            <element signature="e#64218#65214#0" expanded="false" />
-            <element signature="e#65261#66791#0" expanded="false" />
-            <element signature="e#66842#67691#0" expanded="false" />
-            <element signature="e#67731#68706#0" expanded="false" />
-            <element signature="e#68753#69967#0" expanded="false" />
-            <element signature="e#70021#71001#0" expanded="false" />
-            <element signature="e#71055#72506#0" expanded="false" />
-            <element signature="e#72562#73600#0" expanded="false" />
-            <element signature="e#73662#74654#0" expanded="false" />
-            <element signature="e#74694#76959#0" expanded="false" />
-            <element signature="e#77002#78015#0" expanded="false" />
-            <element signature="e#78057#78826#0" expanded="false" />
-            <element signature="e#78873#80671#0" expanded="false" />
-            <element signature="e#80720#80856#0" expanded="false" />
-            <element signature="e#80906#81046#0" expanded="false" />
-            <element signature="e#81081#82400#0" expanded="false" />
-            <element signature="e#82439#83466#0" expanded="false" />
-            <element signature="e#83508#84246#0" expanded="false" />
-            <element signature="e#84291#85899#0" expanded="false" />
-            <element signature="e#85942#86992#0" expanded="false" />
-            <element signature="e#87025#88048#0" expanded="false" />
-            <element signature="e#88095#88957#0" expanded="false" />
-            <element signature="e#89002#89094#0" expanded="false" />
-            <element signature="e#89133#90113#0" expanded="false" />
-            <element signature="e#90162#90949#0" expanded="false" />
-            <element signature="e#90996#91745#0" expanded="false" />
-            <element signature="e#91788#93221#0" expanded="false" />
-            <element signature="e#93260#94371#0" expanded="false" />
-            <element signature="e#94413#95218#0" expanded="false" />
-            <element signature="e#95264#96500#0" expanded="false" />
-            <element signature="e#96546#97569#0" expanded="false" />
-            <element signature="e#97629#98817#0" expanded="false" />
-            <element signature="e#98861#99561#0" expanded="false" />
-            <element signature="e#99603#100153#0" expanded="false" />
-            <element signature="e#100192#100275#0" expanded="false" />
-            <element signature="e#100314#100397#0" expanded="false" />
-            <element signature="e#100441#101224#0" expanded="false" />
-            <element signature="e#101263#101571#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/backends/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="238" column="0" lean-forward="false" selection-start-line="238" selection-start-column="0" selection-end-line="238" selection-end-column="0" />
+        <state relative-caret-position="300">
+          <caret line="49" column="15" lean-forward="false" selection-start-line="49" selection-start-column="4" selection-end-line="49" selection-end-column="15" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/report_data_extract/models/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="295">
-          <caret line="32" column="24" lean-forward="false" selection-start-line="32" selection-start-column="24" selection-end-line="32" selection-end-column="24" />
+        <state relative-caret-position="30">
+          <caret line="1" column="98" lean-forward="false" selection-start-line="1" selection-start-column="98" selection-end-line="1" selection-end-column="98" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/twelve.py">
+    <entry file="file://$PROJECT_DIR$/report_data_extract/models/download.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9810">
-          <caret line="2709" column="41" lean-forward="false" selection-start-line="2709" selection-start-column="41" selection-end-line="2709" selection-end-column="41" />
-          <folding>
-            <element signature="e#546#6983#0" expanded="false" />
-            <element signature="e#7043#12246#0" expanded="false" />
-            <element signature="e#12320#16602#0" expanded="false" />
-            <element signature="e#16658#21824#0" expanded="false" />
-            <element signature="e#21886#23935#0" expanded="false" />
-            <element signature="e#23998#28606#0" expanded="false" />
-            <element signature="e#28650#31375#0" expanded="false" />
-            <element signature="e#31423#37259#0" expanded="false" />
-            <element signature="e#42015#45884#0" expanded="false" />
-            <element signature="e#45950#49658#0" expanded="false" />
-            <element signature="e#49712#53104#0" expanded="false" />
-            <element signature="e#53156#55160#0" expanded="false" />
-            <element signature="e#55211#60394#0" expanded="false" />
-            <element signature="e#60444#62441#0" expanded="false" />
-            <element signature="e#62487#64471#0" expanded="false" />
-            <element signature="e#64512#66477#0" expanded="false" />
-            <element signature="e#66529#72400#0" expanded="false" />
-            <element signature="e#76570#82733#0" expanded="false" />
-            <element signature="e#82791#92331#0" expanded="false" />
-            <element signature="e#84377#91744#0" expanded="false" />
-            <element signature="e#92392#96789#0" expanded="false" />
-            <element signature="e#93971#96758#0" expanded="false" />
-            <element signature="e#94449#96758#0" expanded="false" />
-            <element signature="e#96852#103635#0" expanded="false" />
-            <element signature="e#103681#110441#0" expanded="false" />
-            <element signature="e#110499#115363#0" expanded="false" />
-            <element signature="e#115410#117452#0" expanded="false" />
-            <element signature="e#117521#119654#0" expanded="false" />
-            <element signature="e#119717#121845#0" expanded="false" />
-            <element signature="e#121918#125659#0" expanded="false" />
-            <element signature="e#125723#127751#0" expanded="false" />
-            <element signature="e#131569#133582#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/report_data_extract/models/fourth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="492">
+          <caret line="96" column="62" lean-forward="false" selection-start-line="96" selection-start-column="62" selection-end-line="96" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/report_data_extract/models/first.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/autoGetIndexPattern.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="373">
+          <caret line="33" column="43" lean-forward="false" selection-start-line="33" selection-start-column="43" selection-end-line="33" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/report_data_extract/models/standard.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="433">
+          <caret line="73" column="35" lean-forward="false" selection-start-line="73" selection-start-column="28" selection-end-line="73" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/first.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1333">
+          <caret line="54" column="33" lean-forward="false" selection-start-line="54" selection-start-column="16" selection-end-line="54" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/getTableFields.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="223">
+          <caret line="246" column="26" lean-forward="false" selection-start-line="246" selection-start-column="26" selection-end-line="246" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/third.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1735">
+          <caret line="214" column="87" lean-forward="false" selection-start-line="214" selection-start-column="80" selection-end-line="214" selection-end-column="87" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/second.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3360">
+          <caret line="133" column="0" lean-forward="false" selection-start-line="133" selection-start-column="0" selection-end-line="133" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/fourth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3095">
+          <caret line="1647" column="0" lean-forward="false" selection-start-line="1647" selection-start-column="0" selection-end-line="1647" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/sixth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2923">
+          <caret line="98" column="0" lean-forward="false" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/fifth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1290">
+          <caret line="97" column="0" lean-forward="false" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/report_data_extract/models/sixth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="484">
+          <caret line="106" column="33" lean-forward="false" selection-start-line="106" selection-start-column="24" selection-end-line="106" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/seventh.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/eighth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="870">
+          <caret line="103" column="0" lean-forward="false" selection-start-line="103" selection-start-column="0" selection-end-line="103" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/ninth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/tenth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2310">
+          <caret line="81" column="0" lean-forward="false" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/models/query.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="406" column="0" lean-forward="false" selection-start-line="406" selection-start-column="0" selection-end-line="406" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/db/models/manager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="81" column="0" lean-forward="false" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/report_data_extract/models/twelve.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2100">
-          <caret line="350" column="22" lean-forward="false" selection-start-line="350" selection-start-column="22" selection-end-line="350" selection-end-column="22" />
-          <folding>
-            <element signature="e#38#66#0" expanded="true" />
-            <element signature="e#214#1376#0" expanded="false" />
-            <element signature="e#2708#4266#0" expanded="false" />
-            <element signature="e#4304#5237#0" expanded="false" />
-            <element signature="e#5290#6069#0" expanded="false" />
-            <element signature="e#6119#6905#0" expanded="false" />
-            <element signature="e#6955#7832#0" expanded="false" />
-            <element signature="e#7884#8714#0" expanded="false" />
-            <element signature="e#8780#10856#0" expanded="false" />
-            <element signature="e#10911#11967#0" expanded="false" />
-            <element signature="e#12004#12454#0" expanded="false" />
-            <element signature="e#12494#13594#0" expanded="false" />
-            <element signature="e#13634#14486#0" expanded="false" />
-            <element signature="e#14521#15467#0" expanded="false" />
-            <element signature="e#15513#16075#0" expanded="false" />
-            <element signature="e#16118#17228#0" expanded="false" />
-            <element signature="e#17272#18258#0" expanded="false" />
-            <element signature="e#19238#19818#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="312">
+          <caret line="315" column="0" lean-forward="false" selection-start-line="315" selection-start-column="0" selection-end-line="315" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/reshape/concat.py">
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/twelve.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="20" column="15" lean-forward="false" selection-start-line="20" selection-start-column="11" selection-end-line="20" selection-end-column="15" />
+        <state relative-caret-position="49620">
+          <caret line="1654" column="0" lean-forward="false" selection-start-line="1654" selection-start-column="0" selection-end-line="1654" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/eleventh.py">
+    <entry file="file://$PROJECT_DIR$/log/lines_log">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6510">
-          <caret line="2147" column="61" lean-forward="false" selection-start-line="2147" selection-start-column="61" selection-end-line="2147" selection-end-column="61" />
-          <folding>
-            <element signature="e#550#9439#0" expanded="false" />
-            <element signature="e#9486#18502#0" expanded="false" />
-            <element signature="e#18538#28565#0" expanded="false" />
-            <element signature="e#28614#30586#0" expanded="false" />
-            <element signature="e#30633#32598#0" expanded="false" />
-            <element signature="e#30855#31877#0" expanded="false" />
-            <element signature="e#32646#34878#0" expanded="false" />
-            <element signature="e#34922#40586#0" expanded="false" />
-            <element signature="e#37058#37605#0" expanded="false" />
-            <element signature="e#40636#42901#0" expanded="false" />
-            <element signature="e#42958#46229#0" expanded="false" />
-            <element signature="e#46285#48304#0" expanded="false" />
-            <element signature="e#48357#50361#0" expanded="false" />
-            <element signature="e#50414#52428#0" expanded="false" />
-            <element signature="e#52479#56676#0" expanded="false" />
-            <element signature="e#54296#55487#0" expanded="false" />
-            <element signature="e#56719#58689#0" expanded="false" />
-            <element signature="e#58732#64664#0" expanded="false" />
-            <element signature="e#64712#69411#0" expanded="false" />
-            <element signature="e#69460#73372#0" expanded="false" />
-            <element signature="e#73422#78868#0" expanded="false" />
-            <element signature="e#78916#82878#0" expanded="false" />
-            <element signature="e#91406#93853#0" expanded="false" />
-            <element signature="e#92131#93337#0" expanded="false" />
-            <element signature="e#106489#113046#0" expanded="false" />
-            <element signature="e#113090#119437#0" expanded="false" />
-            <element signature="e#119480#125079#0" expanded="false" />
-            <element signature="e#125131#135560#0" expanded="false" />
-            <element signature="e#135615#140707#0" expanded="false" />
-            <element signature="e#140769#146108#0" expanded="false" />
-            <element signature="e#146170#154628#0" expanded="false" />
-            <element signature="e#154692#160679#0" expanded="false" />
-            <element signature="e#160749#166679#0" expanded="false" />
-            <element signature="e#166738#171738#0" expanded="false" />
-            <element signature="e#171795#176390#0" expanded="false" />
-            <element signature="e#176445#181561#0" expanded="false" />
-            <element signature="e#181609#186523#0" expanded="false" />
-            <element signature="e#186578#190901#0" expanded="false" />
-            <element signature="e#190961#193629#0" expanded="false" />
-            <element signature="e#193680#198233#0" expanded="false" />
-            <element signature="e#198283#203210#0" expanded="false" />
-            <element signature="e#203264#211469#0" expanded="false" />
-            <element signature="e#211511#222766#0" expanded="false" />
-            <element signature="e#222813#227778#0" expanded="false" />
-            <element signature="e#227828#231411#0" expanded="false" />
-            <element signature="e#231464#240125#0" expanded="false" />
-            <element signature="e#240176#245834#0" expanded="false" />
-            <element signature="e#245875#251294#0" expanded="false" />
-            <element signature="e#251349#256386#0" expanded="false" />
-            <element signature="e#256433#260674#0" expanded="false" />
-            <element signature="e#260728#265448#0" expanded="false" />
-            <element signature="e#265496#272261#0" expanded="false" />
-            <element signature="e#270285#272230#0" expanded="false" />
-            <element signature="e#272312#279796#0" expanded="false" />
-            <element signature="e#279840#286141#0" expanded="false" />
-            <element signature="e#286185#296187#0" expanded="false" />
-            <element signature="e#296241#303372#0" expanded="false" />
-            <element signature="e#303426#306934#0" expanded="false" />
-            <element signature="e#306986#316126#0" expanded="false" />
-            <element signature="e#320422#325622#0" expanded="false" />
-            <element signature="e#322002#325006#0" expanded="false" />
-            <element signature="e#325672#329904#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="30">
+          <caret line="1" column="15" lean-forward="false" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/utils/mytools.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1005">
-          <caret line="308" column="26" lean-forward="false" selection-start-line="308" selection-start-column="26" selection-end-line="308" selection-end-column="26" />
-          <folding>
-            <element signature="e#416#489#0" expanded="false" />
-            <element signature="e#520#726#0" expanded="false" />
-            <element signature="e#763#1012#0" expanded="false" />
-            <element signature="e#1057#1250#0" expanded="false" />
-            <element signature="e#1489#1703#0" expanded="false" />
-            <element signature="e#1737#1870#0" expanded="false" />
-            <element signature="e#1917#2276#0" expanded="false" />
-            <element signature="e#2299#3303#0" expanded="false" />
-            <element signature="e#3339#3499#0" expanded="false" />
-            <element signature="e#3528#3693#0" expanded="false" />
-            <element signature="e#3767#4202#0" expanded="false" />
-            <element signature="e#4276#4712#0" expanded="false" />
-            <element signature="e#4742#5019#0" expanded="false" />
-            <element signature="e#5048#5340#0" expanded="false" />
-            <element signature="e#5380#5408#0" expanded="false" />
-            <element signature="e#5449#6397#0" expanded="false" />
-            <element signature="e#6426#6869#0" expanded="false" />
-            <element signature="e#6919#7097#0" expanded="false" />
-            <element signature="e#7118#7244#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="274">
+          <caret line="322" column="39" lean-forward="true" selection-start-line="322" selection-start-column="39" selection-end-line="322" selection-end-column="39" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/extractTextAndTable.py">
+    <entry file="file://$PROJECT_DIR$/report_data_extract/models/eighth.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="153" column="34" lean-forward="false" selection-start-line="153" selection-start-column="34" selection-end-line="153" selection-end-column="34" />
+        <state relative-caret-position="180">
+          <caret line="19" column="55" lean-forward="false" selection-start-line="19" selection-start-column="49" selection-end-line="19" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="900">
+          <caret line="168" column="43" lean-forward="false" selection-start-line="168" selection-start-column="43" selection-end-line="168" selection-end-column="43" />
           <folding>
-            <element signature="e#38#57#0" expanded="true" />
+            <element signature="e#473#1464#0" expanded="false" />
+            <element signature="e#1492#1935#0" expanded="false" />
+            <element signature="e#1985#2163#0" expanded="false" />
+            <element signature="e#2198#3148#0" expanded="false" />
+            <element signature="e#3204#4260#0" expanded="false" />
+            <element signature="e#4298#4407#0" expanded="false" />
+            <element signature="e#4450#4920#0" expanded="false" />
+            <element signature="e#4954#5175#0" expanded="false" />
+            <element signature="e#5225#7456#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/commons.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="295">
-          <caret line="39" column="43" lean-forward="false" selection-start-line="39" selection-start-column="43" selection-end-line="39" selection-end-column="43" />
+        <state relative-caret-position="1110">
+          <caret line="123" column="48" lean-forward="false" selection-start-line="123" selection-start-column="38" selection-end-line="123" selection-end-column="48" />
           <folding>
-            <element signature="e#38#47#0" expanded="true" />
+            <element signature="e#276#343#0" expanded="false" />
+            <element signature="e#387#1470#0" expanded="false" />
+            <element signature="e#1521#2790#0" expanded="false" />
+            <element signature="e#3454#4032#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/eighth.py">
+    <entry file="file://$PROJECT_DIR$/utils/extractTextAndTable.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="994" column="47" lean-forward="false" selection-start-line="994" selection-start-column="47" selection-end-line="994" selection-end-column="47" />
+        <state relative-caret-position="5040">
+          <caret line="172" column="36" lean-forward="false" selection-start-line="172" selection-start-column="36" selection-end-line="172" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/handleindexcontent/eleventh.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="4559" column="63" lean-forward="false" selection-start-line="4559" selection-start-column="55" selection-end-line="4559" selection-end-column="63" />
+          <folding>
+            <element signature="e#19299#25251#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/report_data_extract/models/eleventh.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="705">
+          <caret line="1024" column="29" lean-forward="false" selection-start-line="1024" selection-start-column="29" selection-end-line="1024" selection-end-column="29" />
           <folding />
         </state>
       </provider>

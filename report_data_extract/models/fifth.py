@@ -3,6 +3,7 @@
 
 from django.db import models
 from .standard import CommonInfo
+from .eleventh import CompanyName
 
 
 class ImportMatter(CommonInfo):
@@ -32,8 +33,8 @@ class CashDividendPolici(CommonInfo):
     amount_of_cash_divid = models.DecimalField(verbose_name='现金分红的数额（含税）',default=0.00,max_digits=22, decimal_places=2)
     common_sharehold_np = models.DecimalField(verbose_name='分红年度合并报表中归属于上市公司普通股股东的净利润',default=0.00,max_digits=22, decimal_places=2)
     distribut_ratio = models.DecimalField(verbose_name='占合并报表中归属于上市公司普通股股东的净利润的比率',default=0.00,max_digits=10, decimal_places=2)
-    distribut_profit = models.DecimalField(verbose_name='可分配利润',default=0.00,max_digits=10, decimal_places=2)
-    prop_of_distribut_profit = models.DecimalField(verbose_name='可分配利润',default=0.00,max_digits=10, decimal_places=2)
+    distribut_profit = models.DecimalField(verbose_name='可分配利润',default=0.00,max_digits=22, decimal_places=2)
+    prop_of_distribut_profit = models.DecimalField(verbose_name='占可分配利润比例',default=0.00,max_digits=10, decimal_places=2)
 
     class Meta:
         unique_together = ('stk_cd', 'acc_per')
@@ -72,8 +73,8 @@ class AccountFirm(CommonInfo):
     name = models.CharField(verbose_name='境内会计师事务所名称',max_length=150,default='')
     remuner = models.DecimalField(verbose_name='境内会计师事务所报酬',default=0.00,max_digits=22, decimal_places=2)
     audit_period = models.CharField(verbose_name='境内会计师事务所审计年限',max_length=150,default=0)
-    intern_control_name = models.CharField(verbose_name='境内会计师事务所名称', max_length=150, default='')
-    intern_control_remuner = models.DecimalField(verbose_name='境内会计师事务所报酬', default=0.00, max_digits=22, decimal_places=2)
+    intern_control_name = models.CharField(verbose_name='内部控制审计会计师事务所', max_length=150, default='')
+    intern_control_remuner = models.DecimalField(verbose_name='内部控制审计会计师事务所报酬', default=0.00, max_digits=22, decimal_places=2)
     cpa_name = models.CharField(verbose_name='境内注册会计师名称', max_length=150, default='')
     cpa_period = models.CharField(verbose_name='境内会计师事务所注册会计师审计服务的连续年限', max_length=150, default=0)
     oversea_name = models.CharField(verbose_name='境外会计师事务所名称', max_length=150, default='')
@@ -114,7 +115,7 @@ class OtherMajorContract(CommonInfo):
     evalu_agenc_name = models.CharField(verbose_name='评估机构名称',max_length=150,default='')
     base_date_of_assess = models.CharField(verbose_name='评估基准日',max_length=150,default='')
     price_principl = models.CharField(verbose_name='定价原则',max_length=150,default='')
-    price = models.CharField(verbose_name='交易价格',max_length=150,default='')
+    trade_price = models.CharField(verbose_name='交易价格',max_length=150,default='')
     is_relat_trade = models.CharField(verbose_name='是否关联交易',max_length=150,default='')
     relationship = models.CharField(verbose_name='关联关系',max_length=150,default='')
     progress = models.CharField(verbose_name='截至报告期末的执行情况',max_length=300,default='')
@@ -124,5 +125,64 @@ class OtherMajorContract(CommonInfo):
     class Meta:
         unique_together = ('stk_cd', 'acc_per','compani_parti_name','other_side_name','subject')
 
+class ExternGuarante(CommonInfo):
+    GUARANTE_OBJECT_CLASSIFY = (
+        ('A', 'extern_company'),  # 公司及其子公司对外担保情况（不包括对子公司的担保）
+        ('B', 'subsidiari'),  # 公司对子公司的担保情况
+        ('C', 'subsidiari_to_subsidiari'),  # 子公司对子公司的担保情况
+    )
+    object_classify = models.CharField(verbose_name='担保对象分类', max_length=30, choices=GUARANTE_OBJECT_CLASSIFY, default='B')
+    company_name = models.ForeignKey(CompanyName,on_delete=models.CASCADE, verbose_name='担保对象名称')
+    date_of_disclosur = models.CharField(verbose_name='担保额度相关公告披露日期',default='',max_length=150)
+    amount = models.DecimalField(verbose_name='担保额度', decimal_places=2, max_digits=22, default=0.00)
+    actual_date_of_occurr = models.CharField(verbose_name='实际发生日期', default='', max_length=150)
+    actual_amount = models.DecimalField(verbose_name='实际担保金额', decimal_places=2, max_digits=22, default=0.00)
+    type = models.CharField(verbose_name='担保类型', default='', max_length=150)
+    period = models.CharField(verbose_name='担保期', default='', max_length=150)
+    is_complet = models.CharField(verbose_name='是否履行完毕', default='', max_length=1)
+    is_related = models.CharField(verbose_name='是否为关联方担保', default='', max_length=1)
+
+    class Meta:
+        unique_together = ("stk_cd", "acc_per", 'object_classify','company_name')
+
+    def __str__(self):
+        return '对外担保情况：{}于{}'.format(self.stk_cd, self.acc_per)
+
+class GuaranteAmount(CommonInfo):
+    GUARANTE_OBJECT_CLASSIFY = (
+        ('A', 'extern_company'),  # 公司及其子公司对外担保情况（不包括对子公司的担保）
+        ('B', 'subsidiari'),  # 公司对子公司的担保情况
+        ('C', 'subsidiari_to_subsidiari'),  # 子公司对子公司的担保情况
+        ('sum', 'sum'),  # 担保合计
+    )
+    object_classify = models.CharField(verbose_name='担保对象分类', max_length=30, choices=GUARANTE_OBJECT_CLASSIFY,
+                                       default='B')
+    approv_amount_due_period =  models.DecimalField(verbose_name='报告期内审批的对外担保额度合计', decimal_places=2, max_digits=22, default=0.00)
+    actual_amount_due_period =  models.DecimalField(verbose_name='报告期内实际发生额', decimal_places=2, max_digits=22, default=0.00)
+    approv_amount_end_period =  models.DecimalField(verbose_name='报告期末已审批的对外担保额度合计', decimal_places=2, max_digits=22, default=0.00)
+    actual_amount_end_period =  models.DecimalField(verbose_name='报告期末实际对外担保余额合计', decimal_places=2, max_digits=22, default=0.00)
+
+    class Meta:
+        unique_together = ("stk_cd", "acc_per", 'object_classify')
+
+    def __str__(self):
+        return '对外担保金额：{}于{}'.format(self.stk_cd, self.acc_per)
+
+class AnalysiOfGuarante(CommonInfo):
+    related = models.DecimalField(verbose_name='为股东、实际控制人及其关联方提供担保的余额', decimal_places=2, max_digits=22,
+                                                   default=0.00)
+    asset_li_ratio_exce_70_per = models.DecimalField(verbose_name='直接或间接为资产负债率超过70%的被担保对象提供的债务担保余额', decimal_places=2, max_digits=22,
+                                  default=0.00)
+    more_than_50_per_of_net_asset = models.DecimalField(verbose_name='担保总额超过净资产50%部分的金额', decimal_places=2,
+                                                     max_digits=22,default=0.00)
+    sum = models.DecimalField(verbose_name='担保分析合计', decimal_places=2,max_digits=22,default=0.00)
+    warranti_respons_desc = models.TextField(verbose_name='对未到期担保，报告期内已发生担保责任或可能承担连带清偿责任的情况说明',default='')
+    non_compli_guarante = models.TextField(verbose_name='违反规定程序对外提供担保的说明',default='')
+
+    class Meta:
+        unique_together = ("stk_cd", "acc_per")
+
+    def __str__(self):
+        return '对外担保金额：{}于{}'.format(self.stk_cd, self.acc_per)
 
 

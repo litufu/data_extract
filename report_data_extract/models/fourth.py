@@ -8,16 +8,16 @@ class BusiSituatDiscussAndAnalysi(CommonInfo):
     busi_situat_discuss = models.TextField(verbose_name='经营情况讨论与分析',default='')
     major_oper_condit = models.TextField(verbose_name='报告期内主要经营情况',default='')
     revenu_and_cost_anal = models.TextField(verbose_name='收入与成本分析',default='')
-    ipr_instructi = models.TextField(verbose_name='分行业、分产品、分地区主营业务说明',default='')
-    psi_instructi = models.TextField(verbose_name='产销量情况说明',default='')
-    ca_instructi = models.TextField(verbose_name='成本分析情况说明',default='')
-    mfcs_instructi = models.TextField(verbose_name='前五大客户及供应商说明',default='')
-    ea_instructi = models.TextField(verbose_name='费用变动分析',default='')
-    cfa_instructi = models.TextField(verbose_name='现金流量表变动分析',default='')
-    al_instructi = models.TextField(verbose_name='资产负债表表变动分析',default='')
-    la_instructi = models.TextField(verbose_name='受限资产情况说明',default='')
-    ioia_instructi = models.TextField(verbose_name='行业经营性信息分析',default='')
-    mhca_instructi = models.TextField(verbose_name='主要参股公司分析',default='')
+    industry_product_region = models.TextField(verbose_name='分行业、分产品、分地区主营业务说明',default='')
+    product_and_sale = models.TextField(verbose_name='产销量情况说明',default='')
+    cost_analysi = models.TextField(verbose_name='成本分析情况说明',default='')
+    top_5_custom_and_supplier = models.TextField(verbose_name='前五大客户及供应商说明',default='')
+    chang_in_expense = models.TextField(verbose_name='费用变动分析',default='')
+    chang_in_cash_flow_statement = models.TextField(verbose_name='现金流量表变动分析',default='')
+    balanc_sheet_chang = models.TextField(verbose_name='资产负债表变动分析',default='')
+    restrict_asset = models.TextField(verbose_name='受限资产情况说明',default='')
+    industri_busi_inform = models.TextField(verbose_name='行业经营性信息分析',default='')
+    main_sharehold_compani_analysi = models.TextField(verbose_name='主要参股公司分析',default='')
     industri_structur_and_trend = models.TextField(verbose_name='行业格局和趋势',default='')
     comp_develop_strategi = models.TextField(verbose_name='公司发展战略',default='')
     bussi_plan = models.TextField(verbose_name='公司经营计划',default='')
@@ -30,8 +30,8 @@ class BusiSituatDiscussAndAnalysi(CommonInfo):
 
 class MainBusiSubIndustry(CommonInfo):
     industry = models.CharField(verbose_name='分行业',max_length=150,default='')
-    income = models.DecimalField(verbose_name='营业收入',default=0.00,max_digits=22, decimal_places=2)
-    cost = models.DecimalField(verbose_name='营业成本',default=0.00,max_digits=22, decimal_places=2)
+    oprtng_incm = models.DecimalField(verbose_name='营业收入',default=0.00,max_digits=22, decimal_places=2)
+    oprtng_cst = models.DecimalField(verbose_name='营业成本',default=0.00,max_digits=22, decimal_places=2)
 
 
     class Meta:
@@ -39,17 +39,17 @@ class MainBusiSubIndustry(CommonInfo):
 
 class MainBusiSubProduct(CommonInfo):
     product = models.CharField(verbose_name='分产品',max_length=150,default='')
-    income = models.DecimalField(verbose_name='营业收入',default=0.00,max_digits=22, decimal_places=2)
-    cost = models.DecimalField(verbose_name='营业成本',default=0.00,max_digits=22, decimal_places=2)
+    oprtng_incm = models.DecimalField(verbose_name='营业收入',default=0.00,max_digits=22, decimal_places=2)
+    oprtng_cst = models.DecimalField(verbose_name='营业成本',default=0.00,max_digits=22, decimal_places=2)
 
 
     class Meta:
         unique_together = ('stk_cd', 'acc_per','product')
 
 class MainBusiSubRegion(CommonInfo):
-    region = models.CharField(verbose_name='分产品',max_length=150,default='')
-    income = models.DecimalField(verbose_name='营业收入',default=0.00,max_digits=22, decimal_places=2)
-    cost = models.DecimalField(verbose_name='营业成本',default=0.00,max_digits=22, decimal_places=2)
+    region = models.CharField(verbose_name='分地区',max_length=150,default='')
+    oprtng_incm = models.DecimalField(verbose_name='营业收入',default=0.00,max_digits=22, decimal_places=2)
+    oprtng_cst = models.DecimalField(verbose_name='营业成本',default=0.00,max_digits=22, decimal_places=2)
 
 
     class Meta:
@@ -58,8 +58,8 @@ class MainBusiSubRegion(CommonInfo):
 class CostIndustry(CommonInfo):
     industry = models.CharField(verbose_name='分行业',max_length=150,default='')
     cost_composit = models.CharField(verbose_name='成本构成',max_length=120,default='')
-    thiperiod = models.DecimalField(verbose_name='本期金额',default=0.00,max_digits=22, decimal_places=2)
-    lastperiod = models.DecimalField(verbose_name='上期金额', default=0.00,max_digits=22, decimal_places=2)
+    current_period = models.DecimalField(verbose_name='本期金额',default=0.00,max_digits=22, decimal_places=2)
+    last_period = models.DecimalField(verbose_name='上期金额', default=0.00,max_digits=22, decimal_places=2)
 
 
     class Meta:
@@ -68,8 +68,8 @@ class CostIndustry(CommonInfo):
 class CostProduct(CommonInfo):
     product = models.CharField(verbose_name='分产品',max_length=150,default='')
     cost_composit = models.CharField(verbose_name='成本构成', max_length=120, default='')
-    thiperiod = models.DecimalField(verbose_name='本期金额', default=0.00,max_digits=22, decimal_places=2)
-    lastperiod = models.DecimalField(verbose_name='上期金额', default=0.00,max_digits=22, decimal_places=2)
+    current_period = models.DecimalField(verbose_name='本期金额', default=0.00,max_digits=22, decimal_places=2)
+    last_period = models.DecimalField(verbose_name='上期金额', default=0.00,max_digits=22, decimal_places=2)
 
 
     class Meta:
@@ -78,8 +78,8 @@ class CostProduct(CommonInfo):
 class CostSubRegion(CommonInfo):
     region = models.CharField(verbose_name='分地区',max_length=150,default='')
     cost_composit = models.CharField(verbose_name='成本构成', max_length=120, default='')
-    thiperiod = models.DecimalField(verbose_name='本期金额', default=0.00,max_digits=22, decimal_places=2)
-    lastperiod = models.DecimalField(verbose_name='上期金额', default=0.00,max_digits=22, decimal_places=2)
+    current_period = models.DecimalField(verbose_name='本期金额', default=0.00,max_digits=22, decimal_places=2)
+    last_period = models.DecimalField(verbose_name='上期金额', default=0.00,max_digits=22, decimal_places=2)
 
 
     class Meta:
@@ -92,6 +92,9 @@ class ProductAndSale(CommonInfo):
     inventori_vol =  models.CharField(verbose_name='库存量',max_length=150,default='')
     main_product =  models.CharField(verbose_name='主要产品',max_length=150,default='')
     unit =  models.CharField(verbose_name='单位',max_length=150,default='')
+
+    class Meta:
+        unique_together = ('stk_cd', 'acc_per','main_product')
 
 class MajorCustomAndSupplie(CommonInfo):
     MAJOR_CLASS = (
@@ -122,7 +125,7 @@ class MajorCustomAndSupplieDetail(CommonInfo):
 
 class ExpensAnalysi(CommonInfo):
     name = models.CharField(verbose_name='费用名称', max_length=150, default='', blank=True)
-    instruct = models.CharField(verbose_name='变动原因说明', max_length=500, default='', blank=True)
+    change_reason = models.CharField(verbose_name='变动原因说明', max_length=500, default='', blank=True)
 
     class Meta:
         unique_together = ('stk_cd', 'acc_per','name')
@@ -214,23 +217,23 @@ class SellMajorAsset(CommonInfo):
         unique_together = ('stk_cd', 'acc_per','trade_class','trade_partner','asset_sold')
 
 class MajorHoldCompani(CommonInfo):
-    name = models.CharField(verbose_name='公司名称', default='', max_length=150)
+    company_name = models.CharField(verbose_name='公司名称', default='', max_length=150)
     company_type = models.CharField(verbose_name='公司类型', default='', max_length=150)
     main_bussi = models.CharField(verbose_name='主营业务', default='', max_length=500)
-    regist_capit = models.DecimalField(verbose_name='注册资本', default=0.00, max_digits=22, decimal_places=2)
+    regist_capit = models.CharField(verbose_name='注册资本', default='', max_length=50)
     total_asset = models.DecimalField(verbose_name='总资产', default=0.00, max_digits=22, decimal_places=2)
     net_asset = models.DecimalField(verbose_name='净资产', default=0.00, max_digits=22, decimal_places=2)
-    oper_incom = models.DecimalField(verbose_name='营业收入', default=0.00, max_digits=22, decimal_places=2)
-    oper_profit = models.DecimalField(verbose_name='营业利润', default=0.00, max_digits=22, decimal_places=2)
-    net_profit = models.DecimalField(verbose_name='净利润', default=0.00, max_digits=22, decimal_places=2)
+    oprtng_incm = models.DecimalField(verbose_name='营业收入', default=0.00, max_digits=22, decimal_places=2)
+    oprtng_prft = models.DecimalField(verbose_name='营业利润', default=0.00, max_digits=22, decimal_places=2)
+    np = models.DecimalField(verbose_name='净利润', default=0.00, max_digits=22, decimal_places=2)
 
     class Meta:
-        unique_together = ('stk_cd', 'acc_per','name')
+        unique_together = ('stk_cd', 'acc_per','company_name')
 
 class AcquisitAndDisposCom(CommonInfo):
-    name = models.CharField(verbose_name='公司名称', default='', max_length=150)
+    company_name = models.CharField(verbose_name='公司名称', default='', max_length=150)
     acquisit_and_dispos = models.CharField(verbose_name='取得和处置子公司方式', default='', max_length=150)
     impact_on_production = models.CharField(verbose_name='对整体生产经营和业绩的影响', default='', max_length=300)
 
     class Meta:
-        unique_together = ('stk_cd', 'acc_per','name')
+        unique_together = ('stk_cd', 'acc_per','company_name')

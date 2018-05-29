@@ -4,7 +4,8 @@
 import re
 from bs4 import BeautifulSoup
 from collections import OrderedDict
-from utils.mytools import check_if_pure_digital
+from utils.mytools import check_if_pure_digital,is_num
+import re
 
 class HtmlTable(object):
 
@@ -21,7 +22,19 @@ class HtmlTable(object):
         self.split_or_not = self.need_splittable_or_not()
         self.split_tables = self.splitAndCombine()
         # self.split_tables = self.splittable()
-        self.fill_merge_cells_table =[self.fill_merge_cells(table) for table in self.split_tables]
+        self.fill_merge_cells_table = self.get_fill_merge_cells_table()
+
+    def get_fill_merge_cells_table(self):
+        ret = []
+        for table in self.split_tables:
+            if isinstance(table,tuple):
+                ret.append(table)
+            else:
+                if True in [is_num(re.sub('\s+','',cell.get_text())) for tr in table for cell in tr]:
+                    ret.append(self.fill_merge_cells(table))
+                else:
+                    ret.append(table)
+        return ret
 
     def get_cell_by_pos(self,pos):
         for item,value in self.table_cells_dict:
@@ -242,7 +255,7 @@ class HtmlTable(object):
         else:
             return [after_splite_table]
 
-    def splitAndCombine(self):
+    def splitAndCombine(self,combine_header=False):
         '''
         将表格进行拆分或合并：
         如果一行有一个单元格，且该单元格的w不在最长的单元格列表中，则分表
@@ -271,7 +284,6 @@ class HtmlTable(object):
                     for j in range(1,len(curr_row_index)):
                         if curr_row_index[j]- curr_row_index[j-1]>1:
                             row_have_space.append(i)
-
         #检查单元格是否没有第一个和最后一个
         row_have_no_start_end = []
         if self.longest_row_x is not None:
@@ -279,7 +291,7 @@ class HtmlTable(object):
                 if row_length[i]<row_length[i-1]:
                     curr_row = self.ordered_table_cells[i]
                     curr_row_index = [self.longest_row_x.index(td.attrs['class'][1]) for td in curr_row]
-                    if (0 not in curr_row_index) and ((len(self.longest_row_x)-1) not in curr_row_index):
+                    if (0 not in curr_row_index) or ((len(self.longest_row_x)-1) not in curr_row_index):
                         row_have_no_start_end.append(i)
         else:
             for i in range(1,len(row_length)):
@@ -288,10 +300,9 @@ class HtmlTable(object):
                     last_row_td = [td.attrs['class'][1] for td in last_row]
                     curr_row = self.ordered_table_cells[i]
                     # curr_row_index = [last_row_td.index(td.attrs['class'][1]) for td in curr_row]
-                    if ((curr_row[0].attrs['class'][1] in last_row_td) and (last_row_td.index(curr_row[0].attrs['class'][1])!=0)  and
+                    if (((curr_row[0].attrs['class'][1] in last_row_td) and (last_row_td.index(curr_row[0].attrs['class'][1])!=0))  or
                          ((curr_row[len(curr_row)-1].attrs['class'][1] in last_row_td) and (last_row_td.index(curr_row[len(curr_row)-1].attrs['class'][1])!=(len(last_row_td)-1)))):
                         row_have_no_start_end.append(i)
-
         #检查是否存在一行只有一个单元格的情况,求出该行的索引
         row_have_1_cell = [i for i,length in enumerate(row_length) if length==1]
         columns_max_length = max(row_length)
@@ -324,7 +335,7 @@ class HtmlTable(object):
 
                     is_combin = []
                     for curr_td in curr_row:
-                        if type(last_row) is not int:
+                        if type(last_row) is not tuple:
                             flag = curr_td.attrs['class'][3] in [td.attrs['class'][3] for td in last_row]
                             is_combin.append(flag)
 
@@ -336,52 +347,81 @@ class HtmlTable(object):
                                     td.string = td.get_text() + curr_td.get_text()
                                     # combine_list.append(i)
                         self.ordered_table_cells.pop(i)
+                    elif True in is_combin:
+                        for curr_td in curr_row:
+                            for td in last_row:
+                                if td.attrs['class'][3] == curr_td.attrs['class'][3] and td.attrs['class'][1] == \
+                                        curr_td.attrs['class'][1] :
+                                    td.string = td.get_text() + curr_td.get_text()
+                                    # curr_row.remove(curr_td)
+                        # self.ordered_table_cells.pop(i)
                     else:
-                        if next_row is None:
+                        if next_row is None or type(next_row) is int:
                             pass
                         else:
                             if len(curr_row) == 1 :
                                 if self.check_row_have_pure_digital(next_row):
-                                    self.ordered_table_cells[i] = 1
+                                    self.ordered_table_cells[i] = (1,re.sub('\s+','',self.ordered_table_cells[i][0].get_text()))
                                 else:
-                                    self.ordered_table_cells[i] = 1
-
-
-                    # if type(last_row) is not int and curr_row[0].attrs['class'][3] in [td.attrs['class'][3] for td in last_row]:
-                    #     for td in last_row:
-                    #         if td.attrs['class'][3] == curr_row[0].attrs['class'][3] and td.attrs['class'][1] == curr_row[0].attrs['class'][1]:
-                    #             td.string = td.get_text()+ curr_row[0].get_text()
-                    #             # combine_list.append(i)
-                    #             self.ordered_table_cells.pop(i)
-                    #             break
-                    # else:
-                    #     if next_row is None:
-                    #         pass
-                    #     else:
-                    #         if self.check_row_have_pure_digital(next_row):
-                    #             self.ordered_table_cells[i] = 1
-                    #         else:
-                    #             self.ordered_table_cells[i] = 1
+                                    self.ordered_table_cells[i] = (1,re.sub('\s+','',self.ordered_table_cells[i][0].get_text()))
                 else:
                     if i == 0:
-                        self.ordered_table_cells[i] = 1
+                        self.ordered_table_cells[i] = (1,re.sub('\s+','',self.ordered_table_cells[i][0].get_text()))
                     elif i == len(self.ordered_table_cells):
-                        self.ordered_table_cells[i] = 1
+                        self.ordered_table_cells[i] = (1,re.sub('\s+','',self.ordered_table_cells[i][0].get_text()))
                     else:
                         pass
 
             for tr in self.ordered_table_cells:
-                if tr == 1:
+                if isinstance(tr,tuple):
                     if len(temp)>0:
                         temp_tables.append(temp[:])
                         temp = []
+                        temp_tables.append(tr)
                 elif tr==0:
                     pass
                 else:
                     temp.append(tr[:])
             if len(temp)>0:
                 temp_tables.append(temp[:])
-            return temp_tables
+
+            if len(temp_tables)>1:
+
+                first_df_id = 0
+                for key, table in enumerate(temp_tables):
+                    if not isinstance(table,str):
+                        first_df_id = key
+                        break
+
+                first_df = temp_tables[first_df_id]
+
+                result_talbes = []
+                for key, table in enumerate(temp_tables):
+
+                    if isinstance(table,tuple):
+                        result_talbes.append(table)
+                    else:
+                        if key == first_df_id:
+                            result_talbes.append(table)
+                        else:
+                            if True not in [is_num(re.sub('\s+','',cell.get_text())) for cell in table[0]]:
+                                pass
+                            else:
+                                first_lines = []
+                                if first_df is not None:
+                                    for tr in first_df:
+                                        if True not in [is_num(re.sub('\s+', '', cell.get_text())) for cell in tr]:
+                                            first_lines.append(tr)
+                                        else:
+                                            break
+                                if len(first_lines)>0:
+                                    first_lines.extend(table)
+                                    result_talbes.append(first_lines)
+                                else:
+                                    pass
+                return result_talbes
+            else:
+                return temp_tables
         else:
             return [self.ordered_table_cells]
 
@@ -393,6 +433,7 @@ class HtmlTable(object):
         return False
 
     def fill_merge_cells(self,table):
+
         '''
         返回表格所有单元格的坐标信息，对于合并单元格采用先向下填充，再向左填充的方法，确保所有的行拥有相同的列数
         :return: table 将同一行的单元格放在一个列表，将行按照顺序添加到table中：格式如下
@@ -434,7 +475,7 @@ class HtmlTable(object):
                         max_col_num = max_row_col.index(x) if x in max_row_col else diff_col_num
                         now_row.insert(max_col_num, pre_row[diff_col_num])
 
-        # 单元格想左填充
+        # 单元格向左填充
         for i, tr in enumerate(table):
             # 如果已经是最大行跳过
             if len(tr) == maxlength:
@@ -477,7 +518,6 @@ class HtmlTable(object):
         for line in table:
             tr = soup.new_tag('tr')
             for cell in line:
-                # print(cell)
                 new_td = cell.wrap(soup.new_tag('td'))
                 tr.append(BeautifulSoup(str(new_td), 'lxml').find('td'))  # 不能直接append td，否则会出现浅拷贝情况
             html_table.append(BeautifulSoup(str(tr), 'lxml').find('tr'))  # 不能直接append tr，否则会出现浅拷贝情况

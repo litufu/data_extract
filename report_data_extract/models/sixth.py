@@ -41,7 +41,7 @@ class ChangInOrdinariShare(CommonInfo):
         ('others', 'others'),
         ('total_number', 'total_number'),
     )
-    project = models.CharField(verbose_name='项目', choices=PROJECT_CLASS, max_length=50, blank=True)
+    name = models.CharField(verbose_name='项目', choices=PROJECT_CLASS, max_length=50, blank=True)
     quantiti_befor_chang = models.IntegerField(verbose_name='变动前数量')
     issu_new_share = models.IntegerField(verbose_name='发行新股')
     give_share = models.IntegerField(verbose_name='送股')
@@ -51,7 +51,7 @@ class ChangInOrdinariShare(CommonInfo):
     quantiti_after_chang = models.IntegerField(verbose_name='变动后数量')
 
     class Meta:
-        unique_together = ('stk_cd', 'acc_per','project')
+        unique_together = ('stk_cd', 'acc_per','name')
 
 class ChangInRestrictSaleOfShare(CommonInfo):
     sharehold_name = models.CharField(verbose_name='股东名称',max_length=150,default='')
@@ -67,10 +67,10 @@ class ChangInRestrictSaleOfShare(CommonInfo):
 
 class TopTenSharehold(CommonInfo):
     sharehold_name = models.CharField(verbose_name='股东名称',max_length=150,default='')
-    increas_and_decreas = models.IntegerField(verbose_name='报告期内增减',default=0)
-    end_hold_num = models.IntegerField(verbose_name='期末持股数量',default=0)
+    increas_and_decreas = models.DecimalField(verbose_name='报告期内增减',default=0.00,max_digits=22, decimal_places=2)
+    end_hold_num = models.DecimalField(verbose_name='期末持股数量',default=0.00,max_digits=22, decimal_places=2)
     ratio = models.DecimalField(verbose_name='比例',default=0.00,max_digits=22, decimal_places=2)
-    restrict_share = models.IntegerField(verbose_name='持有有限售条件股份数量',default=0)
+    restrict_share = models.DecimalField(verbose_name='持有有限售条件股份数量',default=0.00,max_digits=22, decimal_places=2)
     pledg_or_freez_status = models.CharField(verbose_name='质押或冻结情况',max_length=150,default='')
     pledg_or_freez_num = models.CharField(verbose_name='质押或冻结数量',max_length=150,default='')
     natur_of_sharehold = models.CharField(verbose_name='股东性质',max_length=150,default='')
@@ -80,9 +80,9 @@ class TopTenSharehold(CommonInfo):
 
 class TopTenUnlimitSharehold(CommonInfo):
     sharehold_name = models.CharField(verbose_name='股东名称',max_length=150,default='')
-    hold_num = models.IntegerField(verbose_name='持有无限售条件流通股的数量',default=0)
+    hold_num = models.DecimalField(verbose_name='持有无限售条件流通股的数量',default=0.00,max_digits=22, decimal_places=2)
     type = models.CharField(verbose_name='股份种类',max_length=150,default='')
-    type_num = models.IntegerField(verbose_name='股份种类数量',default=0)
+    type_num = models.DecimalField(verbose_name='股份种类数量',default=0.00,max_digits=22, decimal_places=2)
 
 
     class Meta:
@@ -103,7 +103,7 @@ class ShareholdCorpor(CommonInfo):
     date_of_establish = models.CharField(verbose_name='成立日期', max_length=150, default='')
     main_busines = models.TextField(verbose_name='主要经营业务', default='')
     regist_capit = models.CharField(verbose_name='注册资本',max_length=150, default='')
-    contor_other_list_com = models.TextField(verbose_name='报告期内控股和参股的其他境内外上市公司的股权情况', default='')
+    control_other_list_com = models.TextField(verbose_name='报告期内控股和参股的其他境内外上市公司的股权情况', default='')
     other_desc = models.TextField(verbose_name='其他情况说明', default='')
 
 
@@ -124,7 +124,7 @@ class ControlShareholdNaturPerson(CommonInfo):
     other_right_of_abod = models.CharField(verbose_name='是否取得其他国家或地区居留权', max_length=150, default='')
     chang_date = models.CharField(verbose_name='变更日期', max_length=150, default='')
     major_occup_and_job = models.TextField(verbose_name='主要职业及职务', default='')
-    sharehold_other_company = models.TextField(verbose_name='报告期内控股和参股的其他境内外上市公司的股权情况', default='')
+    control_other_list_com = models.TextField(verbose_name='报告期内控股和参股的其他境内外上市公司的股权情况', default='')
 
     class Meta:
         unique_together = ('stk_cd', 'acc_per')

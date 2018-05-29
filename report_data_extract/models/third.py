@@ -9,7 +9,7 @@ class CompaniBusiOverview(CommonInfo):
     major_chang_in_major_asset = models.TextField(verbose_name='主要资产发生重大变化', default='')
     core_competit = models.TextField(verbose_name='核心竞争力', default='')
     major_asset = models.CharField(verbose_name='主要资产', max_length=150, default='')
-    descrip = models.TextField(verbose_name='变动原因说明', default='')
+    change_reason = models.TextField(verbose_name='变动原因说明', default='')
     major_oversea_asset = models.TextField(verbose_name='主要境外资产情况', default='')
 
     class Meta:

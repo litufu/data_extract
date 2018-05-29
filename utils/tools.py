@@ -407,71 +407,7 @@ def find_longest_row(cells_dict):
             return None
 
 if __name__ == '__main__':
-
-    # lst = [2]
-    # print(is_continue(lst))
-    # handle_merge_cells('pf5')
-    # import xlrd
-    #
-    # xls = xlrd.open_workbook(r'C:\Users\28521\Desktop\123.xlsx')
-    # sh = xls.sheet_by_index(0)
-    #
-    # # 读取excel并读取第一页的内容。
-    #
-    # for crange in sh.merged_cells:
-    #     rs, re, cs, ce = crange
-    #     print(rs,re,cs,ce)
-    #     print((rs, cs),(re - rs, ce - cs))
-
-    # dfs = pd.read_html()
-    # soup = BeautifulSoup()
-    # 求总共的列数
-
-
-
-    html = handle_page_table('t.html')
-    # all_pc_children = get_all_pc_children('nw.html')
-    # for pc_childern in all_pc_children:
-    #     table_cells = get_table_cells(pc_childern)
-    #     for cells in table_cells:
-    #         print('------------------')
-    #         print(cells)
-    # table_cells = get_table_cells('t.html')
-    # for cells in table_cells:
-    #     cells_dict = create_cells_dict(cells)
-    #     # print(cells_dict)
-    #     result = func(cells_dict)
-    #     print(result)
-    dfs = pd.read_html(str(html))
-    for df in dfs:
-        print(remove_per_from_df(remove_space_from_df(df)))
-
-        # print(df)
-    # print(html)
-    # soup = BeautifulSoup(open('t.html',encoding='utf-8').read(),'lxml')
-    # cells = soup.find_all(class_='c')
-
-
-
-    # print(tag_special.attrs['class'])
-    # print(tag_special)
-    # cells_dict = create_cells_dict(cells)
-    # table_coordinate = create_table_coordinate(cells_dict)
-    # table = create_html_table(cells_dict,table_coordinate)
-    # dfs = pd.read_html(table)
-    # print(dfs[0])
-
-
-
-
-
-
-    # dfs = handle_more_talbe_in_one_page('pf5')
-    # if dfs is not None:
-    #     for df in dfs:
-    #         print(df)
-    # else:
-    #     print('该页面不存在表格')
+    pass
 
 
 

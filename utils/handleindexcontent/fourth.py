@@ -5,14 +5,17 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "data_extract.settings")
 django.setup()
 import re
 import numpy as np
-from utils.mytools import HandleIndexContent,remove_space_from_df,remove_per_from_df
+
 from report_data_extract import models
-from decimal import Decimal
-import decimal
 from collections import OrderedDict
 from itertools import chain
 import pandas as pd
-
+from utils.handleindexcontent.commons import save_instructi
+from utils.handleindexcontent.base import HandleIndexContent
+from utils.mytools import remove_space_from_df,remove_per_from_df,num_to_decimal,combine_table_to_first
+from utils.handleindexcontent.commons import save_instructi,recognize_instucti,recognize_df_and_instucti,\
+    compute_start_pos,get_dfs
+from utils.handleindexcontent.base import create_and_update
 
 class BusiSituatDiscussAndAnalysi(HandleIndexContent):
     '''
@@ -22,22 +25,8 @@ class BusiSituatDiscussAndAnalysi(HandleIndexContent):
         super(BusiSituatDiscussAndAnalysi, self).__init__(stk_cd_id,acc_per,indexno,indexcontent)
 
     def recognize(self):
-        contents = []
-        if self.indexno in ['0401000000','04010000']:
-            for content in self.indexcontent:
-                for classify,item in content.items():
-                    if classify == 't' and len(item)>0:
-                        #逻辑检验：含有公司的中文名称
-                        content = re.sub('.适用.不适用','',item)
-                        contents.append(content)
-                    elif classify == 'c' and len(item)>0:
-                        content = remove_space_from_df(item[0][0]).to_string()
-                        contents.append(content)
-                    else:
-                        pass
-        else:
-            pass
-        return ''.join(contents)
+        indexnos = ['0401000000','04010000']
+        pass
 
     def converse(self):
 
@@ -48,21 +37,9 @@ class BusiSituatDiscussAndAnalysi(HandleIndexContent):
         pass
 
     def save(self):
-        busi_situat_discuss  = self.recognize()
-
-        if len(busi_situat_discuss)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.busi_situat_discuss = busi_situat_discuss
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    busi_situat_discuss=busi_situat_discuss
-                   )
-        else:
-            pass
+        df,unit,instructi  = recognize_instucti(self.indexcontent)
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'busi_situat_discuss')
 
 class MajorOperConditDureTheReportPe(HandleIndexContent):
     '''
@@ -72,22 +49,9 @@ class MajorOperConditDureTheReportPe(HandleIndexContent):
         super(MajorOperConditDureTheReportPe, self).__init__(stk_cd_id,acc_per,indexno,indexcontent)
 
     def recognize(self):
-        contents = []
-        if self.indexno in ['0402000000']:
-            for content in self.indexcontent:
-                for classify,item in content.items():
-                    if classify == 't' and len(item)>0:
-                        #逻辑检验：含有公司的中文名称
-                        content = re.sub('.适用.不适用','',item)
-                        contents.append(content)
-                    elif classify == 'c' and len(item)>0:
-                        content = remove_space_from_df(item[0][0]).to_string()
-                        contents.append(content)
-                    else:
-                        pass
-        else:
-            pass
-        return ''.join(contents)
+        indexnos = ['0402000000']
+        pass
+
 
     def converse(self):
 
@@ -98,21 +62,9 @@ class MajorOperConditDureTheReportPe(HandleIndexContent):
         pass
 
     def save(self):
-        major_oper_condit  = self.recognize()
-
-        if len(major_oper_condit)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.major_oper_condit = major_oper_condit
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    major_oper_condit=major_oper_condit
-                   )
-        else:
-            pass
+        df,unit,instructi  = recognize_instucti(self.indexcontent)
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'major_oper_condit')
 
 class RevenuAndCostAnalysi(HandleIndexContent):
     '''
@@ -122,22 +74,8 @@ class RevenuAndCostAnalysi(HandleIndexContent):
         super(RevenuAndCostAnalysi, self).__init__(stk_cd_id,acc_per,indexno,indexcontent)
 
     def recognize(self):
-        contents = []
-        if self.indexno in ['0402010100','04020100']:
-            for content in self.indexcontent:
-                for classify,item in content.items():
-                    if classify == 't' and len(item)>0:
-                        #逻辑检验：含有公司的中文名称
-                        content = re.sub('.适用.不适用','',item)
-                        contents.append(content)
-                    # elif classify == 'c' and len(item)>0:
-                    #     content = remove_space_from_df(item[0]).to_string()
-                    #     contents.append(content)
-                    else:
-                        pass
-        else:
-            pass
-        return ''.join(contents)
+        indexnos = ['0402010100','04020100']
+        pass
 
     def converse(self):
 
@@ -148,21 +86,10 @@ class RevenuAndCostAnalysi(HandleIndexContent):
         pass
 
     def save(self):
-        revenu_and_cost_anal  = self.recognize()
+        df, unit, instructi = recognize_instucti(self.indexcontent)
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'revenu_and_cost_anal')
 
-        if len(revenu_and_cost_anal)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.revenu_and_cost_anal = revenu_and_cost_anal
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    revenu_and_cost_anal=revenu_and_cost_anal
-                   )
-        else:
-            pass
 
 class MainBusiSubIndustryProduRegion(HandleIndexContent):
     '''
@@ -219,7 +146,6 @@ class MainBusiSubIndustryProduRegion(HandleIndexContent):
 
     def save(self):
         dfs, unit, instructi = self.recognize()
-        unit_change = {'元':1,'千元':1000,'万元':10000,'百万元':1000000,'亿元':100000000}
         if len(dfs)>0:
             df_industri = dfs.get('分行业')
             df_produ = dfs.get('分产品')
@@ -229,24 +155,15 @@ class MainBusiSubIndustryProduRegion(HandleIndexContent):
                 industri = list(df.iloc[:,0])
                 industri_incom = list(df.iloc[:,1])
                 industri_cost = list(df.iloc[:,2])
-                for industry, income, cost in zip(industri, industri_incom, industri_cost):
-                    if models.MainBusiSubIndustry.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                 industry=industry):
-                        obj = models.MainBusiSubIndustry.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                     industry=industry)
-                        obj.industry = industry
-                        obj.income = Decimal(re.sub(',','',str(income)))*unit_change[unit]
-                        obj.cost = Decimal(re.sub(',','',str(cost)))*unit_change[unit]
-                        obj.save()
-                    else:
-                        print(income)
-                        print(unit)
-                        models.MainBusiSubIndustry.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            industry=industry,
-                            income=Decimal(re.sub(',','',str(income)))*unit_change[unit],
-                            cost=Decimal(re.sub(',','',str(cost)))*unit_change[unit])
+                for industry, oprtng_incm, oprtng_cst in zip(industri, industri_incom, industri_cost):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        industry=industry,
+                        oprtng_incm=num_to_decimal(oprtng_incm, unit),
+                        oprtng_cst=num_to_decimal(oprtng_cst, unit)
+                    )
+                    create_and_update('MainBusiSubIndustry',**value_dict)
             else:
                 pass
 
@@ -255,22 +172,15 @@ class MainBusiSubIndustryProduRegion(HandleIndexContent):
                 products = list(df.iloc[:,0])
                 product_incom = list(df.iloc[:,1])
                 product_cost = list(df.iloc[:,2])
-                for product, income, cost in zip(products, product_incom, product_cost):
-                    if models.MainBusiSubProduct.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                product=product):
-                        obj = models.MainBusiSubProduct.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                    product=product)
-                        obj.product = product
-                        obj.income = Decimal(str(income))*unit_change[unit]
-                        obj.cost = Decimal(str(cost))*unit_change[unit]
-                        obj.save()
-                    else:
-                        models.MainBusiSubProduct.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            product=product,
-                            income=Decimal(str(income))*unit_change[unit],
-                            cost=Decimal(str(cost))*unit_change[unit])
+                for product, oprtng_incm, oprtng_cst in zip(products, product_incom, product_cost):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        product=product,
+                        oprtng_incm=num_to_decimal(oprtng_incm, unit),
+                        oprtng_cst=num_to_decimal(oprtng_cst, unit)
+                    )
+                    create_and_update('MainBusiSubProduct',**value_dict)
             else:
                 pass
 
@@ -279,40 +189,22 @@ class MainBusiSubIndustryProduRegion(HandleIndexContent):
                 regions = list(df.iloc[:,0])
                 region_incom = list(df.iloc[:,1])
                 region_cost = list(df.iloc[:,2])
-                for region, income, cost in zip(regions, region_incom, region_cost):
-                    if models.MainBusiSubRegion.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                region=region):
-                        obj = models.MainBusiSubRegion.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                    region=region)
-                        obj.region = region
-                        obj.income = Decimal(re.sub(',','',str(income)))*unit_change[unit]
-                        obj.cost = Decimal(re.sub(',','',str(cost)))*unit_change[unit]
-                        obj.save()
-                    else:
-                        models.MainBusiSubRegion.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            region=region,
-                            income=Decimal(re.sub(',','',str(income)))*unit_change[unit],
-                            cost=Decimal(re.sub(',','',str(cost)))*unit_change[unit])
+                for region, oprtng_incm, oprtng_cst in zip(regions, region_incom, region_cost):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        region=region,
+                        oprtng_incm=num_to_decimal(oprtng_incm, unit),
+                        oprtng_cst=num_to_decimal(oprtng_cst, unit)
+                    )
+                    create_and_update('MainBusiSubRegion',**value_dict)
             else:
                 pass
         else:
             pass
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'industry_product_region')
 
-        if len(instructi) > 0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.ipr_instructi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    ipr_instructi=instructi
-                   )
-        else:
-            pass
 
 class MainBusiSubIndustryProduRegionSZ(HandleIndexContent):
     '''
@@ -332,9 +224,10 @@ class MainBusiSubIndustryProduRegionSZ(HandleIndexContent):
             for content in self.indexcontent:
                 for classify, item in content.items():
                     if classify == 'c' and len(item) > 0:
-                        dfs['分行业'] = remove_space_from_df(item[1][0])
-                        dfs['分产品'] = remove_space_from_df(item[2][0])
-                        dfs['分地区'] = remove_space_from_df(item[3][0])
+                        item = combine_table_to_first(item)
+                        dfs = get_dfs(('分行业', '分产品', '分地区'), item)
+                        for i in dfs:
+                            print(dfs[i])
                     elif classify=='t' and len(item)>0:
                         if pattern.match(item):
                             unit = pattern.match(item).groups()[0]
@@ -355,73 +248,55 @@ class MainBusiSubIndustryProduRegionSZ(HandleIndexContent):
 
     def save(self):
         dfs, unit = self.recognize()
-        unit_change = {'元':1,'千元':1000,'万元':10000,'百万元':1000000,'亿元':100000000}
         if len(dfs)>0:
             df_industri = dfs.get('分行业')
             df_produ = dfs.get('分产品')
             df_region = dfs.get('分地区')
             if df_industri is not None:
-                df = df_industri
-                industri = list(df.iloc[:,0])
-                industri_incom = list(df.iloc[:,1])
-                for industry, income in zip(industri, industri_incom):
-                    if models.MainBusiSubIndustry.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                 industry=industry):
-                        obj = models.MainBusiSubIndustry.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                     industry=industry)
-                        obj.industry = industry
-                        obj.income = Decimal(re.sub(',','',str(income)))*unit_change[unit]
-                        obj.save()
-                    else:
-                        models.MainBusiSubIndustry.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            industry=industry,
-                            income=Decimal(re.sub(',','',str(income)))*unit_change[unit],
-                        )
+                df = df_industri[~df_industri.iloc[:,0].str.contains('合计')]
+                start_pos = compute_start_pos(df)
+                industri = list(df.iloc[start_pos[0]:,0])
+                industri_incom = list(df.iloc[start_pos[0]:,1])
+                for industry, oprtng_incm in zip(industri, industri_incom):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        industry=industry,
+                        oprtng_incm=num_to_decimal(oprtng_incm, unit),
+                    )
+                    create_and_update('MainBusiSubIndustry',**value_dict)
             else:
                 pass
 
             if df_produ is not None:
-                df = df_produ
-                products = list(df.iloc[:,0])
-                product_incom = list(df.iloc[:,1])
-                for product, income in zip(products, product_incom):
-                    if models.MainBusiSubProduct.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                product=product):
-                        obj = models.MainBusiSubProduct.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                    product=product)
-                        obj.product = product
-                        obj.income = Decimal(str(income))*unit_change[unit]
-                        obj.save()
-                    else:
-                        models.MainBusiSubProduct.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            product=product,
-                            income=Decimal(str(income))*unit_change[unit])
+                df = df_produ[~df_produ.iloc[:, 0].str.contains('合计')]
+                start_pos = compute_start_pos(df)
+                products = list(df.iloc[start_pos[0]:,0])
+                product_incom = list(df.iloc[start_pos[0]:,1])
+                for product, oprtng_incm in zip(products, product_incom):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        product=product,
+                        oprtng_incm=num_to_decimal(oprtng_incm, unit)
+                    )
+                    create_and_update('MainBusiSubProduct',**value_dict)
             else:
                 pass
 
             if df_region is not None:
-                df = df_region
-                regions = list(df.iloc[:,0])
-                region_incom = list(df.iloc[:,1])
-                for region, income in zip(regions, region_incom):
-                    if models.MainBusiSubRegion.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                region=region):
-                        obj = models.MainBusiSubRegion.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                    region=region)
-                        obj.region = region
-                        obj.income = Decimal(re.sub(',','',str(income)))*unit_change[unit]
-                        obj.save()
-                    else:
-                        models.MainBusiSubRegion.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            region=region,
-                            income=Decimal(re.sub(',','',str(income)))*unit_change[unit]
-                        )
+                df = df_region[~df_region.iloc[:, 0].str.contains('合计')]
+                start_pos = compute_start_pos(df)
+                regions = list(df.iloc[start_pos[0]:,0])
+                region_incom = list(df.iloc[start_pos[0]:,1])
+                for region, oprtng_incm in zip(regions, region_incom):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        region=region,
+                        oprtng_incm=num_to_decimal(oprtng_incm, unit)
+                    )
+                    create_and_update('MainBusiSubRegion',**value_dict)
             else:
                 pass
         else:
@@ -444,10 +319,9 @@ class MainBusiSubIndustryProduRegionOvertenP(HandleIndexContent):
         if self.indexno in ['04020202']:
             for content in self.indexcontent:
                 for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        dfs['分行业'] = remove_space_from_df(item[1][0])
-                        dfs['分产品'] = remove_space_from_df(item[2][0])
-                        dfs['分地区'] = remove_space_from_df(item[3][0])
+                    if classify == 'c':
+                        item = combine_table_to_first(item)
+                        dfs = get_dfs(('分行业','分产品','分地区'),item)
                     elif classify == 't' and len(item) > 0:
                         if pattern.match(item):
                             unit = pattern.match(item).groups()[0]
@@ -468,80 +342,68 @@ class MainBusiSubIndustryProduRegionOvertenP(HandleIndexContent):
 
     def save(self):
         dfs, unit = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if len(dfs) > 0:
             df_industri = dfs.get('分行业')
             df_produ = dfs.get('分产品')
             df_region = dfs.get('分地区')
             if df_industri is not None:
-                df = df_industri.drop([0])
-                industri = list(df.iloc[:, 0])
-                industri_incom = list(df.iloc[:, 1])
-                industri_cost = list(df.iloc[:, 2])
-                for industry, income, cost in zip(industri, industri_incom, industri_cost):
-                    if models.MainBusiSubIndustry.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                 industry=industry):
-                        obj = models.MainBusiSubIndustry.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                     industry=industry)
-                        obj.industry = industry
-                        obj.income = Decimal(re.sub(',', '', str(income))) * unit_change[unit]
-                        obj.cost = Decimal(re.sub(',', '', str(cost))) * unit_change[unit]
-                        obj.save()
-                    else:
-                        models.MainBusiSubIndustry.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            industry=industry,
-                            income=Decimal(re.sub(',', '', str(income))) * unit_change[unit],
-                            cost=Decimal(re.sub(',', '', str(cost))) * unit_change[unit])
+                df = df_industri
+                pattern = re.compile('^.*?\d.*?$')
+                start_pos = list(
+                    np.where(df.iloc[:, 1].str.match(pattern) | df.iloc[:,1].str.match('nan'))[0])
+
+                industri = list(df.iloc[start_pos[0]:, 0])
+                industri_incom = list(df.iloc[start_pos[0]:, 1])
+                industri_cost = list(df.iloc[start_pos[0]:, 2])
+                for industry, oprtng_incm, oprtng_cst in zip(industri, industri_incom, industri_cost):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        industry=industry,
+                        oprtng_incm=num_to_decimal(oprtng_incm, unit),
+                        oprtng_cst=num_to_decimal(oprtng_cst, unit)
+                    )
+                    create_and_update('MainBusiSubIndustry',**value_dict)
             else:
                 pass
 
             if df_produ is not None:
-                df = df_produ.drop([0])
-                products = list(df.iloc[:, 0])
-                product_incom = list(df.iloc[:, 1])
-                product_cost = list(df.iloc[:, 2])
-                for product, income, cost in zip(products, product_incom, product_cost):
-                    if models.MainBusiSubProduct.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                product=product):
-                        obj = models.MainBusiSubProduct.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                    product=product)
-                        obj.product = product
-                        obj.income = Decimal(str(income)) * unit_change[unit]
-                        obj.cost = Decimal(str(cost)) * unit_change[unit]
-                        obj.save()
-                    else:
-                        models.MainBusiSubProduct.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            product=product,
-                            income=Decimal(str(income)) * unit_change[unit],
-                            cost=Decimal(str(cost)) * unit_change[unit])
+                df = df_produ
+                pattern = re.compile('^.*?\d.*?$')
+                start_pos = list(
+                    np.where(df.iloc[:, 1].str.match(pattern) | df.iloc[:, 1].str.match('nan'))[0])
+                products = list(df.iloc[start_pos[0]:, 0])
+                product_incom = list(df.iloc[start_pos[0]:, 1])
+                product_cost = list(df.iloc[start_pos[0]:, 2])
+                for product, oprtng_incm, oprtng_cst in zip(products, product_incom, product_cost):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        product=product,
+                        oprtng_incm=num_to_decimal(oprtng_incm, unit),
+                        oprtng_cst=num_to_decimal(oprtng_cst, unit)
+                    )
+                    create_and_update('MainBusiSubProduct',**value_dict)
             else:
                 pass
 
             if df_region is not None:
-                df = df_region.drop([0])
-                regions = list(df.iloc[:, 0])
-                region_incom = list(df.iloc[:, 1])
-                region_cost = list(df.iloc[:, 2])
-                for region, income, cost in zip(regions, region_incom, region_cost):
-                    if models.MainBusiSubRegion.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                               region=region):
-                        obj = models.MainBusiSubRegion.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                   region=region)
-                        obj.region = region
-                        obj.income = Decimal(re.sub(',', '', str(income))) * unit_change[unit]
-                        obj.cost = Decimal(re.sub(',', '', str(cost))) * unit_change[unit]
-                        obj.save()
-                    else:
-                        models.MainBusiSubRegion.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            region=region,
-                            income=Decimal(re.sub(',', '', str(income))) * unit_change[unit],
-                            cost=Decimal(re.sub(',', '', str(cost))) * unit_change[unit])
+                df = df_produ
+                pattern = re.compile('^.*?\d.*?$')
+                start_pos = list(
+                    np.where(df.iloc[:, 1].str.match(pattern) | df.iloc[:, 1].str.match('nan'))[0])
+                regions = list(df.iloc[start_pos[0]:, 0])
+                region_incom = list(df.iloc[start_pos[0]:, 1])
+                region_cost = list(df.iloc[start_pos[0]:, 2])
+                for region, oprtng_incm, oprtng_cst in zip(regions, region_incom, region_cost):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        region=region,
+                        oprtng_incm=num_to_decimal(oprtng_incm, unit),
+                        oprtng_cst=num_to_decimal(oprtng_cst, unit)
+                    )
+                    create_and_update('MainBusiSubRegion',**value_dict)
             else:
                 pass
         else:
@@ -602,44 +464,19 @@ class ProductAndSale(HandleIndexContent):
             inventori_vols = list(df.iloc[:,inventori_vol_pos[0]])
 
             for main_product, product_vol, sale_vol,inventori_vol in zip(main_products, product_vols, sale_vols,inventori_vols):
-                if models.ProductAndSale.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                             main_product=main_product,product_vol=product_vol,
-                                                             sale_vol=sale_vol,inventori_vol=inventori_vol):
-                    obj = models.ProductAndSale.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                             main_product=main_product,product_vol=product_vol,
-                                                             sale_vol=sale_vol,inventori_vol=inventori_vol)
-                    obj.main_product = main_product
-                    obj.product_vol = product_vol
-                    obj.sale_vol = sale_vol
-                    obj.inventori_vol = inventori_vol
-                    # obj.unit = unit
-                    obj.save()
-                else:
-                    models.ProductAndSale.objects.create(
-                        stk_cd_id=self.stk_cd_id,
-                        acc_per=self.acc_per,
-                        main_product=main_product,
-                        product_vol=product_vol,
-                        sale_vol=sale_vol,
-                        inventori_vol=inventori_vol,
-                        # unit=unit,
-                    )
-        else:
-            pass
-
-        if len(instructi) > 0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.psi_instructi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
+                value_dict = dict(
                     stk_cd_id=self.stk_cd_id,
                     acc_per=self.acc_per,
-                    psi_instructi=instructi
-                   )
+                    main_product=main_product,
+                    product_vol=product_vol,
+                    sale_vol=sale_vol,
+                    inventori_vol=inventori_vol,
+                )
+                create_and_update('ProductAndSale',**value_dict)
         else:
             pass
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'product_and_sale')
 
 class CostAnalysi(HandleIndexContent):
     '''
@@ -694,7 +531,6 @@ class CostAnalysi(HandleIndexContent):
 
     def save(self):
         dfs, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if len(dfs) > 0:
             df_industri = dfs.get('分行业')
             df_produ = dfs.get('分产品')
@@ -703,26 +539,18 @@ class CostAnalysi(HandleIndexContent):
                 df = df_industri.drop([0])
                 industri = list(df.iloc[:, 0])
                 cost_composits = list(df.iloc[:, 1])
-                thiperiods = list(df.iloc[:, 2])
-                lastperiods = list(df.iloc[:, 4])
-                for industry, cost_composit, thiperiod, lastperiod in zip(industri, cost_composits, thiperiods,lastperiods):
-                    if models.CostIndustry.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                 industry=industry,cost_composit=cost_composit):
-                        obj = models.CostIndustry.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                     industry=industry,cost_composit=cost_composit)
-                        obj.industry = industry
-                        obj.cost_composit = cost_composit
-                        obj.thiperiod = thiperiod
-                        obj.lastperiod = lastperiod
-                        obj.save()
-                    else:
-                        models.CostIndustry.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            industry=industry,
-                            cost_composit=cost_composit,
-                            thiperiod=thiperiod,
-                            lastperiod=lastperiod)
+                current_periods = list(df.iloc[:, 2])
+                last_periods = list(df.iloc[:, 4])
+                for industry, cost_composit, current_period, last_period in zip(industri, cost_composits, current_periods,last_periods):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        industry=industry,
+                        cost_composit=cost_composit,
+                        current_period=current_period,
+                        last_period=last_period
+                    )
+                    create_and_update('CostIndustry',**value_dict)
             else:
                 pass
 
@@ -730,27 +558,18 @@ class CostAnalysi(HandleIndexContent):
                 df = df_produ.drop([0])
                 products = list(df.iloc[:, 0])
                 cost_composits = list(df.iloc[:, 1])
-                thiperiods = list(df.iloc[:, 2])
-                lastperiods = list(df.iloc[:, 4])
-                for product, cost_composit, thiperiod, lastperiod in zip(products, cost_composits, thiperiods,lastperiods):
-                    if models.CostProduct.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                          product=product,cost_composit=cost_composit):
-                        obj = models.CostProduct.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              product=product,cost_composit=cost_composit)
-                        obj.product = product
-                        obj.cost_composit = cost_composit
-
-                        obj.thiperiod = Decimal(str(thiperiod)) * unit_change[unit]
-                        obj.lastperiod = Decimal(str(lastperiod)) * unit_change[unit]
-                        obj.save()
-                    else:
-                        models.CostProduct.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            product=product,
-                            cost_composit=cost_composit,
-                            thiperiod=Decimal(str(thiperiod)) * unit_change[unit],
-                            lastperiod=Decimal(str(lastperiod)) * unit_change[unit])
+                current_periods = list(df.iloc[:, 2])
+                last_periods = list(df.iloc[:, 4])
+                for product, cost_composit, current_period, last_period in zip(products, cost_composits, current_periods,last_periods):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        product=product,
+                        cost_composit=cost_composit,
+                        current_period=num_to_decimal(current_period, unit),
+                        last_period=num_to_decimal(last_period, unit)
+                    )
+                    create_and_update('CostProduct',**value_dict)
             else:
                 pass
 
@@ -758,44 +577,24 @@ class CostAnalysi(HandleIndexContent):
                 df = df_region.drop([0])
                 regions = list(df.iloc[:, 0])
                 cost_composits = list(df.iloc[:, 1])
-                thiperiods = list(df.iloc[:, 2])
-                lastperiods = list(df.iloc[:, 4])
-                for region, cost_composit, thiperiod, lastperiod in zip(regions, cost_composits, thiperiods,lastperiods):
-                    if models.CostSubRegion.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                           region=region,cost_composit=cost_composit):
-                        obj = models.CostSubRegion.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              region=region,cost_composit=cost_composit)
-                        obj.region = region
-                        obj.cost_composit = cost_composit
-                        obj.thiperiod = Decimal(str(thiperiod)) * unit_change[unit]
-                        obj.lastperiod = Decimal(str(lastperiod)) * unit_change[unit]
-                        obj.save()
-                    else:
-                        models.CostSubRegion.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            region=region,
-                            cost_composit=cost_composit,
-                            thiperiod=Decimal(str(thiperiod)) * unit_change[unit],
-                            lastperiod=Decimal(str(lastperiod)) * unit_change[unit])
+                current_periods = list(df.iloc[:, 2])
+                last_periods = list(df.iloc[:, 4])
+                for region, cost_composit, current_period, last_period in zip(regions, cost_composits, current_periods,last_periods):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        region=region,
+                        cost_composit=cost_composit,
+                        current_period=num_to_decimal(current_period, unit),
+                        last_period=num_to_decimal(last_period, unit)
+                    )
+                    create_and_update('CostSubRegion',**value_dict)
             else:
                 pass
         else:
             pass
-
-        if len(instructi) > 0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.psi_instructi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    psi_instructi=instructi
-                   )
-        else:
-            pass
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'cost_analysi')
 
 class CostAnalysiSZ(HandleIndexContent):
     '''
@@ -848,7 +647,6 @@ class CostAnalysiSZ(HandleIndexContent):
 
     def save(self):
         dfs, unit = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if len(dfs) > 0:
             df_industri = dfs.get('分行业')
             df_produ = dfs.get('分产品')
@@ -857,27 +655,18 @@ class CostAnalysiSZ(HandleIndexContent):
                 df = df_industri.drop([0,1])
                 industri = list(df.iloc[:, 0])
                 cost_composits = list(df.iloc[:, 1])
-                thiperiods = list(df.iloc[:, 2])
-                lastperiods = list(df.iloc[:, 4])
-                for industry, cost_composit, thiperiod, lastperiod in zip(industri, cost_composits, thiperiods,lastperiods):
-                    if models.CostIndustry.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                 industry=industry,cost_composit=cost_composit):
-                        obj = models.CostIndustry.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                     industry=industry,cost_composit=cost_composit)
-                        obj.industry = industry
-                        obj.cost_composit = cost_composit
-                        obj.thiperiod = Decimal(str(thiperiod)) * unit_change[unit]
-                        obj.lastperiod = Decimal(str(lastperiod)) * unit_change[unit]
-                        obj.save()
-                    else:
-                        models.CostIndustry.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            industry=industry,
-                            cost_composit=cost_composit,
-                            thiperiod=Decimal(str(thiperiod)) * unit_change[unit],
-                            lastperiod=Decimal(str(lastperiod)) * unit_change[unit]
-                        )
+                current_periods = list(df.iloc[:, 2])
+                last_periods = list(df.iloc[:, 4])
+                for industry, cost_composit, current_period, last_period in zip(industri, cost_composits, current_periods,last_periods):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        industry=industry,
+                        cost_composit=cost_composit,
+                        current_period=num_to_decimal(current_period, unit),
+                        last_period=num_to_decimal(last_period, unit)
+                    )
+                    create_and_update('CostIndustry',**value_dict)
             else:
                 pass
 
@@ -885,26 +674,18 @@ class CostAnalysiSZ(HandleIndexContent):
                 df = df_produ.drop([0,1])
                 products = list(df.iloc[:, 0])
                 cost_composits = list(df.iloc[:, 1])
-                thiperiods = list(df.iloc[:, 2])
-                lastperiods = list(df.iloc[:, 4])
-                for product, cost_composit, thiperiod, lastperiod in zip(products, cost_composits, thiperiods,lastperiods):
-                    if models.CostProduct.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                          product=product,cost_composit=cost_composit):
-                        obj = models.CostProduct.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              product=product,cost_composit=cost_composit)
-                        obj.product = product
-                        obj.cost_composit = cost_composit
-                        obj.thiperiod = Decimal(str(thiperiod)) * unit_change[unit]
-                        obj.lastperiod = Decimal(str(lastperiod)) * unit_change[unit]
-                        obj.save()
-                    else:
-                        models.CostProduct.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            product=product,
-                            cost_composit=cost_composit,
-                            thiperiod=Decimal(str(thiperiod)) * unit_change[unit],
-                            lastperiod=Decimal(str(lastperiod)) * unit_change[unit])
+                current_periods = list(df.iloc[:, 2])
+                last_periods = list(df.iloc[:, 4])
+                for product, cost_composit, current_period, last_period in zip(products, cost_composits, current_periods,last_periods):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        product=product,
+                        cost_composit=cost_composit,
+                        current_period=num_to_decimal(current_period, unit),
+                        last_period=num_to_decimal(last_period, unit)
+                    )
+                    create_and_update('CostProduct',**value_dict)
             else:
                 pass
 
@@ -912,26 +693,18 @@ class CostAnalysiSZ(HandleIndexContent):
                 df = df_region.drop([0,1])
                 regions = list(df.iloc[:, 0])
                 cost_composits = list(df.iloc[:, 1])
-                thiperiods = list(df.iloc[:, 2])
-                lastperiods = list(df.iloc[:, 4])
-                for region, cost_composit, thiperiod, lastperiod in zip(regions, cost_composits, thiperiods,lastperiods):
-                    if models.CostSubRegion.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                           region=region,cost_composit=cost_composit):
-                        obj = models.CostSubRegion.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              region=region,cost_composit=cost_composit)
-                        obj.region = region
-                        obj.cost_composit = cost_composit
-                        obj.thiperiod = Decimal(str(thiperiod)) * unit_change[unit]
-                        obj.lastperiod = Decimal(str(lastperiod)) * unit_change[unit]
-                        obj.save()
-                    else:
-                        models.CostSubRegion.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            region=region,
-                            cost_composit=cost_composit,
-                            thiperiod=Decimal(str(thiperiod)) * unit_change[unit],
-                            lastperiod=Decimal(str(lastperiod)) * unit_change[unit])
+                current_periods = list(df.iloc[:, 2])
+                last_periods = list(df.iloc[:, 4])
+                for region, cost_composit, current_period, last_period in zip(regions, cost_composits, current_periods,last_periods):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        region=region,
+                        cost_composit=cost_composit,
+                        current_period=num_to_decimal(current_period, unit),
+                        last_period=num_to_decimal(last_period, unit)
+                    )
+                    create_and_update('CostSubRegion',**value_dict)
             else:
                 pass
         else:
@@ -946,22 +719,8 @@ class BusinesChang(HandleIndexContent):
         super(BusinesChang, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        contents = []
-        if self.indexno in ['04020207']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 't' and len(item) > 0:
-                        # 逻辑检验：含有公司的中文名称
-                        content = re.sub('.适用.不适用', '', item)
-                        contents.append(content)
-                    elif classify == 'c' and len(item) > 0:
-                        content = remove_space_from_df(item[0][0]).to_string()
-                        contents.append(content)
-                    else:
-                        pass
-        else:
-            pass
-        return ''.join(contents)
+        indexnos = ['04020207']
+        pass
 
     def converse(self):
 
@@ -971,21 +730,10 @@ class BusinesChang(HandleIndexContent):
         pass
 
     def save(self):
-        busi_chang = self.recognize()
+        df,unit,instructi = recognize_instucti(self.indexcontent)
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'busi_chang')
 
-        if len(busi_chang) > 0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.busi_chang = busi_chang
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    busi_chang=busi_chang
-                )
-        else:
-            pass
 
 class MajorCustomAndSupplie(HandleIndexContent):
     '''
@@ -1057,7 +805,6 @@ class MajorCustomAndSupplie(HandleIndexContent):
 
     def save(self):
         dfs, table_unit, unit, instructi, instructi_sale, instructi_suppli = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if len(dfs) > 0:
             df_custom = dfs.get('custom')
             df_suppli = dfs.get('suppli')
@@ -1069,24 +816,15 @@ class MajorCustomAndSupplie(HandleIndexContent):
                 amounts = list(df.iloc[:, 1])
                 amount_props = list(df.iloc[:, 2])
                 for name, amount, amount_prop in zip(names, amounts, amount_props):
-                    if models.MajorCustomAndSupplieDetail.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                          major_class='custom',name=name):
-                        obj = models.MajorCustomAndSupplieDetail.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              major_class='custom',name=name)
-                        obj.major_class = 'custom'
-                        obj.name = name
-                        obj.amount = Decimal(re.sub(',','',str(amount)))*unit_change[table_unit_cunstom]
-                        obj.amount_prop = amount_prop
-                        obj.save()
-                    else:
-                        models.MajorCustomAndSupplieDetail.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            major_class='custom',
-                            name=name,
-                            amount=Decimal(re.sub(',','',str(amount)))*unit_change[table_unit_cunstom],
-                            amount_prop=amount_prop
-                           )
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        major_class='custom',
+                        name=name,
+                        amount=num_to_decimal(amount, table_unit_cunstom),
+                        amount_prop=amount_prop
+                    )
+                    create_and_update('MajorCustomAndSupplieDetail',**value_dict)
             else:
                 pass
 
@@ -1096,24 +834,15 @@ class MajorCustomAndSupplie(HandleIndexContent):
                 amounts = list(df.iloc[:, 1])
                 amount_props = list(df.iloc[:, 2])
                 for name, amount, amount_prop in zip(names, amounts, amount_props):
-                    if models.MajorCustomAndSupplieDetail.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                          major_class='suppli',name=name):
-                        obj = models.MajorCustomAndSupplieDetail.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              major_class='suppli',name=name)
-                        obj.major_class = 'suppli'
-                        obj.name = name
-                        obj.amount = Decimal(re.sub(',','',str(amount)))*unit_change[table_unit_suppli]
-                        obj.amount_prop = amount_prop
-                        obj.save()
-                    else:
-                        models.MajorCustomAndSupplieDetail.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            major_class='suppli',
-                            name=name,
-                            amount=Decimal(re.sub(',','',str(amount)))*unit_change[table_unit_suppli],
-                            amount_prop=amount_prop
-                           )
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        major_class='suppli',
+                        name=name,
+                        amount=num_to_decimal(amount, table_unit_suppli),
+                        amount_prop=amount_prop
+                    )
+                    create_and_update('MajorCustomAndSupplieDetail',**value_dict)
             else:
                 pass
         else:
@@ -1126,26 +855,16 @@ class MajorCustomAndSupplie(HandleIndexContent):
             amount_relat = instructi_sale.get('amount_relat')
             amount_relat_prop = instructi_sale.get('amount_relat_prop')
             amount_relat_unit = unit.get('sale_ammount_relat')
-            if models.MajorCustomAndSupplie.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                 major_class='custom'):
-                obj = models.MajorCustomAndSupplie.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                     major_class='custom')
-                obj.major_class = 'custom'
-                obj.amount = Decimal(re.sub(',','',str(amount))) * unit_change[amount_unit]
-                obj.amount_prop = amount_prop
-                obj.amount_relat = Decimal(re.sub(',','',str(amount_relat))) * unit_change[amount_relat_unit]
-                obj.amount_relat_prop = amount_relat_prop
-                obj.save()
-            else:
-                models.MajorCustomAndSupplie.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    major_class='custom',
-                    amount=Decimal(re.sub(',','',str(amount))) * unit_change[amount_unit],
-                    amount_prop=amount_prop,
-                    amount_relat=Decimal(re.sub(',','',str(amount_relat))) * unit_change[amount_relat_unit],
-                    amount_relat_prop=amount_relat_prop,
-                )
+            value_dict = dict(
+                stk_cd_id=self.stk_cd_id,
+                acc_per=self.acc_per,
+                major_class='custom',
+                amount=num_to_decimal(amount, amount_unit),
+                amount_prop=amount_prop,
+                amount_relat=num_to_decimal(amount_relat, amount_relat_unit),
+                amount_relat_prop=amount_relat_prop,
+            )
+            create_and_update('MajorCustomAndSupplie',**value_dict)
         else:
             pass
 
@@ -1156,40 +875,20 @@ class MajorCustomAndSupplie(HandleIndexContent):
             amount_relat = instructi_suppli.get('amount_relat')
             amount_relat_prop = instructi_suppli.get('amount_relat_prop')
             amount_relat_unit = unit.get('suppli_ammount_relat')
-            if models.MajorCustomAndSupplie.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                 major_class='suppli'):
-                obj = models.MajorCustomAndSupplie.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                     major_class='suppli')
-                obj.major_class = 'suppli'
-                obj.amount = Decimal(re.sub(',','',str(amount))) * unit_change[amount_unit]
-                obj.amount_prop = amount_prop
-                obj.amount_relat = Decimal(re.sub(',','',str(amount_relat))) * unit_change[amount_relat_unit]
-                obj.amount_relat_prop = amount_relat_prop
-                obj.save()
-            else:
-                models.MajorCustomAndSupplie.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    major_class='suppli',
-                    amount=Decimal(re.sub(',','',str(amount))) * unit_change[amount_unit],
-                    amount_prop=amount_prop,
-                    amount_relat=Decimal(re.sub(',','',str(amount_relat))) * unit_change[amount_relat_unit],
-                    amount_relat_prop=amount_relat_prop,
-                )
+            value_dict = dict(
+                stk_cd_id=self.stk_cd_id,
+                acc_per=self.acc_per,
+                major_class='suppli',
+                amount=num_to_decimal(amount, amount_unit),
+                amount_prop=amount_prop,
+                amount_relat=num_to_decimal(amount_relat, amount_relat_unit),
+                amount_relat_prop=amount_relat_prop,
+            )
+            create_and_update('MajorCustomAndSupplie',value_dict)
         else:
             pass
-
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.mfcs_instructi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    mfcs_instructi=instructi
-                   )
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'top_5_custom_and_supplier')
 
 class MajorCustomAndSupplieSZ(HandleIndexContent):
     '''
@@ -1253,7 +952,6 @@ class MajorCustomAndSupplieSZ(HandleIndexContent):
 
     def save(self):
         dfs, table_unit, contents = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if len(dfs) > 0:
             df_custom = dfs.get('custom')
             df_custom_detail = dfs.get('custom_detail')
@@ -1269,24 +967,15 @@ class MajorCustomAndSupplieSZ(HandleIndexContent):
                 amounts = list(df.iloc[:, 2])
                 amount_props = list(df.iloc[:, 3])
                 for name, amount, amount_prop in zip(names, amounts, amount_props):
-                    if models.MajorCustomAndSupplieDetail.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                          major_class='custom',name=name):
-                        obj = models.MajorCustomAndSupplieDetail.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              major_class='custom',name=name)
-                        obj.major_class = 'custom'
-                        obj.name = name
-                        obj.amount = Decimal(re.sub(',','',str(amount)))*unit_change[table_unit_cunstom_detail]
-                        obj.amount_prop = amount_prop
-                        obj.save()
-                    else:
-                        models.MajorCustomAndSupplieDetail.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            major_class='custom',
-                            name=name,
-                            amount=Decimal(re.sub(',','',str(amount)))*unit_change[table_unit_cunstom_detail],
-                            amount_prop=amount_prop
-                           )
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        major_class='custom',
+                        name=name,
+                        amount=num_to_decimal(amount, table_unit_cunstom_detail),
+                        amount_prop=amount_prop
+                    )
+                    create_and_update('MajorCustomAndSupplieDetail',**value_dict)
             else:
                 pass
 
@@ -1296,90 +985,59 @@ class MajorCustomAndSupplieSZ(HandleIndexContent):
                 amounts = list(df.iloc[:, 2])
                 amount_props = list(df.iloc[:, 3])
                 for name, amount, amount_prop in zip(names, amounts, amount_props):
-                    if models.MajorCustomAndSupplieDetail.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                          major_class='suppli',name=name):
-                        obj = models.MajorCustomAndSupplieDetail.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              major_class='suppli',name=name)
-                        obj.major_class = 'suppli'
-                        obj.name = name
-                        obj.amount = Decimal(re.sub(',','',str(amount)))*unit_change[table_unit_suppli_detail]
-                        obj.amount_prop = amount_prop
-                        obj.save()
-                    else:
-                        models.MajorCustomAndSupplieDetail.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            major_class='suppli',
-                            name=name,
-                            amount=Decimal(re.sub(',','',str(amount)))*unit_change[table_unit_suppli_detail],
-                            amount_prop=amount_prop
-                           )
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        major_class='suppli',
+                        name=name,
+                        amount=num_to_decimal(amount, table_unit_suppli_detail),
+                        amount_prop=amount_prop
+                    )
+                    create_and_update('MajorCustomAndSupplieDetail',**value_dict)
+            else:
+                pass
+
+            if df_custom is not None and len(df_custom) > 0:
+                amount = df_custom.iloc[0, 1]
+                amount_prop = df_custom.iloc[1, 1]
+                amount_unit = table_unit_cunstom
+                # amount_relat = instructi_sale.get('amount_relat')
+                amount_relat_prop = df_custom.iloc[2, 1]
+                # amount_relat_unit = unit.get('sale_ammount_relat')
+                value_dict = dict(
+                    stk_cd_id=self.stk_cd_id,
+                    acc_per=self.acc_per,
+                    major_class='custom',
+                    amount=num_to_decimal(amount, amount_unit),
+                    amount_prop=amount_prop,
+                    amount_relat_prop=amount_relat_prop,
+                )
+                create_and_update('MajorCustomAndSupplie',**value_dict)
+            else:
+                pass
+
+            if df_suppli is not None and len(df_suppli) > 0:
+                amount = df_suppli.iloc[0, 1]
+                amount_prop = df_suppli.iloc[1, 1]
+                amount_unit = table_unit_suppli
+                # amount_relat = instructi_sale.get('amount_relat')
+                amount_relat_prop = df_suppli.iloc[2, 1]
+                # amount_relat_unit = unit.get('sale_ammount_relat')
+                value_dict = dict(
+                    stk_cd_id=self.stk_cd_id,
+                    acc_per=self.acc_per,
+                    major_class='suppli',
+                    amount=num_to_decimal(amount, amount_unit),
+                    amount_prop=amount_prop,
+                    amount_relat_prop=amount_relat_prop,
+                )
+                create_and_update('MajorCustomAndSupplie',**value_dict)
             else:
                 pass
         else:
             pass
 
-        if df_custom is not None and len(df_custom)>0:
-            amount = df_custom.iloc[0,1]
-            amount_prop = df_custom.iloc[1,1]
-            amount_unit = table_unit_cunstom
-            # amount_relat = instructi_sale.get('amount_relat')
-            amount_relat_prop = df_custom.iloc[2,1]
-            # amount_relat_unit = unit.get('sale_ammount_relat')
-            if models.MajorCustomAndSupplie.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                 major_class='custom'):
-                obj = models.MajorCustomAndSupplie.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                     major_class='custom')
-                obj.major_class = 'custom'
-                obj.amount = Decimal(re.sub(',','',str(amount))) * unit_change[amount_unit]
-                obj.amount_prop = amount_prop
-                # obj.amount_relat = Decimal(re.sub(',','',str(amount_relat))) * unit_change[amount_relat_unit]
-                obj.amount_relat_prop = amount_relat_prop
-                obj.save()
-            else:
-                models.MajorCustomAndSupplie.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    major_class='custom',
-                    amount=Decimal(re.sub(',','',str(amount))) * unit_change[amount_unit],
-                    amount_prop=amount_prop,
-                    # amount_relat=Decimal(re.sub(',','',str(amount_relat))) * unit_change[amount_relat_unit],
-                    amount_relat_prop=amount_relat_prop,
-                )
-        else:
-            pass
 
-        if df_suppli is not None and len(df_suppli)>0:
-            amount = df_suppli.iloc[0, 1]
-            amount_prop = df_suppli.iloc[1, 1]
-            amount_unit = table_unit_suppli
-            # amount_relat = instructi_sale.get('amount_relat')
-            amount_relat_prop = df_suppli.iloc[2, 1]
-            # amount_relat_unit = unit.get('sale_ammount_relat')
-            if models.MajorCustomAndSupplie.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                 major_class='suppli'):
-                obj = models.MajorCustomAndSupplie.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                     major_class='suppli')
-                obj.major_class = 'suppli'
-                obj.amount = Decimal(re.sub(',','',str(amount))) * unit_change[amount_unit]
-                obj.amount_prop = amount_prop
-                # obj.amount_relat = Decimal(re.sub(',','',str(amount_relat))) * unit_change[amount_relat_unit]
-                obj.amount_relat_prop = amount_relat_prop
-                obj.save()
-            else:
-                print(amount)
-                print(amount_unit)
-                models.MajorCustomAndSupplie.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    major_class='suppli',
-                    amount=Decimal(re.sub(',','',str(amount))) * unit_change[amount_unit],
-                    amount_prop=amount_prop,
-                    # amount_relat=Decimal(re.sub(',','',str(amount_relat))) * unit_change[amount_relat_unit],
-                    amount_relat_prop=amount_relat_prop,
-                )
-        else:
-            pass
 
 class Expens(HandleIndexContent):
     '''
@@ -1390,29 +1048,8 @@ class Expens(HandleIndexContent):
         super(Expens, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        instructi = ''
-        df = None
-        pattern = re.compile('^(.适用.不适用)?(单位：.*元)?$')
-        if self.indexno in ['0402010200','04020300']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                if table.iloc[0, :].str.contains("说明").any():
-                                    df = remove_space_from_df(table)
-                                else:
-                                    pass
-                    elif classify == 't' and len(item) > 0:
-                        if pattern.match(item):
-                            pass
-                        else:
-                            instructi = item
-                    else:
-                        pass
-        else:
-            pass
-        return df, instructi
+        indexnos = ['0402010200','04020300']
+        pass
 
     def converse(self):
 
@@ -1422,44 +1059,25 @@ class Expens(HandleIndexContent):
         pass
 
     def save(self):
-        df, instructi = self.recognize()
-        if len(df) > 0:
+        df,unit, instructi = recognize_df_and_instucti(self.indexcontent)
+        if df is not None and len(df) > 1:
             df = df.drop([0])
             names = list(df.iloc[:, 0])
             instructs = list(df.iloc[:, (len(df.columns)-1)])
             for name, instruct in zip(names, instructs):
-                if models.ExpensAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                      name=name):
-                    obj = models.ExpensAnalysi.objects.get(stk_cd_id=self.stk_cd_id,
-                                                                         acc_per=self.acc_per,name=name)
-                    obj.name = name
-                    obj.instruct = instruct
-                    obj.save()
-                else:
-                    models.ExpensAnalysi.objects.create(
-                        stk_cd_id=self.stk_cd_id,
-                        acc_per=self.acc_per,
-                        name=name,
-                        instruct=instruct
-                    )
+                value_dict = dict(
+                    stk_cd_id=self.stk_cd_id,
+                    acc_per=self.acc_per,
+                    name=name,
+                    change_reason=instruct
+                )
+                create_and_update('ExpensAnalysi',**value_dict)
             else:
                 pass
         else:
             pass
-
-        if len(instructi) > 0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.ea_instructi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    ea_instructi=instructi
-                )
-        else:
-            pass
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'chang_in_expense')
 
 class RDInvest(HandleIndexContent):
     '''
@@ -1470,30 +1088,9 @@ class RDInvest(HandleIndexContent):
         super(RDInvest, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0402010300']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                if table.iloc[:, 0].str.contains("研发").any():
-                                    df = remove_per_from_df(remove_space_from_df(table))
-                                else:
-                                    pass
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            pass
-                    else:
-                        pass
-        else:
-            pass
+        indexnos = ['0402010300']
+        pass
 
-        return df,unit
 
     def converse(self):
 
@@ -1503,35 +1100,25 @@ class RDInvest(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit = self.recognize()
+        df,unit,instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 0:
-            unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
             expens = df.iloc[list(np.where((df.iloc[:, 0] == '本期费用化研发投入'))[0])[0],1]
             capit = df.iloc[list(np.where((df.iloc[:, 0] == '本期资本化研发投入'))[0])[0],1]
             total = df.iloc[list(np.where((df.iloc[:, 0] == '研发投入合计'))[0])[0],1]
             proport_of_incom = df.iloc[list(np.where((df.iloc[:, 0].str.contains('研发投入总额占营业收入比例')))[0])[0],1]
             staff_number = df.iloc[list(np.where((df.iloc[:, 0].str.contains('公司研发人员的数量')))[0])[0],1]
             proport_of_staff = df.iloc[list(np.where((df.iloc[:, 0].str.contains('研发人员数量占公司总人数的比例')))[0])[0],1]
-            if models.RDInvest.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.RDInvest.objects.get(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per)
-                obj.expens = Decimal(re.sub(',','',str(expens)))*unit_change[unit]
-                obj.capit = Decimal(re.sub(',','',str(capit)))*unit_change[unit]
-                obj.total = Decimal(re.sub(',','',str(total)))*unit_change[unit]
-                obj.proport_of_incom = Decimal(re.sub(',','',str(proport_of_incom)))
-                obj.staff_number = int(float(re.sub(',','',str(staff_number))))
-                obj.proport_of_staff = Decimal(re.sub(',','',str(proport_of_staff)))
-                obj.save()
-            else:
-                models.RDInvest.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    expens=Decimal(re.sub(',','',str(expens)))*unit_change[unit],
-                    capit=Decimal(re.sub(',','',str(capit)))*unit_change[unit],
-                    total=Decimal(re.sub(',','',str(total)))*unit_change[unit],
-                    proport_of_incom=Decimal(re.sub(',','',str(proport_of_incom))),
-                    staff_number=Decimal(re.sub(',','',str(staff_number))),
-                    proport_of_staff=Decimal(re.sub(',','',str(proport_of_staff))),
-                )
+            value_dict = dict(
+                stk_cd_id=self.stk_cd_id,
+                acc_per=self.acc_per,
+                expens=num_to_decimal(expens, unit),
+                capit=num_to_decimal(capit, unit),
+                total=num_to_decimal(total, unit),
+                proport_of_incom=num_to_decimal(proport_of_incom),
+                staff_number=int(float(re.sub(',', '', str(staff_number)))),
+                proport_of_staff=num_to_decimal(proport_of_staff),
+            )
+            create_and_update('RDInvest',**value_dict)
         else:
             pass
 
@@ -1544,31 +1131,9 @@ class RDInvestSZ(HandleIndexContent):
         super(RDInvestSZ, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        contents = []
-        unit='元'
-        if self.indexno in ['04020400']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                if table.iloc[:, 0].str.contains("研发").any():
-                                    df = remove_per_from_df(remove_space_from_df(table))
-                                else:
-                                    pass
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            contents.append(item)
-                    else:
-                        pass
-        else:
-            pass
+        indexnos = ['04020400']
+        pass
 
-        return df,unit,''.join(contents)
 
     def converse(self):
 
@@ -1578,37 +1143,26 @@ class RDInvestSZ(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit,instructi = self.recognize()
+        df,unit,instructi = recognize_df_and_instucti(self.indexcontent)
         pattern = re.compile('^.*?研发投入金额（(.*?)）.*?$')
         if df is not None and len(df) > 0:
             unit = pattern.match(df.iloc[list(np.where((df.iloc[:, 0].str.contains('研发投入金额')))[0])[0],0]).groups()[0]
-            unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
             total = df.iloc[list(np.where((df.iloc[:, 0].str.contains('研发投入金额')))[0])[0],1]
-            capit = df.iloc[list(np.where((df.iloc[:, 0].str.contains('研发投入资本化的金额')))[0])[0],1]
+            capit = df.iloc[list(np.where((df.iloc[:, 0].str.contains('资本化的金额')))[0])[0],1]
             # total = df.iloc[list(np.where((df.iloc[:, 0] == '研发投入合计'))[0])[0],1]
             proport_of_incom = df.iloc[list(np.where((df.iloc[:, 0].str.contains('研发投入占营业收入比例')))[0])[0],1]
             staff_number = df.iloc[list(np.where((df.iloc[:, 0].str.contains('研发人员数量')))[0])[0],1]
             proport_of_staff = df.iloc[list(np.where((df.iloc[:, 0].str.contains('研发人员数量占比')))[0])[0],1]
-            if models.RDInvest.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.RDInvest.objects.get(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per)
-                # obj.expens = Decimal(re.sub(',','',str(expens)))*unit_change[unit]
-                obj.capit = Decimal(re.sub(',','',str(capit)))*unit_change[unit]
-                obj.total = Decimal(re.sub(',','',str(total)))*unit_change[unit]
-                obj.proport_of_incom = Decimal(re.sub(',','',str(proport_of_incom)))
-                obj.staff_number = int(float(re.sub(',','',str(staff_number))))
-                obj.proport_of_staff = Decimal(re.sub(',','',str(proport_of_staff)))
-                obj.save()
-            else:
-                models.RDInvest.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    # expens=Decimal(re.sub(',','',str(expens)))*unit_change[unit],
-                    capit=Decimal(re.sub(',','',str(capit)))*unit_change[unit],
-                    total=Decimal(re.sub(',','',str(total)))*unit_change[unit],
-                    proport_of_incom=Decimal(re.sub(',','',str(proport_of_incom))),
-                    staff_number=Decimal(re.sub(',','',str(staff_number))),
-                    proport_of_staff=Decimal(re.sub(',','',str(proport_of_staff))),
-                )
+            value_dict = dict(
+                stk_cd_id=self.stk_cd_id,
+                acc_per=self.acc_per,
+                capit=num_to_decimal(capit, unit),
+                total=num_to_decimal(total, unit),
+                proport_of_incom=num_to_decimal(proport_of_incom),
+                staff_number=int(float(re.sub(',', '', str(staff_number)))),
+                proport_of_staff=num_to_decimal(proport_of_staff),
+            )
+            create_and_update('RDInvest',**value_dict)
         else:
             pass
 
@@ -1621,34 +1175,8 @@ class CashFlow(HandleIndexContent):
         super(CashFlow, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0402010400','04020500']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                if table.iloc[:, 0].str.contains("现金").any():
-                                    if table.iloc[0, :].str.contains("说明").any():
-                                        df = remove_space_from_df(table)
-                                else:
-                                    pass
-                    elif classify == 't' and len(item) > 0 :
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用','',item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df,unit,''.join(instructi)
+        indexnos = ['0402010400','04020500']
+        pass
 
     def converse(self):
 
@@ -1658,41 +1186,23 @@ class CashFlow(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit,instructi = self.recognize()
+        df,unit,instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 0:
-            # unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
             df = df.drop([0])
             items = list(df.iloc[:,0])
             descs = list(df.iloc[:,(len(df.columns)-1)])
             for item,desc in zip(items,descs):
-                if models.CashFlowAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,item=item):
-                    obj = models.CashFlowAnalysi.objects.get(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,item=item)
-                    obj.item = item
-                    obj.desc = desc
-                    obj.save()
-                else:
-                    models.CashFlowAnalysi.objects.create(
-                        stk_cd_id=self.stk_cd_id,
-                        acc_per=self.acc_per,
-                        item=item,
-                        desc=desc
-                    )
-        else:
-            pass
-
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.cfa_instructi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
+                value_dict = dict(
                     stk_cd_id=self.stk_cd_id,
                     acc_per=self.acc_per,
-                    cfa_instructi=instructi
-                   )
+                    item=item,
+                    desc=desc
+                )
+                create_and_update('CashFlowAnalysi',**value_dict)
         else:
             pass
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'chang_in_cash_flow_statement')
 
 class AssetAndLiabil(HandleIndexContent):
     '''
@@ -1703,33 +1213,8 @@ class AssetAndLiabil(HandleIndexContent):
         super(AssetAndLiabil, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0402030100','04040100']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                if table.iloc[0, :].str.contains("说明").any():
-                                    df = remove_space_from_df(table)
-                                else:
-                                    pass
-                    elif classify == 't' and len(item) > 0 :
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用','',item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df,unit,''.join(instructi)
+        indexnos = ['0402030100','04040100']
+        pass
 
     def converse(self):
 
@@ -1739,41 +1224,23 @@ class AssetAndLiabil(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit,instructi = self.recognize()
+        df,unit,instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 0:
-            # unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
             df = df.drop([0])
             items = list(df.iloc[:,0])
             descs = list(df.iloc[:,(len(df.columns)-1)])
             for item,desc in zip(items,descs):
-                if models.AssetAndLiabil.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,item=item):
-                    obj = models.AssetAndLiabil.objects.get(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,item=item)
-                    obj.item = item
-                    obj.desc = desc
-                    obj.save()
-                else:
-                    models.AssetAndLiabil.objects.create(
-                        stk_cd_id=self.stk_cd_id,
-                        acc_per=self.acc_per,
-                        item=item,
-                        desc=desc
-                    )
-        else:
-            pass
-
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.al_instructi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
+                value_dict = dict(
                     stk_cd_id=self.stk_cd_id,
                     acc_per=self.acc_per,
-                    al_instructi=instructi
-                   )
+                    item=item,
+                    desc=desc
+                )
+                create_and_update('AssetAndLiabil',**value_dict)
         else:
             pass
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'balanc_sheet_chang')
 
 class LimitAsset(HandleIndexContent):
     '''
@@ -1784,28 +1251,8 @@ class LimitAsset(HandleIndexContent):
         super(LimitAsset, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0402030200']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        df = remove_space_from_df(item[0][0])
-                    elif classify == 't' and len(item) > 0 :
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用','',item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df,unit,''.join(instructi)
+        indexnos = ['0402030200']
+        pass
 
     def converse(self):
 
@@ -1815,41 +1262,23 @@ class LimitAsset(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit,instructi = self.recognize()
+        df,unit,instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 0:
-            # unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
             df = df.drop([0])
             items = list(df.iloc[:,0])
             descs = list(df.iloc[:,(len(df.columns)-1)])
             for item,desc in zip(items,descs):
-                if models.LimitAsset.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,item=item):
-                    obj = models.LimitAsset.objects.get(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,item=item)
-                    obj.item = item
-                    obj.desc = desc
-                    obj.save()
-                else:
-                    models.LimitAsset.objects.create(
-                        stk_cd_id=self.stk_cd_id,
-                        acc_per=self.acc_per,
-                        item=item,
-                        desc=desc
-                    )
-        else:
-            pass
-
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.la_instructi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
+                value_dict = dict(
                     stk_cd_id=self.stk_cd_id,
                     acc_per=self.acc_per,
-                    la_instructi=instructi
-                   )
+                    item=item,
+                    desc=desc
+                )
+                create_and_update('LimitAsset',**value_dict)
         else:
             pass
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'restrict_asset')
 
 class OveralInvest(HandleIndexContent):
     '''
@@ -1860,28 +1289,8 @@ class OveralInvest(HandleIndexContent):
         super(OveralInvest, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['04050100']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        df = remove_per_from_df(remove_space_from_df(item[0][0]))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['04050100']
+        pass
 
     def converse(self):
 
@@ -1891,28 +1300,19 @@ class OveralInvest(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 0:
             pattern = re.compile('^.*?报告期投资额（(.*?)）.*?$')
-            unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
             this_period = df.iloc[1,0]
             last_period = df.iloc[1, 1]
             unit = pattern.match(df.iloc[list(np.where((df.iloc[:, 0].str.contains('报告期投资额')))[0])[0], 0]).groups()[0]
-            if models.OveralInvest.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.OveralInvest.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.this_period = Decimal(re.sub(',','',str(this_period)))*unit_change[unit]
-                obj.last_period = Decimal(re.sub(',','',str(last_period)))*unit_change[unit]
-                obj.save()
-            else:
-                # print(unit)
-                # print(this_period)
-                # print(re.sub(',','',str(this_period)))
-                models.OveralInvest.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    this_period=Decimal(re.sub(',','',str(this_period)))*unit_change[unit],
-                    last_period=Decimal(re.sub(',','',str(last_period)))*unit_change[unit]
-                )
+            value_dict = dict(
+                stk_cd_id=self.stk_cd_id,
+                acc_per=self.acc_per,
+                this_period=num_to_decimal(this_period, unit),
+                last_period=num_to_decimal(last_period, unit)
+            )
+            create_and_update('OveralInvest',**value_dict)
 
 class EquitiInvest(HandleIndexContent):
     '''
@@ -1923,28 +1323,8 @@ class EquitiInvest(HandleIndexContent):
         super(EquitiInvest, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['04050200']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        df = remove_per_from_df(remove_space_from_df(item[0][0]))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['04050200']
+        pass
 
     def converse(self):
 
@@ -1954,9 +1334,8 @@ class EquitiInvest(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 0:
-            unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
             name_of_invest_compa_pos =  list(np.where((df.iloc[0, :] == '被投资公司名称'))[0])
             main_busi_pos =  list(np.where((df.iloc[0, :] == '主要业务'))[0])
             invest_method_pos =  list(np.where((df.iloc[0, :] == '投资方式'))[0])
@@ -1976,20 +1355,20 @@ class EquitiInvest(HandleIndexContent):
             df = df.drop([0,(len(df.index)-1)])
 
             name_of_invest_compas = list(df.iloc[:, name_of_invest_compa_pos[0]])
-            main_busis = list(df.iloc[:, main_busi_pos[0]])
-            invest_methods = list(df.iloc[:, invest_method_pos[0]])
-            invest_amounts = list(df.iloc[:, invest_amount_pos[0]])
-            sharehold_ratios = list(df.iloc[:, sharehold_ratio_pos[0]])
-            sourc_of_funds = list(df.iloc[:, sourc_of_fund_pos[0]])
-            partners = list(df.iloc[:, partner_pos[0]])
-            invest_periods = list(df.iloc[:, invest_period_pos[0]])
-            product_types = list(df.iloc[:, product_type_pos[0]])
-            progresses = list(df.iloc[:, progress_pos[0]])
-            expect_revenus = list(df.iloc[:, expect_revenu_pos[0]])
-            current_invest_gains = list(df.iloc[:, current_invest_gain_pos[0]])
-            involv_litigs = list(df.iloc[:, involv_litig_pos[0]])
-            date_of_disclosurs = list(df.iloc[:, date_of_disclosur_pos[0]])
-            disclosur_indexes = list(df.iloc[:, disclosur_index_pos[0]])
+            main_busis = list(df.iloc[:, main_busi_pos[0]]) if len(main_busi_pos)>0 else ['' for i in range(len(name_of_invest_compas))]
+            invest_methods = list(df.iloc[:, invest_method_pos[0]]) if len(invest_method_pos)>0 else ['' for i in range(len(name_of_invest_compas))]
+            invest_amounts = list(df.iloc[:, invest_amount_pos[0]]) if len(invest_amount_pos)>0 else [0.00 for i in range(len(name_of_invest_compas))]
+            sharehold_ratios = list(df.iloc[:, sharehold_ratio_pos[0]]) if len(sharehold_ratio_pos)>0 else ['' for i in range(len(name_of_invest_compas))]
+            sourc_of_funds = list(df.iloc[:, sourc_of_fund_pos[0]]) if len(sourc_of_fund_pos)>0 else ['' for i in range(len(name_of_invest_compas))]
+            partners = list(df.iloc[:, partner_pos[0]]) if len(partner_pos)>0 else ['' for i in range(len(name_of_invest_compas))]
+            invest_periods = list(df.iloc[:, invest_period_pos[0]]) if len(invest_period_pos)>0 else ['' for i in range(len(name_of_invest_compas))]
+            product_types = list(df.iloc[:, product_type_pos[0]]) if len(product_type_pos)>0 else ['' for i in range(len(name_of_invest_compas))]
+            progresses = list(df.iloc[:, progress_pos[0]]) if len(progress_pos)>0 else ['' for i in range(len(name_of_invest_compas))]
+            expect_revenus = list(df.iloc[:, expect_revenu_pos[0]]) if len(expect_revenu_pos)>0 else [0.00 for i in range(len(name_of_invest_compas))]
+            current_invest_gains = list(df.iloc[:, current_invest_gain_pos[0]]) if len(current_invest_gain_pos)>0 else [0.00 for i in range(len(name_of_invest_compas))]
+            involv_litigs = list(df.iloc[:, involv_litig_pos[0]]) if len(involv_litig_pos)>0 else ['' for i in range(len(name_of_invest_compas))]
+            date_of_disclosurs = list(df.iloc[:, date_of_disclosur_pos[0]]) if len(date_of_disclosur_pos)>0 else ['' for i in range(len(name_of_invest_compas))]
+            disclosur_indexes = list(df.iloc[:, disclosur_index_pos[0]]) if len(disclosur_index_pos)>0 else ['' for i in range(len(name_of_invest_compas))]
 
             for (name_of_invest_compa, main_busi,invest_method,invest_amount ,\
                     sharehold_ratio,sourc_of_fund,partner,invest_period,product_type,progress, \
@@ -1998,61 +1377,29 @@ class EquitiInvest(HandleIndexContent):
                     sharehold_ratios,sourc_of_funds,partners,invest_periods,product_types,progresses, \
                         expect_revenus,current_invest_gains, involv_litigs ,date_of_disclosurs, \
                                   disclosur_indexes    ):
-                if models.EquitiInvest.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, name_of_invest_compa=name_of_invest_compa):
-                    obj = models.EquitiInvest.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, name_of_invest_compa=name_of_invest_compa)
-                    obj.name_of_invest_compa = name_of_invest_compa
-                    obj.main_busi = main_busi
-                    obj.invest_method = invest_method
-                    obj.invest_amount = Decimal(re.sub(',','',str(invest_amount)))*unit_change[unit]
-                    obj.sharehold_ratio = sharehold_ratio
-                    obj.sourc_of_fund = sourc_of_fund
-                    obj.partner = partner
-                    obj.invest_period = invest_period
-                    obj.product_type = product_type
-                    obj.progress = progress
-                    obj.expect_revenu = Decimal(re.sub(',','',str(expect_revenu)))*unit_change[unit]
-                    obj.current_invest_gain = Decimal(re.sub(',','',str(current_invest_gain)))*unit_change[unit]
-                    obj.involv_litig = involv_litig
-                    obj.date_of_disclosur = date_of_disclosur
-                    obj.disclosur_index = disclosur_index
-                    obj.save()
-                else:
-                    print(expect_revenu)
-                    models.EquitiInvest.objects.create(
-                        stk_cd_id=self.stk_cd_id,
-                        acc_per=self.acc_per,
-                        name_of_invest_compa=name_of_invest_compa,
-                        main_busi=main_busi,
-                        invest_method=invest_method,
-                        invest_amount=Decimal(re.sub(',','',str(invest_amount)))*unit_change[unit],
-                        sharehold_ratio=sharehold_ratio,
-                        sourc_of_fund=sourc_of_fund,
-                        partner=partner,
-                        invest_period=invest_period,
-                        product_type=product_type,
-                        progress=progress,
-                        expect_revenu=Decimal(re.sub(',','',str(expect_revenu)))*unit_change[unit],
-                        current_invest_gain=Decimal(re.sub(',','',str(current_invest_gain)))*unit_change[unit],
-                        involv_litig=involv_litig,
-                        date_of_disclosur=date_of_disclosur,
-                        disclosur_index=disclosur_index
-                    )
+                value_dict = dict(
+                    stk_cd_id=self.stk_cd_id,
+                    acc_per=self.acc_per,
+                    name_of_invest_compa=name_of_invest_compa,
+                    main_busi=main_busi,
+                    invest_method=invest_method,
+                    invest_amount=num_to_decimal(invest_amount, unit),
+                    sharehold_ratio=sharehold_ratio,
+                    sourc_of_fund=sourc_of_fund,
+                    partner=partner,
+                    invest_period=invest_period,
+                    product_type=product_type,
+                    progress=progress,
+                    expect_revenu=num_to_decimal(expect_revenu, unit),
+                    current_invest_gain=num_to_decimal(current_invest_gain, unit),
+                    involv_litig=involv_litig,
+                    date_of_disclosur=date_of_disclosur,
+                    disclosur_index=disclosur_index
+                )
+                create_and_update('EquitiInvest',**value_dict)
         else:
             pass
 
-        # if len(instructi) > 0:
-        #     if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-        #         obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-        #         obj.la_instructi = instructi
-        #         obj.save()
-        #     else:
-        #         models.BusiSituatDiscussAndAnalysi.objects.create(
-        #             stk_cd_id=self.stk_cd_id,
-        #             acc_per=self.acc_per,
-        #             la_instructi=instructi
-        #         )
-        # else:
-        #     pass
 
 class SellMajorAsset(HandleIndexContent):
     '''
@@ -2063,28 +1410,8 @@ class SellMajorAsset(HandleIndexContent):
         super(SellMajorAsset, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['04060100','04060200']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        df = remove_per_from_df(remove_space_from_df(item[0][0]))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['04060100','04060200']
+        pass
 
     def converse(self):
 
@@ -2094,11 +1421,10 @@ class SellMajorAsset(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 0:
             pattern1 = re.compile('.*?交易价格（(.*?元)）.*?')
             pattern2 = re.compile('.*?本期初起至出售日该.*?为上市公司贡献的净利润（(.*?元)）.*?')
-            unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
 
             trade_partner_pos = list(np.where((df.iloc[0, :] == '交易对方'))[0])
             asset_sold_pos = list(np.where((df.iloc[0, :].str.contains('被出售')))[0])
@@ -2152,50 +1478,27 @@ class SellMajorAsset(HandleIndexContent):
                                          before_net_profits,impact_of_sales,proport_net_profits, price_principls,\
                                          relat_transas,connect_relats,transfer_of_titls, \
                                          debt_transfs,is_on_scheduls,date_of_disclosurs,disclosur_indexes):
-                if models.SellMajorAsset.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                        trade_class=trade_class,trade_partner=trade_partner,asset_sold=asset_sold):
-                    obj = models.SellMajorAsset.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                            trade_class=trade_class,trade_partner=trade_partner, asset_sold=asset_sold)
-                    obj.trade_class = trade_class
-                    obj.trade_partner = trade_partner
-                    obj.asset_sold = asset_sold
-                    obj.sale_day = sale_day
-                    print(trade_price,unit1)
-                    obj.trade_price = Decimal(re.sub(',', '', str(trade_price))) * unit_change[unit1]
-                    obj.before_net_profit = Decimal(re.sub(',', '', str(before_net_profit))) * unit_change[unit2]
-                    obj.impact_of_sale = impact_of_sale
-                    obj.proport_net_profit = proport_net_profit
-                    obj.price_principl = price_principl
-                    obj.relat_transa = relat_transa
-                    obj.connect_relat = connect_relat
-                    obj.transfer_of_titl = transfer_of_titl
-                    obj.debt_transf = debt_transf
-                    obj.is_on_schedul = is_on_schedul
-                    obj.date_of_disclosur = date_of_disclosur
-                    obj.disclosur_index = disclosur_index
-                    obj.save()
-                else:
-                    print(trade_price,unit1)
-                    models.SellMajorAsset.objects.create(
-                        stk_cd_id=self.stk_cd_id,
-                        acc_per=self.acc_per,
-                        trade_class=trade_class,
-                        trade_partner=trade_partner,
-                        asset_sold=asset_sold,
-                        sale_day=sale_day,
-                        trade_price=Decimal(re.sub(',', '', str(trade_price))) * unit_change[unit1],
-                        before_net_profit=Decimal(re.sub(',', '', str(before_net_profit))) * unit_change[unit2],
-                        impact_of_sale=impact_of_sale,
-                        proport_net_profit=proport_net_profit,
-                        price_principl=price_principl,
-                        relat_transa=relat_transa,
-                        connect_relat=connect_relat,
-                        transfer_of_titl=transfer_of_titl,
-                        debt_transf=debt_transf,
-                        is_on_schedul=is_on_schedul,
-                        date_of_disclosur=date_of_disclosur,
-                        disclosur_index=disclosur_index,
-                    )
+                value_dict = dict(
+                    stk_cd_id=self.stk_cd_id,
+                    acc_per=self.acc_per,
+                    trade_class=trade_class,
+                    trade_partner=trade_partner,
+                    asset_sold=asset_sold,
+                    sale_day=sale_day,
+                    trade_price=num_to_decimal(trade_price, unit1),
+                    before_net_profit=num_to_decimal(before_net_profit, unit2),
+                    impact_of_sale=impact_of_sale,
+                    proport_net_profit=proport_net_profit,
+                    price_principl=price_principl,
+                    relat_transa=relat_transa,
+                    connect_relat=connect_relat,
+                    transfer_of_titl=transfer_of_titl,
+                    debt_transf=debt_transf,
+                    is_on_schedul=is_on_schedul,
+                    date_of_disclosur=date_of_disclosur,
+                    disclosur_index=disclosur_index,
+                )
+                create_and_update('SellMajorAsset',**value_dict)
         else:
             pass
 
@@ -2208,28 +1511,8 @@ class IndustriOperInformAnalysi(HandleIndexContent):
         super(IndustriOperInformAnalysi, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0402040000']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        df = remove_space_from_df(item[0][0])
-                    elif classify == 't' and len(item) > 0 :
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用','',item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df,unit,''.join(instructi)
+        indexnos =  ['0402040000']
+        pass
 
     def converse(self):
 
@@ -2239,21 +1522,9 @@ class IndustriOperInformAnalysi(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit,instructi = self.recognize()
-
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.ioia_instructi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    ioia_instructi=instructi
-                   )
-        else:
-            pass
+        df,unit,instructi = recognize_instucti(self.indexcontent)
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'industri_busi_inform')
 
 class MajorHoldCompaniAnalysiSZ(HandleIndexContent):
     '''
@@ -2308,113 +1579,74 @@ class MajorHoldCompaniAnalysiSZ(HandleIndexContent):
         if len(dfs) > 0:
             if dfs.get('joint_stock') is not None:
                 df = dfs.get('joint_stock')
-                unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
 
-                name_pos = list(np.where((df.iloc[0, :] == '公司名称'))[0])
+                company_name_pos = list(np.where((df.iloc[0, :] == '公司名称'))[0])
                 company_type_pos = list(np.where((df.iloc[0, :].str.contains('公司类型')))[0])
                 main_bussi_pos = list(np.where((df.iloc[0, :] == '主要业务'))[0])
                 regist_capit_pos = list(np.where((df.iloc[0, :].str.contains('注册资本') ))[0])
                 total_asset_pos = list(np.where((df.iloc[0, :].str.contains('总资产')))[0])
                 net_asset_pos = list(np.where((df.iloc[0, :].str.contains('净资产')))[0])
-                oper_incom_pos = list(np.where((df.iloc[0, :].str.contains('营业收入')))[0])
-                oper_profit_pos = list(np.where((df.iloc[0, :].str.contains('营业利润')))[0])
+                oprtng_incm_pos = list(np.where((df.iloc[0, :].str.contains('营业收入')))[0])
+                oprtng_prft_pos = list(np.where((df.iloc[0, :].str.contains('营业利润')))[0])
                 net_profit_pos = list(np.where((df.iloc[0, :] == '净利润'))[0])
 
                 df = df.drop([0])
 
-                names = list(df.iloc[:, name_pos[0]])
+                company_names = list(df.iloc[:, company_name_pos[0]])
                 company_types = list(df.iloc[:, company_type_pos[0]])
                 main_bussis = list(df.iloc[:, main_bussi_pos[0]])
                 regist_capits = list(df.iloc[:, regist_capit_pos[0]])
                 total_assets = list(df.iloc[:, total_asset_pos[0]])
                 net_assets = list(df.iloc[:, net_asset_pos[0]])
-                oper_incoms = list(df.iloc[:, oper_incom_pos[0]])
-                oper_profits = list(df.iloc[:, oper_profit_pos[0]])
+                oprtng_incms = list(df.iloc[:, oprtng_incm_pos[0]])
+                oprtng_prfts = list(df.iloc[:, oprtng_prft_pos[0]])
                 net_profits = list(df.iloc[:, net_profit_pos[0]])
 
 
-                for (name,company_type,main_bussi,regist_capit,total_asset,net_asset,oper_incom, \
-                               oper_profit,net_profit ) \
-                        in zip(names,company_types,main_bussis,regist_capits,total_assets,net_assets,oper_incoms, \
-                               oper_profits,net_profits ):
-                    if models.MajorHoldCompani.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                            name=name):
-                        obj = models.MajorHoldCompani.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                name=name)
-                        obj.name = name
-                        obj.company_type = company_type
-                        obj.main_bussi = main_bussi
-                        obj.regist_capit = Decimal(re.sub(',', '', str(regist_capit))) * unit_change[unit]
-                        obj.total_asset = Decimal(re.sub(',', '', str(total_asset))) * unit_change[unit]
-                        obj.net_asset = Decimal(re.sub(',', '', str(net_asset))) * unit_change[unit]
-                        obj.oper_incom = Decimal(re.sub(',', '', str(oper_incom))) * unit_change[unit]
-                        obj.oper_profit = Decimal(re.sub(',', '', str(oper_profit))) * unit_change[unit]
-                        obj.net_profit = Decimal(re.sub(',', '', str(net_profit))) * unit_change[unit]
-                        obj.save()
-                    else:
-                        models.MajorHoldCompani.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            name=name,
-                            company_type=company_type,
-                            main_bussi=main_bussi,
-                            regist_capit=Decimal(re.sub(',', '', str(regist_capit))) * unit_change[unit],
-                            total_asset=Decimal(re.sub(',', '', str(total_asset))) * unit_change[unit],
-                            net_asset=Decimal(re.sub(',', '', str(net_asset))) * unit_change[unit],
-                            oper_incom=Decimal(re.sub(',', '', str(oper_incom))) * unit_change[unit],
-                            oper_profit=Decimal(re.sub(',', '', str(oper_profit))) * unit_change[unit],
-                            net_profit=Decimal(re.sub(',', '', str(net_profit))) * unit_change[unit],
-
-                        )
+                for (company_name,company_type,main_bussi,regist_capit,total_asset,net_asset,oprtng_incm,
+                     oprtng_prft,net_profit ) \
+                        in zip(company_names,company_types,main_bussis,regist_capits,total_assets,net_assets,oprtng_incms,
+                               oprtng_prfts,net_profits ):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        company_name=company_name,
+                        company_type=company_type,
+                        main_bussi=main_bussi,
+                        regist_capit=regist_capit,
+                        total_asset=num_to_decimal(total_asset, unit),
+                        net_asset=num_to_decimal(net_asset, unit),
+                        oprtng_incm=num_to_decimal(oprtng_incm, unit),
+                        oprtng_prft=num_to_decimal(oprtng_prft, unit),
+                        np=num_to_decimal(net_profit, unit),
+                    )
+                    create_and_update('MajorHoldCompani',**value_dict)
             else:
                 pass
             if dfs.get('acquisit_and_dispos') is not None:
                 df = dfs.get('acquisit_and_dispos')
-                name_pos = list(np.where((df.iloc[0, :] == '公司名称'))[0])
+                company_name_pos = list(np.where((df.iloc[0, :] == '公司名称'))[0])
                 acquisit_and_dispos_pos = list(np.where((df.iloc[0, :].str.contains('报告期内取得和处置子公司方式')))[0])
                 impact_on_production_pos = list(np.where((df.iloc[0, :] == '对整体生产经营和业绩的影响 '))[0])
 
                 df = df.drop([0])
 
-                names = list(df.iloc[:, name_pos[0]])
+                company_names = list(df.iloc[:, company_name_pos[0]])
                 acquisit_and_disposes = list(df.iloc[:, acquisit_and_dispos_pos[0]])
                 impact_on_productions = list(df.iloc[:, impact_on_production_pos[0]])
 
-                for (name,acquisit_and_dispos,impact_on_production) \
-                        in zip(names,acquisit_and_disposes,impact_on_productions):
-                    if models.AcquisitAndDisposCom.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                            name=name):
-                        obj = models.AcquisitAndDisposCom.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                name=name)
-                        obj.name = name
-                        obj.acquisit_and_dispos = acquisit_and_dispos
-                        obj.impact_on_production = impact_on_production
-                        obj.save()
-                    else:
-                        models.AcquisitAndDisposCom.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            name=name,
-                            acquisit_and_dispos=acquisit_and_dispos,
-                            impact_on_production=impact_on_production,
-                        )
+                for (company_name,acquisit_and_dispos,impact_on_production) \
+                        in zip(company_names,acquisit_and_disposes,impact_on_productions):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        company_name=company_name,
+                        acquisit_and_dispos=acquisit_and_dispos,
+                        impact_on_production=impact_on_production,
+                    )
+                    create_and_update('AcquisitAndDisposCom',**value_dict)
 
-
-
-
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.mhca_instructi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    mhca_instructi=instructi
-                   )
-        else:
-            pass
+        save_instructi(instructi,models.BusiSituatDiscussAndAnalysi,self.stk_cd_id,self.acc_per,'main_sharehold_compani_analysi')
 
 class MajorHoldCompaniAnalysi(HandleIndexContent):
     '''
@@ -2425,28 +1657,8 @@ class MajorHoldCompaniAnalysi(HandleIndexContent):
         super(MajorHoldCompaniAnalysi, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0402070000']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        df = remove_space_from_df(item[0][0])
-                    elif classify == 't' and len(item) > 0 :
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用','',item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df,unit,''.join(instructi)
+        indexnos = ['0402070000']
+        pass
 
     def converse(self):
 
@@ -2456,21 +1668,10 @@ class MajorHoldCompaniAnalysi(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit,instructi = self.recognize()
+        df,unit,instructi = recognize_instucti(self.indexcontent)
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'main_sharehold_compani_analysi')
 
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.mhca_instructi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    mhca_instructi=instructi
-                   )
-        else:
-            pass
 
 class IndustriStructurAndTrend(HandleIndexContent):
     '''
@@ -2481,28 +1682,8 @@ class IndustriStructurAndTrend(HandleIndexContent):
         super(IndustriStructurAndTrend, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0403010000']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        df = remove_space_from_df(item[0][0])
-                    elif classify == 't' and len(item) > 0 :
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用','',item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df,unit,''.join(instructi)
+        indexnos = ['0403010000']
+        pass
 
     def converse(self):
 
@@ -2512,21 +1693,9 @@ class IndustriStructurAndTrend(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit,instructi = self.recognize()
-
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.industri_structur_and_trend = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    industri_structur_and_trend=instructi
-                   )
-        else:
-            pass
+        df,unit,instructi = recognize_instucti(self.indexcontent)
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'industri_structur_and_trend')
 
 class CompaniDevelopStrategi(HandleIndexContent):
     '''
@@ -2537,28 +1706,8 @@ class CompaniDevelopStrategi(HandleIndexContent):
         super(CompaniDevelopStrategi, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0403020000']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        df = remove_space_from_df(item[0][0])
-                    elif classify == 't' and len(item) > 0 :
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用','',item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df,unit,''.join(instructi)
+        indexnos = ['0403020000']
+        pass
 
     def converse(self):
 
@@ -2568,21 +1717,10 @@ class CompaniDevelopStrategi(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit,instructi = self.recognize()
+        df,unit,instructi = recognize_instucti(self.indexcontent)
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'comp_develop_strategi')
 
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.comp_develop_strategi = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    comp_develop_strategi=instructi
-                   )
-        else:
-            pass
 
 class BussiPlan(HandleIndexContent):
     '''
@@ -2593,28 +1731,8 @@ class BussiPlan(HandleIndexContent):
         super(BussiPlan, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0403030000']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        df = remove_space_from_df(item[0][0])
-                    elif classify == 't' and len(item) > 0 :
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用','',item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df,unit,''.join(instructi)
+        indexnos = ['0403030000']
+        pass
 
     def converse(self):
 
@@ -2624,21 +1742,10 @@ class BussiPlan(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit,instructi = self.recognize()
+        df,unit,instructi = recognize_instucti(self.indexcontent)
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'bussi_plan')
 
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.bussi_plan = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    bussi_plan=instructi
-                   )
-        else:
-            pass
 
 class PossiblRisk(HandleIndexContent):
     '''
@@ -2649,28 +1756,8 @@ class PossiblRisk(HandleIndexContent):
         super(PossiblRisk, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['0403040000']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        df = remove_space_from_df(item[0][0])
-                    elif classify == 't' and len(item) > 0 :
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用','',item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df,unit,''.join(instructi)
+        indexnos = ['0403040000']
+        pass
 
     def converse(self):
 
@@ -2680,21 +1767,10 @@ class PossiblRisk(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit,instructi = self.recognize()
+        df,unit,instructi = recognize_instucti(self.indexcontent)
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'possibl_risk')
 
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.possibl_risk = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    possibl_risk=instructi
-                   )
-        else:
-            pass
 
 class ProspectFuture(HandleIndexContent):
     '''
@@ -2705,28 +1781,9 @@ class ProspectFuture(HandleIndexContent):
         super(ProspectFuture, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?)$')
-        if self.indexno in ['04090000']:
-            for content in self.indexcontent:
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        df = remove_space_from_df(item[0][0])
-                    elif classify == 't' and len(item) > 0 :
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用','',item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
+        indexnos = ['04090000']
+        pass
 
-        return df,unit,''.join(instructi)
 
     def converse(self):
 
@@ -2736,18 +1793,6 @@ class ProspectFuture(HandleIndexContent):
         pass
 
     def save(self):
-        df,unit,instructi = self.recognize()
-
-        if len(instructi)>0:
-            if models.BusiSituatDiscussAndAnalysi.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.BusiSituatDiscussAndAnalysi.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.prospect_future = instructi
-                obj.save()
-            else:
-                models.BusiSituatDiscussAndAnalysi.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    prospect_future=instructi
-                   )
-        else:
-            pass
+        df,unit,instructi = recognize_instucti(self.indexcontent)
+        save_instructi(instructi, models.BusiSituatDiscussAndAnalysi, self.stk_cd_id, self.acc_per,
+                       'prospect_future')

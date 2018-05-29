@@ -1,22 +1,28 @@
 # _author : litufu
 # date : 2018/4/7
+import os,django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "data_extract.settings")
+django.setup()
+
 from bs4 import BeautifulSoup
 import pandas as pd
 pd.set_option('mode.chained_assignment','raise')
 import re
 import datetime
+import numpy as np
 from sqlalchemy import create_engine
 engine = create_engine(r'sqlite:///H:\data_extract\db.sqlite3')
 from collections import OrderedDict
-import os,django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "data_extract.settings")
-django.setup()
 from utils import mytools
 from collections import Counter
+
+import logging
+from log.logs import setup_logging
   #临时数据库
 from utils.mytools import del_same_item_from_list
-from utils.mytools import cnToArab
+from utils.mytools import cnToArab,compute_num_list,compare_num_list,comput_no
 from report_data_extract import models
+from utils.autoGetIndexPattern import get_index_format,get_std_index
 
 class NoIntegrityException(Exception):
     def __init__(self,err='索引不连续'):
@@ -49,13 +55,23 @@ class HtmlPage(object):
         pc = pf.find(class_='pc')
         # 删除没有内容的标签，前3个div(包括页眉、页脚和空行）
         tags = []
-        pattern = re.compile('^\d+(/\d+)?$')
+        pattern = re.compile('^[^年]*?\d+(/\d+)?[^年]*?$')
         for child in pc.children:
-            if pattern.match(re.sub('\s+','',child.get_text())):
+            text = re.sub('\s+','',child.get_text())
+            if pattern.match(text):
                 tags.append(child)
                 break
             else:
                 tags.append(child)
+
+
+        #删除大部分页面都存在的重复元素（class相同，内容相同),
+        for child in pc.children:
+            cell_text = re.sub('\s+','',child.get_text())
+            cell_class = '_'.join(child['class'])
+            for k,v in self.file.del_duplicated_cells_dict.items():
+                if k == cell_class and v == cell_text and child not in tags:
+                    tags.append(child)
 
         for tag in tags:
             tag.decompose()
@@ -74,7 +90,6 @@ class HtmlFile(object):
 
     def __init__(self,filepath):
         '''
-
         :param filepath: 文件路径地址
         '''
         #网页文件
@@ -93,11 +108,37 @@ class HtmlFile(object):
         self.pageIdToNum = OrderedDict(zip(self.pageId,range(1,self.pageCount+1)))
         #将真实页码与其页面文件内容对应起来
         self.page_contents_base_pgCount = OrderedDict(zip(range(1, self.pageCount + 1), self.pfs))
+        #删除大多数页面中同时存在的元素的class 和get_text() 的字典
+        self.del_duplicated_cells_dict = self.most_duplicated_cells()
         #将页码(页码，元素内容，元素分类）存储到df中
         self.file_cells = []
         self.df_all_cells = self.all_cells_to_df()
 
+    def most_duplicated_cells(self):
+        # 删除大多数页中同时存在的元素
+        all_cells = []
+        cells_text = []
+        cells_class = []
+        page_nums = []
+        for pageNum in range(1,self.pageCount+1):
+            pf = self.page_contents_base_pgCount[pageNum]
+            pc = pf.find(class_='pc')
+            all_cells.extend(list(pc.children))
+            page_nums.extend([pageNum for i in range(len(list(pc.children)))])
+        for cell in all_cells:
+            cells_text.append(re.sub('\s+','',cell.get_text()))
+            cells_class.append('_'.join(cell['class']))
 
+        data = {'pgnum':page_nums,'cellText':cells_text,'cells_class':cells_class,'cells':all_cells}
+        df = pd.DataFrame(data=data)
+        df_count = df.groupby(['cells_class', 'cellText']).count()
+        df_duplicated = df_count[df_count['pgnum'] > 70]
+        df_duplicated = df_duplicated.reset_index()
+
+        if len(df_duplicated)>0:
+            return dict(zip(list(df_duplicated['cells_class']),list(df_duplicated['cellText'])))
+        else:
+            return {}
 
     def get_market_code_accper(self):
         '''
@@ -133,23 +174,19 @@ class HtmlFile(object):
         cells_class = []
 
         for pageNum in range(1,self.pageCount+1):
-        # for pageNum in range(1,6):
             page = HtmlPage(self,pageNum)
             page_content = page.get_page_content()
             page_content_length = len(page_content)
             page_num.extend([pageNum for i in range(page_content_length)])
             self.file_cells.extend(page_content)
-        # print(file_cells)
         for cell in self.file_cells:
             cells_text.append(re.sub('\s+','',cell.get_text()))
             cells_class.append(cell['class'])
             cells_category.append(cell['class'][0])
 
-        # print(cells_text)
         data = {'id':[i for i in range(len(page_num))],'pageNum':page_num,'cellText':cells_text,'cellCategory':cells_category}
         df = pd.DataFrame(data=data)
         return df
-        # df.to_sql('report_data_extract_tempparsehtml', engine, index=False, if_exists='replace')
 
     def get_std_dir(self,root,market,layer=0, fatherid=''):
         '''
@@ -189,23 +226,14 @@ class HtmlFile(object):
                 else:
                     models.StdContentIndex.objects.create(market=market,name=name,no_name=no_name,fatherno=fatherid,level=layer,\
                                         selfno=k,no=last_num,has_child='1')
-                # if fatherid=='0':
-                #     fatherid=''
                 self.get_std_dir(child, layer=layer,fatherid=fatherid + '{}'.format(k),market=market)
             else:
-                print('父级编码', fatherid, end=' ')
-                print('层次编码', layer, end=' ')
-                print('序列编号：', k, end=' ')
                 last_num = '{}{}'.format(fatherid, k)
                 last_num = last_num + ''.join(['0' for i in range(8 - len(last_num))])
-                print('最终编码', last_num, end=' ')
                 no_name = child.a.get_text()
                 no_name = re.sub('\s+', '', no_name)
-                print(no_name)
-                print('页码',self.pageIdToNum[child.a['href'][1:]])
                 name = self.extract_index_content(no_name)
                 name = re.sub('\s+', '', name)
-                print(name)
                 if models.StdContentIndex.objects.filter(market='sz', no=last_num):
                     obj = models.StdContentIndex.objects.get(market='sz', no=last_num)
                     obj.has_child = '0'
@@ -297,7 +325,7 @@ class HtmlFile(object):
 
         pattern0 = re.compile('^第([一二三四五六七八九十]{1,2})节(.*?)$')
         pattern1 = re.compile('^([一二三四五六七八九十]{1,2})、(.*?)$')
-        pattern2 = re.compile('^(\d+)、(.*?)$')
+        pattern2 = re.compile('^(\d+)[、\.](.*?)$')
         pattern3 = re.compile('[\(（](\d+)[\)）](.*?)$')
 
         patterns = [pattern0,pattern1,pattern2,pattern3]
@@ -324,7 +352,7 @@ class HtmlFile(object):
         last_num = '{}{}'.format(fatherno, selfno)
         last_num = last_num + ''.join(['0' for i in range(8 - len(last_num))])
         models.StdContentIndex.objects.create(market=market, name=name, no_name=no_name, fatherno=fatherno,
-                                              level=layer, \
+                                              level=layer,
                                               selfno=selfno, no=last_num, has_child=has_child)
 
     def parse_all_dir(self):
@@ -350,10 +378,10 @@ class HtmlFile(object):
         # #只筛选文本区域，不包含报表区域
         all_cells = all_cells.loc[all_cells.cellCategory=='t']
         # 深圳年报解析不同级别索引的正则表达式
-        sz_pattern0 = re.compile('^第([一二三四五六七八九十]{1,2})节([^：；。]*?)$')
-        sz_pattern1 = re.compile('^([一二三四五六七八九十]{1,2})、([^：；。]*?)$')
-        sz_pattern2 = re.compile('^(\d+)、([^：；。]*?)$')
-        sz_pattern3 = re.compile('\（(\d+)\）([^：；。]*?)$')
+        sz_pattern0 = re.compile('^第([一二三四五六七八九十]{1,2})节([^；。]*?)$')
+        sz_pattern1 = re.compile('^([一二三四五六七八九十]{1,2})、([^；。]*?)$')
+        sz_pattern2 = re.compile('^(\d+)、([^；。]*?)$')
+        sz_pattern3 = re.compile('\（(\d+)\）([^；。]*?)$')
         sz_pattern_dict = {1: sz_pattern0, 2: sz_pattern1, 3: sz_pattern2, 4: sz_pattern3}
         #上证年报
         sh_pattern0 = re.compile('^第([一二三四五六七八九十]{1,2})节([^；。]*?)$')
@@ -405,7 +433,15 @@ class HtmlFile(object):
             elif level == 3:
                 pattern = pattern_dict[3]
                 if len(cells.loc[cells.loc[:,'cellText'].str.match(pattern)])>0:
-                    pass
+                    if len(cells.loc[cells.loc[:,'cellText'].str.match(pattern_dict[4])])>0 and \
+                            (cells.loc[cells.loc[:, 'cellText'].str.match(pattern_dict[4])].cellText.str.contains('编制基础').any() or \
+                             cells.loc[cells.loc[:, 'cellText'].str.match(pattern_dict[4])].cellText.str.contains( '货币资金').any() or
+                             cells.loc[cells.loc[:, 'cellText'].str.match(pattern_dict[4])].cellText.str.contains(
+                                 '会计期间').any()
+                                ):
+                        pattern = pattern_dict[4]
+                    else:
+                        pass
                 elif len(cells.loc[cells.loc[:,'cellText'].str.match(pattern_dict[4])])>0:
                     pattern = pattern_dict[4]
                 else:
@@ -419,14 +455,6 @@ class HtmlFile(object):
                 else:
                     print('level4匹配出差了')
                     return
-
-                # if len(cells.loc[cells.loc[:, 'cellText'].str.match(pattern)]) > 0:
-                #     pass
-                # elif len(cells.loc[cells.loc[:, 'cellText'].str.match(pattern_dict[5])]) > 0:
-                #     pattern = pattern_dict[5]
-                # else:
-                #     print('level4匹配出差了')
-                #     return
             elif level == 5:
                 if pattern_last == pattern_dict[4]:
                     pattern = pattern_dict[5]
@@ -434,10 +462,15 @@ class HtmlFile(object):
                     print('level5匹配出差了')
                     return
 
-        print(pattern)
-
         #目录匹配结果
+        objs = get_std_index(self.market, fatherno, level)
         df_index_level = cells.loc[cells.loc[:,'cellText'].str.match(pattern)]
+        #如果没有找到对应的索引，可以尝试自动匹配
+        if len(df_index_level)<len(objs):
+            print('自动索引开始')
+            pattern = get_index_format(cells,self.market,fatherno,level)
+            if pattern is not None:
+                df_index_level = cells.loc[cells.loc[:, 'cellText'].str.match(pattern)]
         #如果没有匹配成功，则
         if len(df_index_level) == 0:
             pass
@@ -447,7 +480,7 @@ class HtmlFile(object):
             print(df_index_level)
             df_index_level = self.check_index_integrity(df_index_level,pattern,fatherno,level)
             print(df_index_level)
-            # 检查是否需要新增索引
+            # 检查是否需要新增索引,应该注销掉
             self.comput_new_index(list(df_index_level.cellText), pattern, level, fatherno)
 
         #求下一层的cells,level,pattern_dict,fatherid
@@ -469,9 +502,12 @@ class HtmlFile(object):
 
             # 信息按照标准索引进行修改
             #如果没有在标准表中找到索引，则检查是否近似相等
-            if not (models.StdContentIndex.objects.filter(market=self.market,level=level,name=indextext_content)
-                    or models.StdCompareIndex.objects.filter(compare_name=indextext_content)):
-                raise NoFoundIndexException
+            print(self.market)
+            print(level)
+            print(indextext_content)
+            if not (models.StdContentIndex.objects.filter(market=self.market,fatherno=fatherno,level=level,name=indextext_content)
+                    or models.StdCompareIndex.objects.filter(market=self.market,fatherno=fatherno,compare_name=indextext_content)):
+                pass
 
                 # std_names_objs = models.StdContentIndex.objects.filter(level=level,fatherno=fatherno)
                 # for std_name_obj in std_names_objs:
@@ -497,7 +533,7 @@ class HtmlFile(object):
                         no = models.StdContentIndex.objects.filter(market=self.market,level=level, fatherno=fatherno,
                                                               name=indextext_content)[0].no
                 else:
-                    no = models.StdCompareIndex.objects.filter(compare_name=indextext_content)[0].index_name.no
+                    no = models.StdCompareIndex.objects.filter(market=self.market,fatherno=fatherno,compare_name=indextext_content)[0].index_name.no
 
                 #如果临时索引统计表已经存储了，则不再统计
                 if models.TempIndexCellCount.objects.filter(no=no):
@@ -511,8 +547,8 @@ class HtmlFile(object):
                         continue
                     else:
                         self.parse_dir_structure(next_df, level, pattern_dict, no,pattern)
-                elif len(models.StdCompareIndex.objects.filter(compare_name=indextext_content))>0:
-                    if models.StdCompareIndex.objects.filter(compare_name=indextext_content)[0].index_name.has_child == '0':
+                elif len(models.StdCompareIndex.objects.filter(market=self.market,fatherno=fatherno,compare_name=indextext_content))>0:
+                    if models.StdCompareIndex.objects.filter(market=self.market,fatherno=fatherno,compare_name=indextext_content)[0].index_name.has_child == '0':
                         continue
                     else:
                         self.parse_dir_structure(next_df, level, pattern_dict, no,pattern)
@@ -525,8 +561,17 @@ class HtmlFile(object):
         # 检查索引的完整性
         #第一步：自行排序比较是否连续，如果连续则返回目录，不连续则与标准目录进行精确匹配
         celltexts = list(df_index_level.cellText)
-        num_list = self.compute_num_list(celltexts, pattern)
-        comp = self.compare_num_list(num_list)
+        num_list = compute_num_list(celltexts, pattern)
+        #删除序号超过索引长度的索引
+        remain_index = []
+        for k,v in enumerate(num_list):
+            if v <= (len(num_list) + 10):
+                remain_index.append(k)
+
+        df_index_level = df_index_level.iloc[remain_index, :]
+        celltexts = list(df_index_level.cellText)
+        num_list = compute_num_list(celltexts, pattern)
+        comp = compare_num_list(num_list)
         if comp == 1:
             return df_index_level
         else:
@@ -539,9 +584,9 @@ class HtmlFile(object):
             celltexts_compare_with_std_num = [num_list[index] for index in comm_index]
             celltexts_compare_with_std_remain = [celltexts[index] for index in diff_index if num_list[index] not in celltexts_compare_with_std_num]
             print('第一步还剩下：',celltexts_compare_with_std_remain)
-            num_list_1 = sorted(self.compute_num_list(celltexts_compare_with_std, pattern))
+            num_list_1 = sorted(compute_num_list(celltexts_compare_with_std, pattern))
             print('num_list_1',num_list_1)
-            comp_1 = self.compare_num_list(num_list_1)
+            comp_1 = compare_num_list(num_list_1)
             print('comp_1',comp_1)
             if comp_1 == 1:
                 return df_index_level.iloc[comm_index,:]
@@ -550,8 +595,9 @@ class HtmlFile(object):
                 #如果不连续的话，则检查剩余部分中是否存在唯一性目录
                 comm_index_comp, diff_index_comp,compare_index_name_remain = self.compare_with_std_comp(celltexts_compare_with_std_remain, pattern, fatherno, level)
                 celltexts_compare_with_std_comp = [celltexts_compare_with_std_remain[index] for index in comm_index_comp]
-                celltexts_compare_with_std_comp_num = [num_list[index] for index in comm_index_comp]
-                celltexts_compare_with_std_remain_comp = [celltexts_compare_with_std_remain[index] for index in diff_index_comp if num_list[index] not in celltexts_compare_with_std_comp_num]
+                celltexts_compare_with_std_comp_num = [num_list[celltexts.index(celltexts_compare_with_std_remain[index])] for index in comm_index_comp]
+                celltexts_compare_with_std_remain_comp = [celltexts_compare_with_std_remain[index] for index in diff_index_comp if num_list[celltexts.index(celltexts_compare_with_std_remain[index])] not in celltexts_compare_with_std_comp_num]
+
                 print('第二步剩下的：{}'.format(celltexts_compare_with_std_remain_comp))
                 if not celltexts_compare_with_std_comp :
                     comm_index_std_and_comp = comm_index
@@ -560,8 +606,8 @@ class HtmlFile(object):
                     comm_index.extend(index_compare_with_std_comp)
                     comm_index_std_and_comp = sorted(comm_index)
                 celltexts_compare_with_std_and_comp = [celltexts[index] for index in comm_index_std_and_comp]
-                num_list_2 = sorted(self.compute_num_list(celltexts_compare_with_std_and_comp, pattern))
-                comp_2 = self.compare_num_list(num_list_2)
+                num_list_2 = sorted(compute_num_list(celltexts_compare_with_std_and_comp, pattern))
+                comp_2 = compare_num_list(num_list_2)
                 print('num_list_2',num_list_2)
                 print('comp_2',comp_2)
                 if comp_2 == 1:
@@ -580,7 +626,8 @@ class HtmlFile(object):
                     single_indextexts_remain = list(set(single_indextexts) & set(celltexts_compare_with_std_remain_comp))
                     single_indextexts_remain_content = list(map(lambda x: pattern.match(x).groups()[1],list(single_indextexts_remain)))
                     print('单一索引内容：',single_indextexts_remain_content)
-                    temp = self.compare_similar_with_std_and_comp(
+
+                    single_result = self.compare_similar_with_std_and_comp(
                         cellstexts=single_indextexts_remain,
                         origin_index_names_remain=origin_index_names_remain,
                         compare_index_name_remain=compare_index_name_remain,
@@ -588,47 +635,59 @@ class HtmlFile(object):
                         level=level,
                         fatherno=fatherno
                     )
-                    if temp!=None:
-                        raise Exception
-                    comm_index_std_and_comp.extend(list(map(lambda x: celltexts.index(x), single_indextexts_remain)))
+
+                    comm_index_std_and_comp.extend(list(map(lambda x: celltexts.index(x), single_result)))
                     comm_index_std_and_comp_and_unique = sorted( comm_index_std_and_comp )
                     celltexts_compare_with_std_and_comp_and_unique = [celltexts[index] for index in comm_index_std_and_comp_and_unique]
-                    num_list_3 = sorted(self.compute_num_list(celltexts_compare_with_std_and_comp_and_unique, pattern))
-                    comp_3 = self.compare_num_list(num_list_3)
+                    num_list_3 = sorted(compute_num_list(celltexts_compare_with_std_and_comp_and_unique, pattern))
+                    comp_3 = compare_num_list(num_list_3)
+                    print('num_lis_3:',num_list_3)
+                    print('comp_3:',comp_3)
                     if comp_3 == 1:
                         return df_index_level.iloc[comm_index_std_and_comp_and_unique, :]
                     else:
                         #第五步，剩余部分进行相似性检验，如果一致，则插入对照库，不一致，根据长度
                         #去除重复。
-                        remain_celltexts = set(celltexts).difference(set(celltexts_compare_with_std_and_comp_and_unique))
+                        have_handled = celltexts_compare_with_std_and_comp
+                        have_handled.extend(single_indextexts_remain)
+                        remain_celltexts = set(celltexts).difference(set(have_handled))
                         remain_celltexts_content = list(map(lambda x: pattern.match(x).groups()[1],
                                                                list(remain_celltexts)))
-                        remain_celltexts_content_new = self.compare_similar_with_std_and_comp(
-                            cellstexts=list(remain_celltexts),
+                        remain_celltexts_content_new  = list(remain_celltexts)
+                        remain_result = self.compare_similar_with_std_and_comp(
+                            cellstexts=remain_celltexts_content_new,
                             origin_index_names_remain=origin_index_names_remain,
                             compare_index_name_remain=compare_index_name_remain,
                             pattern=pattern,
                             level=level,
                             fatherno=fatherno
                         )
+                        comm_index_std_and_comp_and_unique.extend(list(map(lambda x: celltexts.index(x), remain_result)))
+                        comm_index_std_and_comp_and_unique_and_remain = sorted(comm_index_std_and_comp_and_unique)
+                        celltexts_compare_with_std_and_comp_and_unique_and_remain = [celltexts[index] for index in
+                                                                          comm_index_std_and_comp_and_unique_and_remain]
+                        num_list_4 = sorted(
+                            compute_num_list(celltexts_compare_with_std_and_comp_and_unique_and_remain, pattern))
+                        comp_4 = compare_num_list(num_list_4)
+                        print('num_lis_4:', num_list_4)
+                        print('comp_4:', comp_4)
+                        if comp_4 == 1:
+                            return df_index_level.iloc[comm_index_std_and_comp_and_unique_and_remain, :]
                         #第六步：去除重复后，将去除重复的数据增加到索引中
-                        if remain_celltexts_content_new!=None and len(remain_celltexts_content_new)>0:
-                            drop_duplicted_celltexts = self.drop_dumplicate_index_base_length(remain_celltexts_content_new, pattern)
-                            self.comput_new_index(drop_duplicted_celltexts, pattern, level, fatherno)
                         else:
-                            pass
+                            result_df = df_index_level.iloc[comm_index_std_and_comp_and_unique_and_remain, :]
+                            logger = logging.getLogger(__name__)
+                            setup_logging()
+                            logger.warning('{}{}索引不完整：{}'.format(self.code,self.accper,result_df.to_string()))
+                            return result_df
+                            # remain_celltexts_content_new!=None and len(remain_celltexts_content_new)>0:
+                            # drop_duplicted_celltexts = self.drop_dumplicate_index_base_length(remain_celltexts_content_new, pattern)
+                            # choice = input('是否增加到标准库{}'.format(drop_duplicted_celltexts))
+                            # if choice == 'yes':
+                            #     self.comput_new_index(drop_duplicted_celltexts, pattern, level, fatherno)
+                            # else:
+                            #     pass
 
-    def compute_num_list(self,celltexts,pattern):
-        #获取汉字序号
-        cn_num = list(map(lambda x: pattern.match(x).groups()[0],celltexts))
-        # 将汉字序号转换为阿拉伯数字
-        arab_num = list(map(cnToArab,cn_num))
-        return arab_num
-
-    def compare_num_list(self,num_list):
-        '''检查序列数字的完整性'''
-        comp = len(set([(k - int(v)) for k, v in enumerate(num_list)]))
-        return comp
 
     def drop_dumplicate_index_base_length(self,cellstexts,pattern):
         '''
@@ -638,7 +697,7 @@ class HtmlFile(object):
         :return:
         '''
         print('去除重复前', cellstexts)
-        num_list = self.compute_num_list(cellstexts,pattern)
+        num_list = compute_num_list(cellstexts,pattern)
         duplicated_item_index = {}
         duplicated_counter = Counter(num_list)
         for k, v in duplicated_counter.items():
@@ -672,8 +731,9 @@ class HtmlFile(object):
         origin_indexes = models.StdContentIndex.objects.filter(market=self.market,level=level, fatherno=fatherno)
         origin_index_names = [origin_index.name for origin_index in origin_indexes]
         indextext_contents = list(map(lambda x: pattern.match(x).groups()[1],celltexts))
-
-
+        print(fatherno)
+        print(origin_index_names)
+        print(indextext_contents)
         # 检查索引与数据库中的标准信息的交集是否连续，连续的话则返回该连续的部分
         comm = set(indextext_contents) & set(origin_index_names)
         # diff = set(indextext_contents).difference(set(origin_index_names))
@@ -711,6 +771,7 @@ class HtmlFile(object):
 
         all_compare_index_name = [compare_index_object[0].compare_name for compare_index_object in (compare_index_object_all for compare_index_object_all \
                                   in all_compare_index_objects)]
+        print(all_compare_index_name)
         comm = set(indextext_contents) & set(all_compare_index_name)
         # diff = set(indextext_contents).difference(set(all_compare_index_name))
         comm_index = sorted([indextext_contents.index(item) for item in comm])
@@ -722,47 +783,64 @@ class HtmlFile(object):
         return comm_index, diff_index,compare_index_name_remain
 
     def compare_similar_with_std_and_comp(self,cellstexts,origin_index_names_remain,compare_index_name_remain,pattern,level,fatherno):
-
+        logger = logging.getLogger(__name__)
+        setup_logging()
         indextexts_content = list(map(lambda x: pattern.match(x).groups()[1], cellstexts))
+        cell_texts_dict = dict(zip(indextexts_content,cellstexts))
         temp = indextexts_content[:]
         print('相似性检验项目：',indextexts_content)
         for single_index in indextexts_content:
             similar_std_index = mytools.similar_item_with_list(single_index, origin_index_names_remain)
             if similar_std_index != None:
-                models.StdCompareIndex.objects.create(
-                    compare_name=single_index,
-                    index_name_id=models.StdContentIndex.objects.filter(market=self.market,level=level, fatherno=fatherno, name=similar_std_index)[0].id
-                )
-                temp.remove(single_index)
+                if len(models.StdCompareIndex.objects.filter(market=self.market,fatherno=fatherno,compare_name=single_index))>0:
+                    continue
+                # choice = input('增加{}到对照库：'.format(single_index, ))
+                choice = 'yes'
+                if choice == 'yes':
+                    index_name_id = \
+                    models.StdContentIndex.objects.filter(market=self.market, level=level, fatherno=fatherno,
+                                                          name=similar_std_index)[0].id
+                    self.add_compare_index(self.market,single_index,fatherno,index_name_id)
+
+                # temp.remove(single_index)
             else:
                 similar_std_index_comp = mytools.similar_item_with_list(single_index, compare_index_name_remain)
                 if similar_std_index_comp != None:
-                    models.StdCompareIndex.objects.create(
-                        compare_name=single_index,
-                        index_name_id=models.StdCompareIndex.objects.filter(compare_name=similar_std_index_comp)[
+                    # choice = input('增加{}到对照库：'.format(single_index))
+                    choice = 'yes'
+                    if choice == 'yes':
+                        index_name_id = \
+                        models.StdCompareIndex.objects.filter(market=self.market,fatherno=fatherno, compare_name=similar_std_index_comp)[
                             0].index_name_id
-                    )
-                    temp.remove(single_index)
+                        self.add_compare_index(self.market, single_index,fatherno, index_name_id)
+                    # temp.remove(single_index)
                 else:
-                    choice = input('是否增加到标准库{}'.format(single_index))
+                    # choice = input('是否增加到标准库{}'.format(single_index))
+                    choice = 'no'
                     if choice == 'yes':
                         self.comput_new_index([cellstexts[indextexts_content.index(single_index)], ], pattern, level, fatherno)
-                        temp.remove(single_index)
+                        # temp.remove(single_index)
                     else:
-                        choice1 = input('是否增加到对照库{}'.format(single_index))
+                        logger.warning('{}{}的{}没有被增加到标准库中'.format(self.code, self.accper, single_index))
+                        # choice1 = input('是否增加到对照库{}'.format(single_index))
+                        choice1 = 'no'
                         if choice1 == 'yes':
                             index_name_id = input('请输入对照索引的id')
-                            models.StdCompareIndex.objects.create(
-                                compare_name=single_index,
-                                index_name_id=index_name_id
-                            )
-                            temp.remove(single_index)
+                            self.add_compare_index(self.market,single_index,fatherno,index_name_id)
+                            # temp.remove(single_index)
                         else:
-                            return  temp
+                            logger.warning('{}{}的{}没有被增加到对照库中'.format(self.code,self.accper,single_index))
+                            temp.remove(single_index)
+        if len(temp) == 0:
+            return []
+        else:
+            return [cell_texts_dict[item] for item in temp]
 
-    def add_compare_index(self,compare_name,index_name_id):
+    def add_compare_index(self,market,compare_name,fatherno,index_name_id):
         models.StdCompareIndex.objects.create(
+            market=market,
             compare_name=compare_name,
+            fatherno=fatherno,
             index_name_id=index_name_id
         )
 
@@ -775,6 +853,8 @@ class HtmlFile(object):
         #第三步：计算新增内容的父级id
         :return:
         '''
+        logger = logging.getLogger(__name__)
+        setup_logging()
         #第一步
         #获取数据库中已经存储的标准索引信息
         origin_index_df = models.StdContentIndex.objects.filter(market=self.market,level=level,fatherno=fatherno)
@@ -797,9 +877,13 @@ class HtmlFile(object):
             for add_name in add_index_name:
                 for i,origin_name in enumerate(origin_index_name):
                     if mytools.similar(origin_name, add_name):
+
                         origin_obj_id = models.StdContentIndex.objects.filter(market=self.market,level=level,fatherno=fatherno,name=origin_name)[0].id
-                        if not models.StdCompareIndex.objects.filter(compare_name=add_name,index_name_id=origin_obj_id):
-                            self.add_compare_index(add_name,origin_obj_id)
+                        if not models.StdCompareIndex.objects.filter(market=self.market,fatherno=fatherno,compare_name=add_name):
+                            # choice = input('是否新增近似{}索引{}'.format(add_name,origin_name))
+                            choice = 'yes'
+                            if choice == 'yes':
+                                self.add_compare_index(self.market,add_name,fatherno,origin_obj_id)
                         # df_index_level.loc[df_index_level.index_content==add_name].cellText=origin_index_no_name[i]
                         del_index_name.append(add_name)
             add_index_name = list(set(add_index_name).difference(set(del_index_name)))
@@ -808,54 +892,50 @@ class HtmlFile(object):
             #按照新增内容的顺序排列
             add_index_name.sort(key=lambda x:new_index_name.index(x))
             print('计划新增索引',add_index_name)
-
             # 第二步
             # 计算新增内容的编号
             # 1、读取数据库中该级别的最后一个编号
             temp_df = [obj.no for obj in origin_index_df]
-            if len(temp_df) == 0:
-                last_num = 0
-            else:
-                last_num = max(list(pd.Series(temp_df).map(lambda x: x[(level-1) * 2:(2 * (level))]).map(lambda x: int(x, 16))))
-            # 自己编号
-            self_num = [str(hex(last_num + i))[2:] for i in range(1, len(add_index_name) + 1)]
-            # 将自己编号变为固定的长度---2位
-            self_num_fixed_length = []
-            for num in self_num:
-                if len(num) == 1:
-                    self_num_fixed_length.append('0' + num)
-                else:
-                    self_num_fixed_length.append(num)
-            # 2、父级别编号+自己的编号
-            whole_num = [fatherno + num for num in self_num_fixed_length]
-            #将编号补成8位数
+
             if self.market == 'sh':
-                num_len = 10
+                selfnos,whole_num_fixed_length = comput_no(temp_df,level,add_index_name,fatherno,num_len=10)
             elif self.market ==  'sz':
-                num_len = 8
+                selfnos, whole_num_fixed_length = comput_no(temp_df, level, add_index_name, fatherno, num_len=8)
             else:
                 raise Exception
-            whole_num_fixed_length = [num+''.join(['0' for i in range(num_len-len(num))]) for num in whole_num]
             names = add_index_name
             no_names = [new_no_name[new_index_name.index(name)] for name in names]
-            selfnos = self_num_fixed_length
-            confirm = input('是否输入下列信息：{}'.format(add_index_name))
-            # confirm='yes'
-            if confirm == 'yes':
-                for name,no_name,selfno,no in zip(names,no_names,selfnos,whole_num_fixed_length):
-                    print(name,no_name,fatherno,selfno,no)
-                    models.StdContentIndex.objects.create(
-                        market=self.market,
-                        name=name,
-                        no_name=no_name,
-                        fatherno=fatherno,
-                        level=level,
-                        selfno=selfno,
-                        no=no,
-                        has_child='1'
-                    )
-            else:
-                raise Exception
+
+            for name,no_name,selfno,no in zip(names,no_names,selfnos,whole_num_fixed_length):
+                print(name,no_name,fatherno,selfno,no)
+                if models.StdContentIndex.objects.filter(market=self.market, no=no) or \
+                    models.StdCompareIndex.objects.filter(market=self.market, compare_name=name,
+                                                          fatherno=fatherno):
+
+                    continue
+                else:
+                    # choice = input('是否输入下列信息到标准库：{}'.format(name))
+                    choice = 'no'
+                    if choice == 'yes':
+                        models.StdContentIndex.objects.create(
+                            market=self.market,
+                            name=name,
+                            no_name=no_name,
+                            fatherno=fatherno,
+                            level=level,
+                            selfno=selfno,
+                            no=no,
+                            has_child='1'
+                        )
+                    else:
+                        logger.info('{}{}的{}没有被增加到标准库中'.format(self.code, self.accper, ','.join(names)))
+                        # choice = input('是否输入下列信息到对照库：{}'.format(name))
+                        choice = 'no'
+                        if choice == 'yes':
+                            index_name_id = input('请输入{}标准库对应索引id:'.format(name))
+                            self.add_compare_index(market=self.market,compare_name=name,fatherno=fatherno,index_name_id=index_name_id)
+                        else:
+                            logger.info('{}{}的{}没有被增加到对照库中'.format(self.code, self.accper, ','.join(names)))
         else:
             pass
 
@@ -884,3 +964,6 @@ def get_std_dir_sh():
         else:
             obj.has_child = '0'
             obj.save()
+
+
+

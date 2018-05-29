@@ -1,21 +1,21 @@
 # _author : litufu
 # date : 2018/5/10
-
-
 import os,django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "data_extract.settings")
 django.setup()
 import re
 import numpy as np
-from utils.mytools import HandleIndexContent,remove_space_from_df,remove_per_from_df,similar,is_num
-from report_data_extract import models
-from decimal import Decimal
-from config.fs import manage_config
 import jieba
-import decimal
 from collections import OrderedDict
 from itertools import chain
 import pandas as pd
+
+from report_data_extract import models
+from config.fs import manage_config
+from utils.handleindexcontent.base import HandleIndexContent,create_and_update
+from utils.mytools import remove_space_from_df,remove_per_from_df,similar,num_to_decimal
+from utils.handleindexcontent.commons import save_instructi,save_combine_instructi,get_values,compute_start_pos,\
+    recognize_df_and_instucti,recognize_instucti
 
 class CompositOfEnterprisGroup(HandleIndexContent):
     '''
@@ -26,30 +26,8 @@ class CompositOfEnterprisGroup(HandleIndexContent):
         super(CompositOfEnterprisGroup, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b09010100','0b09030100','0b090101','0b090301']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b09010100','0b09030100','0b090101','0b090301']
+        pass
 
     def converse(self):
 
@@ -60,87 +38,74 @@ class CompositOfEnterprisGroup(HandleIndexContent):
 
     def save(self):
         natures = {'0b09010100':'s','0b09030100':'j','0b090101':'s','0b090301':"j"}
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
-            name_pos = list(np.where(df.iloc[0, :].str.contains('名称'))[0])
+            company_name_pos = list(np.where(df.iloc[0, :].str.contains('名称'))[0])
             main_place_of_busi_pos = list(np.where(df.iloc[0, :].str.contains('主要经营地'))[0])
             registr_place_pos = list(np.where(df.iloc[0, :].str.contains('注册地'))[0])
             busi_natur_pos = list(np.where(df.iloc[0, :].str.contains('业务性质'))[0])
             direct_sharehold_pos = list(np.where(df.iloc[1, :].str.contains('直接'))[0])
             indirect_sharehold_pos = list(np.where(df.iloc[1, :].str.contains('间接'))[0])
-            get_method_pos = list(np.where(df.iloc[0, :].str.contains('取得方式'))[0])
+            acquisit_style_pos = list(np.where(df.iloc[0, :].str.contains('取得方式'))[0])
 
-            pattern = re.compile('^.*?\d.*?$')
-            start_pos = list(
-                np.where(df.iloc[:, direct_sharehold_pos[0]].str.match(pattern) | df.iloc[:, direct_sharehold_pos[0]].str.match('nan'))[0])
-            names = list(df.iloc[start_pos[0]:, name_pos[0]])
-            main_place_of_busis = list(df.iloc[start_pos[0]:, main_place_of_busi_pos[0]])
-            registr_places = list(df.iloc[start_pos[0]:, registr_place_pos[0]])
-            busi_naturs = list(df.iloc[start_pos[0]:, busi_natur_pos[0]])
-            direct_shareholds = list(df.iloc[start_pos[0]:, direct_sharehold_pos[0]])
-            indirect_shareholds = list(df.iloc[start_pos[0]:, indirect_sharehold_pos[0]])
-            get_methods = list(df.iloc[start_pos[0]:, get_method_pos[0]]) if len(get_method_pos) > 0 else ['' for i in
-                                                                                            range(len(names))]
+            start_pos = compute_start_pos(df)
+            if len(start_pos)>0:
+                company_names = get_values(df,start_pos,company_name_pos,'t')
+                main_place_of_busis = get_values(df,start_pos,main_place_of_busi_pos,'t')
+                registr_places = get_values(df,start_pos,registr_place_pos,'t')
+                busi_naturs =  get_values(df,start_pos,busi_natur_pos,'t')
+                direct_shareholds =  get_values(df,start_pos,direct_sharehold_pos,'d')
+                indirect_shareholds =  get_values(df,start_pos,indirect_sharehold_pos,'d')
+                acquisit_styles = get_values(df,start_pos,acquisit_style_pos,'t')
 
-            for (name, main_place_of_busi, registr_place, busi_natur, \
-                        direct_sharehold,indirect_sharehold,get_method) in \
-                    zip(names, main_place_of_busis, registr_places, busi_naturs, \
-                        direct_shareholds,indirect_shareholds,get_methods):
-                if models.CompanyName.objects.filter(natur_of_the_unit=natures[self.indexno], name=name):
-                    obj_name = models.CompanyName.objects.get(natur_of_the_unit=natures[self.indexno], name=name)
-                else:
-                    obj_name = models.CompanyName.objects.create(natur_of_the_unit=natures[self.indexno], name=name)
+                for (company_name, main_place_of_busi, registr_place, busi_natur,
+                            direct_sharehold,indirect_sharehold,acquisit_style) in \
+                        zip(company_names, main_place_of_busis, registr_places, busi_naturs,
+                            direct_shareholds,indirect_shareholds,acquisit_styles):
+                    if models.CompanyName.objects.filter(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per, company_name=company_name):
+                        obj_name = models.CompanyName.objects.get(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per, company_name=company_name)
+                    else:
+                        obj_name = models.CompanyName.objects.create(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,natur_of_the_unit=natures[self.indexno], company_name=company_name)
 
-                if models.CompositOfEnterprisGroup.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                          typ_rep_id='A',name_id=obj_name.id):
-                    obj = models.CompositOfEnterprisGroup.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              typ_rep_id='A', name_id=obj_name.id)
-
-                    obj.main_place_of_busi = main_place_of_busi
-                    obj.registr_place = registr_place
-                    obj.busi_natur = busi_natur
-                    obj.direct_sharehold = direct_sharehold
-                    obj.indirect_sharehold = indirect_sharehold
-                    obj.get_method = get_method
-                    obj.save()
-                else:
-                    models.CompositOfEnterprisGroup.objects.create(
+                    value_dict = dict(
                         stk_cd_id=self.stk_cd_id,
                         acc_per=self.acc_per,
                         typ_rep_id='A',
-                        name_id=obj_name.id,
+                        company_name_id=obj_name.id,
                         main_place_of_busi=main_place_of_busi,
                         registr_place=registr_place,
                         busi_natur=busi_natur,
                         direct_sharehold=direct_sharehold,
                         indirect_sharehold=indirect_sharehold,
-                        get_method=get_method,
+                        acquisit_style=acquisit_style,
                     )
+                    create_and_update('CompositOfEnterprisGroup',**value_dict)
         else:
             pass
 
         if len(instructi) > 0 and self.indexno=='0b09010100':
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
+            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,typ_rep_id='A'):
+                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,typ_rep_id='A')
                 obj.composit_of_enterpris_group = instructi
                 obj.save()
             else:
                 models.ComprehensNote.objects.create(
                     stk_cd_id=self.stk_cd_id,
                     acc_per=self.acc_per,
+                    typ_rep_id='A',
                     composit_of_enterpris_group=instructi
                 )
 
         if len(instructi) > 0 and self.indexno=='0b09030100':
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
+            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,typ_rep_id='A'):
+                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,typ_rep_id='A')
                 obj.joint_ventur = instructi
                 obj.save()
             else:
                 models.ComprehensNote.objects.create(
                     stk_cd_id=self.stk_cd_id,
                     acc_per=self.acc_per,
+                    typ_rep_id='A',
                     joint_ventur=instructi
                 )
 
@@ -153,30 +118,8 @@ class ImportNonwhollyownSubsidia(HandleIndexContent):
         super(ImportNonwhollyownSubsidia, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b09010200','0b090102']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b09010200','0b090102']
+        pass
 
     def converse(self):
 
@@ -186,8 +129,7 @@ class ImportNonwhollyownSubsidia(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
             subcompani_name_pos = list(np.where(df.iloc[0, :].str.contains('子公司名称'))[0])
             minor_sharehold_pos = list(np.where(df.iloc[0, :].str.contains('少数股东持股比例'))[0])
@@ -195,44 +137,27 @@ class ImportNonwhollyownSubsidia(HandleIndexContent):
             dividend_to_minor_pos = list(np.where(df.iloc[0, :].str.contains('本期向少数股东宣告分派的股利'))[0])
             minor_equiti_pos = list(np.where(df.iloc[1, :].str.contains('期末少数股东权益余额'))[0])
 
-            pattern = re.compile('^.*?\d.*?$')
-            start_pos = list(
-                np.where(df.iloc[:, minor_sharehold_pos[0]].str.match(pattern) | df.iloc[:, minor_sharehold_pos[0]].str.match('nan'))[0])
-            subcompani_names = list(df.iloc[start_pos[0]:, subcompani_name_pos[0]])
-            minor_shareholds = list(df.iloc[start_pos[0]:, minor_sharehold_pos[0]])
-            profit_attrib_to_minors = list(df.iloc[start_pos[0]:, profit_attrib_to_minor_pos[0]])
-            dividend_to_minors = list(df.iloc[start_pos[0]:, dividend_to_minor_pos[0]])
-            minor_equitis = list(df.iloc[start_pos[0]:, minor_equiti_pos[0]]) if len(minor_equiti_pos) > 0 else [0.00 for i in
-                                                                                            range(len(subcompani_names))]
+            start_pos = compute_start_pos(df)
+            if len(start_pos)>0:
+                subcompani_names = get_values(df,start_pos,subcompani_name_pos,'t')
+                minor_shareholds = get_values(df,start_pos,minor_sharehold_pos,'t')
+                profit_attrib_to_minors = get_values(df,start_pos,profit_attrib_to_minor_pos,'d')
+                dividend_to_minors = get_values(df,start_pos,dividend_to_minor_pos,'d')
+                minor_equitis = get_values(df,start_pos,minor_equiti_pos,'d')
 
-            for (subcompani_name, minor_sharehold, profit_attrib_to_minor, dividend_to_minor,minor_equiti) in \
-                    zip(subcompani_names, minor_shareholds, profit_attrib_to_minors, dividend_to_minors,minor_equitis):
-                if models.ImportNonwhollyownSubsidia.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                          typ_rep_id='A',subcompani_name=subcompani_name ):
-                    obj = models.ImportNonwhollyownSubsidia.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              typ_rep_id='A', subcompani_name=subcompani_name)
-
-                    obj.minor_sharehold = Decimal(re.sub(',', '', str(minor_sharehold))) * unit_change[unit] if is_num(minor_sharehold) else 0.00
-                    obj.profit_attrib_to_minor = Decimal(re.sub(',', '', str(profit_attrib_to_minor))) * unit_change[unit] if is_num(profit_attrib_to_minor) else 0.00
-                    obj.dividend_to_minor = Decimal(re.sub(',', '', str(dividend_to_minor))) * unit_change[unit] if is_num(dividend_to_minor) else 0.00
-                    obj.minor_equiti = Decimal(re.sub(',', '', str(minor_equiti))) * unit_change[unit] if is_num(minor_equiti) else 0.00
-
-                    obj.save()
-                else:
-                    models.ImportNonwhollyownSubsidia.objects.create(
+                for (subcompani_name, minor_sharehold, profit_attrib_to_minor, dividend_to_minor,minor_equiti) in \
+                        zip(subcompani_names, minor_shareholds, profit_attrib_to_minors, dividend_to_minors,minor_equitis):
+                    value_dict = dict(
                         stk_cd_id=self.stk_cd_id,
                         acc_per=self.acc_per,
                         typ_rep_id='A',
                         subcompani_name=subcompani_name,
-                        minor_sharehold=Decimal(re.sub(',', '', str(minor_sharehold))) * unit_change[unit] if is_num(
-                            minor_sharehold) else 0.00,
-                        profit_attrib_to_minor=Decimal(re.sub(',', '', str(profit_attrib_to_minor))) * unit_change[
-                            unit] if is_num(profit_attrib_to_minor) else 0.00,
-                        dividend_to_minor=Decimal(re.sub(',', '', str(dividend_to_minor))) * unit_change[
-                            unit] if is_num(dividend_to_minor) else 0.00,
-                        minor_equiti=Decimal(re.sub(',', '', str(minor_equiti))) * unit_change[unit] if is_num(
-                            minor_equiti) else 0.00,
+                        minor_sharehold=num_to_decimal(minor_sharehold, unit),
+                        profit_attrib_to_minor=num_to_decimal(profit_attrib_to_minor, unit),
+                        dividend_to_minor=num_to_decimal(dividend_to_minor, unit),
+                        minor_equiti=num_to_decimal(minor_equiti, unit),
                     )
+                    create_and_update('ImportNonwhollyownSubsidia',**value_dict)
         else:
             pass
 
@@ -287,44 +212,33 @@ class MajorNonwhollyownSubsidiaryFinanciInform(HandleIndexContent):
     def save(self):
         dfs, unit, instructi = self.recognize()
         before_end_dict = {'期初余额':'b','期末余额':'e','本期发生额':'e','上期发生额':'b'}
-        subject_dict = {'流动资产':'1','非流动资产':'2','资产合计':'3',\
-                        '流动负债':'4','非流动负债':'5','负债合计':'6',\
+        subject_dict = {'流动资产':'1','非流动资产':'2','资产合计':'3',
+                        '流动负债':'4','非流动负债':'5','负债合计':'6',
                         '营业收入':'7','净利润':'8','综合收益总额':'9','经营活动现金流量':'10'}
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if dfs.get('asset') is not None :
             df = dfs['asset']
             df = df.set_index([0])
             df = df.T
             df = df.set_index(['子公司名称'])
             all_dict = df.to_dict()
-            for subcompani_name in all_dict:
-                for item in all_dict[subcompani_name]:
+            for company_name in all_dict:
+                for item in all_dict[company_name]:
                     before_end_item,subject_item = item
                     before_end = before_end_dict[before_end_item]
-                    subject = subject_dict[subject_item]
-                    value = all_dict[subcompani_name][item]
-                    value = Decimal(re.sub(',', '', str(value))) * unit_change[unit] if is_num(value) else 0.00
-                    if models.MajorNonwhollyownSubsidiaryFinanciInform.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                                typ_rep_id='A', before_end=before_end,company_type='s',
-                                                                        subcompani_name=subcompani_name,subject=subject):
-                        obj = models.MajorNonwhollyownSubsidiaryFinanciInform.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                            typ_rep_id='A', before_end=before_end,company_type='s',
-                                                                        subcompani_name=subcompani_name,subject=subject)
-
-                        obj.amount = value
-
-                        obj.save()
-                    else:
-                        models.MajorNonwhollyownSubsidiaryFinanciInform.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            typ_rep_id='A',
-                            company_type='s',
-                            before_end=before_end,
-                            subcompani_name=subcompani_name,
-                            subject=subject,
-                            amount=value
-                        )
+                    name = subject_dict[subject_item]
+                    value = all_dict[company_name][item]
+                    value = num_to_decimal(value,unit)
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        company_type='s',
+                        before_end=before_end,
+                        company_name=company_name,
+                        name=name,
+                        amount=value
+                    )
+                    create_and_update('MajorNonwhollyownSubsidiaryFinanciInform',**value_dict)
 
 class JointPoolFinanciInform(HandleIndexContent):
     '''
@@ -335,31 +249,8 @@ class JointPoolFinanciInform(HandleIndexContent):
         super(JointPoolFinanciInform, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b09030200','0b09030300','0b090302','0b090303']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos =  ['0b09030200','0b09030300','0b090302','0b090303']
+        pass
 
     def converse(self):
 
@@ -370,7 +261,7 @@ class JointPoolFinanciInform(HandleIndexContent):
 
     def save(self):
         company_type_dict = {'0b09030200':'j','0b09030300':'p','0b090302':'j','0b090303':'p'}
-        df, unit, instructi = self.recognize()
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         subject_dict = {'流动资产':'1','非流动资产':'2','资产合计':'3',\
                         '流动负债':'4','非流动负债':'5','负债合计':'6', \
                         '营业收入': '7', '净利润': '8', '综合收益总额': '9', '经营活动现金流量': '10',
@@ -379,7 +270,6 @@ class JointPoolFinanciInform(HandleIndexContent):
                         '权益投资的账面价值':'19','权益投资的公允价值':'20','财务费用':'21','所得税费用':'22',\
                         '终止经营的净利润':'23','其他综合收益':'24','股利':'25'
                         }
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         if df is not None  and len(df)>1:
             end_poses = list(np.where(df.iloc[0, :].str.contains('期末'))[0])
             before_poses = list(np.where(df.iloc[0, :].str.contains('期初'))[0])
@@ -387,7 +277,7 @@ class JointPoolFinanciInform(HandleIndexContent):
             before_end_poses = {'e':end_poses,'b':before_poses}
             for before_end in before_end_poses:
                 for pos in before_end_poses[before_end]:
-                    subcompani_name = df.iloc[1,pos]
+                    company_name = df.iloc[1,pos]
                     for subject_name in subject_dict:
                         subject_pos = ''
                         for k,subject in enumerate(subjects):
@@ -401,28 +291,20 @@ class JointPoolFinanciInform(HandleIndexContent):
                                 else:
                                     pass
                         if subject_pos != '':
-                            subject = subject_dict[subject_name]
+                            name = subject_dict[subject_name]
                             value = df.iloc[subject_pos,pos]
-                            value = Decimal(re.sub(',', '', str(value))) * unit_change[unit] if is_num(value) else 0.00
-                            if models.MajorNonwhollyownSubsidiaryFinanciInform.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                                        typ_rep_id='A', before_end=before_end,company_type=company_type_dict[self.indexno],
-                                                                                subcompani_name=subcompani_name,subject=subject):
-                                obj = models.MajorNonwhollyownSubsidiaryFinanciInform.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                                    typ_rep_id='A', before_end=before_end,company_type=company_type_dict[self.indexno],
-                                                                                subcompani_name=subcompani_name,subject=subject)
-                                obj.amount = value
-                                obj.save()
-                            else:
-                                models.MajorNonwhollyownSubsidiaryFinanciInform.objects.create(
-                                    stk_cd_id=self.stk_cd_id,
-                                    acc_per=self.acc_per,
-                                    typ_rep_id='A',
-                                    company_type=company_type_dict[self.indexno],
-                                    before_end=before_end,
-                                    subcompani_name=subcompani_name,
-                                    subject=subject,
-                                    amount=value
-                                )
+                            value = num_to_decimal(value,unit)
+                            value_dict = dict(
+                                stk_cd_id=self.stk_cd_id,
+                                acc_per=self.acc_per,
+                                typ_rep_id='A',
+                                company_type=company_type_dict[self.indexno],
+                                before_end=before_end,
+                                company_name=company_name,
+                                name=name,
+                                amount=value
+                            )
+                            create_and_update('MajorNonwhollyownSubsidiaryFinanciInform',**value_dict)
                         else:
                             pass
 
@@ -435,31 +317,8 @@ class RiskRelatToFinanciInstrument(HandleIndexContent):
         super(RiskRelatToFinanciInstrument, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b0a000000','0b0a0000']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                                instructi.append(df.to_string())
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b0a000000','0b0a0000']
+        pass
 
     def converse(self):
 
@@ -469,18 +328,9 @@ class RiskRelatToFinanciInstrument(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        if len(instructi) > 0:
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.risk_relat_to_financi_instrument = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    risk_relat_to_financi_instrument=instructi
-                )
+        df, unit, instructi = recognize_instucti(self.indexcontent)
+        save_combine_instructi(instructi,models.ComprehensNote,self.stk_cd_id,self.acc_per,'A','risk_relat_to_financi_instrument')
+
 
 class ParentCompaniAndActualControl(HandleIndexContent):
     '''
@@ -491,30 +341,8 @@ class ParentCompaniAndActualControl(HandleIndexContent):
         super(ParentCompaniAndActualControl, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b0c010000','0b0c0100']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b0c010000','0b0c0100']
+        pass
 
     def converse(self):
 
@@ -524,24 +352,24 @@ class ParentCompaniAndActualControl(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         pattern = re.compile('^.*?最终控制方是(.*?)。其他说明：(.*?)$')
         parent_compani_name = ''
-        registr = ''
+        registr_place = ''
         busi_natur = ''
         regist_capit = 0.00
         parent_company_share = 0.00
         parent_company_vote_right = 0.00
         if df is not None and len(df)>1:
             parent_compani_name_pos = list(np.where(df.iloc[0, :].str.contains('母公司名称'))[0])
-            registr_pos = list(np.where(df.iloc[0, :].str.contains('注册地'))[0])
+            registr_place_pos = list(np.where(df.iloc[0, :].str.contains('注册地'))[0])
             busi_natur_pos = list(np.where(df.iloc[0, :].str.contains('业务性质'))[0])
             regist_capit_pos = list(np.where(df.iloc[0, :].str.contains('注册资本'))[0])
             parent_company_share_pos = list(np.where(df.iloc[0, :].str.contains('持股比例'))[0])
             parent_company_vote_right_pos = list(np.where(df.iloc[0, :].str.contains('表决权比例'))[0])
             if len(df) == 2:
                 parent_compani_name = df.iloc[1, parent_compani_name_pos[0]]
-                registr = df.iloc[1, registr_pos[0]]
+                registr_place = df.iloc[1, registr_place_pos[0]]
                 busi_natur = df.iloc[1, busi_natur_pos[0]]
                 regist_capit = df.iloc[1, regist_capit_pos[0]]
                 parent_company_share = df.iloc[1, parent_company_share_pos[0]]
@@ -555,35 +383,20 @@ class ParentCompaniAndActualControl(HandleIndexContent):
             desc = ''
 
         if parent_compani_name != '':
-            if models.ParentCompaniAndActualControl.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              typ_rep_id='A',
-                                                                   parent_compani_name=parent_compani_name):
-                obj = models.ParentCompaniAndActualControl.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                  typ_rep_id='A',
-                                                                       parent_compani_name=parent_compani_name)
-
-                obj.registr = registr
-                obj.busi_natur = busi_natur
-                obj.regist_capit = regist_capit
-                obj.parent_company_share = parent_company_share
-                obj.parent_company_vote_right = parent_company_vote_right
-                obj.actual_control = actual_control
-                obj.desc = desc
-                obj.save()
-            else:
-                models.ParentCompaniAndActualControl.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    typ_rep_id='A',
-                    parent_compani_name=parent_compani_name,
-                    registr=registr,
-                    busi_natur=busi_natur,
-                    regist_capit=regist_capit,
-                    parent_company_share=parent_company_share,
-                    parent_company_vote_right=parent_company_vote_right,
-                    actual_control=actual_control,
-                    desc=desc,
-                )
+            value_dict = dict(
+                stk_cd_id=self.stk_cd_id,
+                acc_per=self.acc_per,
+                typ_rep_id='A',
+                parent_compani_name=parent_compani_name,
+                registr_place=registr_place,
+                busi_natur=busi_natur,
+                regist_capit=regist_capit,
+                parent_company_share=parent_company_share,
+                parent_company_vote_right=parent_company_vote_right,
+                actual_control=actual_control,
+                desc=desc,
+            )
+            create_and_update('ParentCompaniAndActualControl',**value_dict)
 
 class OtherRelat(HandleIndexContent):
     '''
@@ -594,30 +407,8 @@ class OtherRelat(HandleIndexContent):
         super(OtherRelat, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b0c040000','0b0c0400']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b0c040000','0b0c0400']
+        pass
 
     def converse(self):
 
@@ -627,7 +418,7 @@ class OtherRelat(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
             name_pos = list(np.where(df.iloc[0, :].str.contains('名称'))[0])
             relationship_pos = list(np.where(df.iloc[0, :].str.contains('关系'))[0])
@@ -635,23 +426,14 @@ class OtherRelat(HandleIndexContent):
             names = list(df.iloc[1:,name_pos[0]])
             relationships = list(df.iloc[1:,relationship_pos[0]])
             for (name,relationship) in zip(names,relationships):
-                if models.OtherRelat.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                       typ_rep_id='A',
-                                                                       name=name):
-                    obj = models.OtherRelat.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                           typ_rep_id='A',
-                                                        name=name)
-
-                    obj.relationship = relationship
-                    obj.save()
-                else:
-                    models.OtherRelat.objects.create(
-                        stk_cd_id=self.stk_cd_id,
-                        acc_per=self.acc_per,
-                        typ_rep_id='A',
-                        name=name,
-                        relationship=relationship,
-                    )
+                value_dict = dict(
+                    stk_cd_id=self.stk_cd_id,
+                    acc_per=self.acc_per,
+                    typ_rep_id='A',
+                    name=name,
+                    relationship=relationship,
+                )
+                create_and_update('OtherRelat',**value_dict)
 
 class PurchasAndSale(HandleIndexContent):
     '''
@@ -713,7 +495,6 @@ class PurchasAndSale(HandleIndexContent):
     def save(self):
         transact_types = ['s','p']
         dfs, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         for transact_type in transact_types:
             if dfs.get(transact_type) is not None and len(dfs[transact_type])>1:
                 df = dfs[transact_type]
@@ -736,32 +517,19 @@ class PurchasAndSale(HandleIndexContent):
 
                 for (name, content,before,end,approv_transact_amou,is_exceed_amount) in \
                         zip(names, contents,befores,ends,approv_transact_amous,is_exceed_amounts):
-                    if models.PurchasAndSale.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                        typ_rep_id='A',transact_type=transact_type,
-                                                        name=name):
-                        obj = models.PurchasAndSale.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                            typ_rep_id='A',transact_type=transact_type,
-                                                            name=name)
-
-                        obj.content = content
-                        obj.before = Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(before) else 0.00
-                        obj.end = Decimal(re.sub(',', '', str(end))) * unit_change[unit] if is_num(end) else 0.00
-                        obj.approv_transact_amou = approv_transact_amou
-                        obj.is_exceed_amount = is_exceed_amount
-                        obj.save()
-                    else:
-                        models.PurchasAndSale.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            typ_rep_id='A',
-                            transact_type=transact_type,
-                            name=name,
-                            content=content,
-                            before=Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(before) else 0.00,
-                            end=Decimal(re.sub(',', '', str(end))) * unit_change[unit] if is_num(end) else 0.00,
-                            approv_transact_amou=approv_transact_amou,
-                            is_exceed_amount=is_exceed_amount,
-                        )
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        transact_type=transact_type,
+                        name=name,
+                        content=content,
+                        before=num_to_decimal(before, unit),
+                        end=num_to_decimal(end, unit),
+                        approv_transact_amou=approv_transact_amou,
+                        is_exceed_amount=is_exceed_amount,
+                    )
+                    create_and_update('PurchasAndSale',**value_dict)
 
 class RelatPartiLeas(HandleIndexContent):
     '''
@@ -820,7 +588,6 @@ class RelatPartiLeas(HandleIndexContent):
     def save(self):
         transact_types = ['to','from']
         dfs, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         for transact_type in transact_types:
             if dfs.get(transact_type) is not None:
                 df = dfs[transact_type]
@@ -837,30 +604,17 @@ class RelatPartiLeas(HandleIndexContent):
 
                 for (name, content,before,end) in \
                         zip(names, contents,befores,ends):
-                    if models.RelatPartiLeas.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                        typ_rep_id='A',transact_type=transact_type,
-                                                        name=name):
-                        obj = models.RelatPartiLeas.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                            typ_rep_id='A',transact_type=transact_type,
-                                                            name=name)
-
-                        obj.content = content
-                        obj.before = Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(before) else 0.00
-                        obj.end = Decimal(re.sub(',', '', str(end))) * unit_change[unit] if is_num(end) else 0.00
-
-                        obj.save()
-                    else:
-                        models.RelatPartiLeas.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            typ_rep_id='A',
-                            transact_type=transact_type,
-                            name=name,
-                            content=content,
-                            before=Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(before) else 0.00,
-                            end=Decimal(re.sub(',', '', str(end))) * unit_change[unit] if is_num(end) else 0.00,
-
-                        )
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        transact_type=transact_type,
+                        name=name,
+                        content=content,
+                        before=num_to_decimal(before, unit),
+                        end=num_to_decimal(end, unit),
+                    )
+                    create_and_update('RelatPartiLeas',**value_dict)
 
 class MoneyLend(HandleIndexContent):
     '''
@@ -917,7 +671,6 @@ class MoneyLend(HandleIndexContent):
     def save(self):
         transact_types = ['to', 'from']
         dfs, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
         for transact_type in transact_types:
             if dfs.get(transact_type) is not None:
                 df = dfs[transact_type]
@@ -928,29 +681,22 @@ class MoneyLend(HandleIndexContent):
                 amounts = list(df.iloc[:, 1])
                 start_dates = list(df.iloc[:, 2])
                 expiri_dates = list(df.iloc[:, 3])
-                descs = list(df.iloc[:, 4])
+                instructs = list(df.iloc[:, 4])
 
-                for (name, amount, start_date, expiri_date,desc) in \
-                        zip(names, amounts, start_dates, expiri_dates,descs):
-                    if models.MoneyLend.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                            typ_rep_id='A', transact_type=transact_type,
-                                                            name=name,amount=amount,start_date=start_date,
-                                                       expiri_date=expiri_date):
-                        pass
-                    else:
-                        models.MoneyLend.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            typ_rep_id='A',
-                            transact_type=transact_type,
-                            name=name,
-                            amount=Decimal(re.sub(',', '', str(amount))) * unit_change[unit] if is_num(
-                                amount) else 0.00,
-                            start_date=start_date,
-                            expiri_date=expiri_date,
-                            desc=desc,
-
-                        )
+                for (name, amount, start_date, expiri_date,instruct) in \
+                        zip(names, amounts, start_dates, expiri_dates,instructs):
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        transact_type=transact_type,
+                        name=name,
+                        amount=num_to_decimal(amount, unit),
+                        start_date=start_date,
+                        expiri_date=expiri_date,
+                        instruct=instruct,
+                    )
+                    create_and_update('MoneyLend',**value_dict)
 
 class RelatAssetTransferDebtRestructur(HandleIndexContent):
     '''
@@ -961,30 +707,8 @@ class RelatAssetTransferDebtRestructur(HandleIndexContent):
         super(RelatAssetTransferDebtRestructur, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b0c050600','0b0c0506']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for key, table in enumerate(tables):
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b0c050600','0b0c0506']
+        pass
 
     def converse(self):
 
@@ -994,8 +718,7 @@ class RelatAssetTransferDebtRestructur(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
             df = df[df.iloc[:,0]!='合计']
             name_pos = list(np.where(df.iloc[0, :].str.contains('关联方'))[0])
@@ -1010,30 +733,17 @@ class RelatAssetTransferDebtRestructur(HandleIndexContent):
 
             for (name, content, before, end, ) in \
                     zip(names, contents, befores, ends):
-                if models.PurchasAndSale.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                        typ_rep_id='A', transact_type='atdr',
-                                                        name=name):
-                    obj = models.PurchasAndSale.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                            typ_rep_id='A', transact_type='atdr',
-                                                            name=name)
-
-                    obj.content = content
-                    obj.before = Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(
-                        before) else 0.00
-                    obj.end = Decimal(re.sub(',', '', str(end))) * unit_change[unit] if is_num(end) else 0.00
-                    obj.save()
-                else:
-                    models.PurchasAndSale.objects.create(
-                        stk_cd_id=self.stk_cd_id,
-                        acc_per=self.acc_per,
-                        typ_rep_id='A',
-                        transact_type='atdr',
-                        name=name,
-                        content=content,
-                        before=Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(
-                            before) else 0.00,
-                        end=Decimal(re.sub(',', '', str(end))) * unit_change[unit] if is_num(end) else 0.00,
-                    )
+                value_dict = dict(
+                    stk_cd_id=self.stk_cd_id,
+                    acc_per=self.acc_per,
+                    typ_rep_id='A',
+                    transact_type='atdr',
+                    name=name,
+                    content=content,
+                    before=num_to_decimal(before, unit),
+                    end=num_to_decimal(end, unit),
+                )
+                create_and_update('PurchasAndSale',**value_dict)
 
 class KeyManagStaffRemuner(HandleIndexContent):
     '''
@@ -1044,30 +754,8 @@ class KeyManagStaffRemuner(HandleIndexContent):
         super(KeyManagStaffRemuner, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b0c050700','0b0c0507']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for key, table in enumerate(tables):
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b0c050700','0b0c0507']
+        pass
 
     def converse(self):
 
@@ -1077,8 +765,7 @@ class KeyManagStaffRemuner(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
             df = df[df.iloc[:, 0] != '合计']
             name_pos = list(np.where(df.iloc[0, :].str.contains('项目'))[0])
@@ -1091,27 +778,15 @@ class KeyManagStaffRemuner(HandleIndexContent):
 
             for (name,  before, end,) in \
                     zip(names,  befores, ends):
-                if models.KeyManagStaffRemuner.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                        typ_rep_id='A',
-                                                        name=name):
-                    obj = models.KeyManagStaffRemuner.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                            typ_rep_id='A',
-                                                            name=name)
-
-                    obj.before = Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(
-                        before) else 0.00
-                    obj.end = Decimal(re.sub(',', '', str(end))) * unit_change[unit] if is_num(end) else 0.00
-                    obj.save()
-                else:
-                    models.KeyManagStaffRemuner.objects.create(
-                        stk_cd_id=self.stk_cd_id,
-                        acc_per=self.acc_per,
-                        typ_rep_id='A',
-                        name=name,
-                        before=Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(
-                            before) else 0.00,
-                        end=Decimal(re.sub(',', '', str(end))) * unit_change[unit] if is_num(end) else 0.00,
-                    )
+                value_dict = dict(
+                    stk_cd_id=self.stk_cd_id,
+                    acc_per=self.acc_per,
+                    typ_rep_id='A',
+                    name=name,
+                    before=num_to_decimal(before, unit),
+                    end=num_to_decimal(end, unit),
+                )
+                create_and_update("KeyManagStaffRemuner",**value_dict)
 
 class OtherRelatTransact(HandleIndexContent):
     '''
@@ -1122,31 +797,8 @@ class OtherRelatTransact(HandleIndexContent):
         super(OtherRelatTransact, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b0c050800','0b0c0508']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                                instructi.append(df.to_string())
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b0c050800','0b0c0508']
+        pass
 
     def converse(self):
 
@@ -1156,18 +808,9 @@ class OtherRelatTransact(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        if len(instructi) > 0 :
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.other_relat_transact = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    other_relat_transact=instructi
-                )
+        df, unit, instructi = recognize_instucti(self.indexcontent)
+        save_combine_instructi(instructi, models.ComprehensNote, self.stk_cd_id, self.acc_per,'A',
+                       'other_relat_transact')
 
 class RelatReceivPayabl(HandleIndexContent):
     '''
@@ -1178,30 +821,8 @@ class RelatReceivPayabl(HandleIndexContent):
         super(RelatReceivPayabl, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b0c060100','0b0c060200','0b0c0601','0b0c0602']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for key, table in enumerate(tables):
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b0c060100','0b0c060200','0b0c0601','0b0c0602']
+        pass
 
     def converse(self):
 
@@ -1212,58 +833,40 @@ class RelatReceivPayabl(HandleIndexContent):
 
     def save(self):
         natur_of_payment_dict = {'0b0c060100':'r','0b0c060200':'p','0b0c0601':'r','0b0c0602':'p'}
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
             df = df[df.iloc[:, 0] != '合计']
             name_pos = list(np.where(df.iloc[0, :].str.contains('项目'))[0])
             relat_parti_name_pos = list(np.where(df.iloc[0, :].str.contains('关联方'))[0])
             before_pos = list(np.where(df.iloc[0, :].str.contains('期初'))[0])
             end_pos = list(np.where(df.iloc[0, :].str.contains('期末'))[0])
-            pattern = re.compile('^.*?\d.*?$')
-            start_pos = list(
-                np.where(df.iloc[:, before_pos[0]].str.match(pattern) | df.iloc[:,before_pos[0]].str.match( 'nan'))[0])
+            start_pos = compute_start_pos(df)
+            if len(start_pos)>0:
+                names = get_values(df,start_pos,name_pos,'t')
+                relat_parti_names = get_values(df,start_pos,relat_parti_name_pos,'t')
+                before_values = get_values(df,start_pos,before_pos,'d')
+                before_bad_debt_prepars = get_values(df,start_pos, before_pos[1],'d') if len(before_pos) == 2 else [0.00 for i in range(len(names))]
+                end_values = get_values(df,start_pos, end_pos,'d')
+                end_bad_debt_prepars = get_values(df,start_pos, end_pos[1],'d')  if len(end_pos) == 2 else [0.00 for i in range(len(names))]
 
-            names = list(df.iloc[start_pos[0]:, name_pos[0]])
-            relat_parti_names = list(df.iloc[start_pos[0]:, relat_parti_name_pos[0]])
-            before_values = list(df.iloc[start_pos[0]:, before_pos[0]])
-            before_bad_debt_prepars = list(df.iloc[start_pos[0]:, before_pos[1]]) if len(before_pos)==2 else [0.00 for i in range(len(names))]
-            end_values = list(df.iloc[start_pos[0]:, end_pos[0]])
-            end_bad_debt_prepars = list(df.iloc[start_pos[0]:, end_pos[1]]) if len(end_pos) == 2 else [0.00 for i in range(len(names))]
+                all_dict = {'b':list(zip(before_values,before_bad_debt_prepars)),
+                            'e':list(zip(end_values,end_bad_debt_prepars))}
 
-            all_dict = {'b':list(zip(before_values,before_bad_debt_prepars)),
-                        'e':list(zip(end_values,end_bad_debt_prepars))}
-
-            for before_end in all_dict:
-                for name,relat_parti_name,value in zip(names,relat_parti_names,all_dict[before_end]):
-                    book_value,bad_debt_prepar = value
-
-                    if models.RelatReceivPayabl.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                            typ_rep_id='A',before_end=before_end,
-                                                               natur_of_payment=natur_of_payment_dict[self.indexno],name=name,
-                                                                 relat_parti_name=relat_parti_name):
-                        obj = models.RelatReceivPayabl.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                typ_rep_id='A',before_end=before_end,
-                                                                   natur_of_payment=natur_of_payment_dict[self.indexno],  name=name,
-                                                                   relat_parti_name=relat_parti_name)
-
-                        obj.book_value = Decimal(re.sub(',', '', str(book_value))) * unit_change[unit] if is_num(
-                            book_value) else 0.00
-                        obj.bad_debt_prepar = Decimal(re.sub(',', '', str(bad_debt_prepar))) * unit_change[unit] if is_num(bad_debt_prepar) else 0.00
-                        obj.save()
-                    else:
-                        models.RelatReceivPayabl.objects.create(
+                for before_end in all_dict:
+                    for name,relat_parti_name,value in zip(names,relat_parti_names,all_dict[before_end]):
+                        book_value,bad_debt_prepar = value
+                        value_dict = dict(
                             stk_cd_id=self.stk_cd_id,
                             acc_per=self.acc_per,
                             typ_rep_id='A',
                             before_end=before_end,
                             natur_of_payment=natur_of_payment_dict[self.indexno],
-                            name=name,
+                            subject=name,
                             relat_parti_name=relat_parti_name,
-                            book_value=Decimal(re.sub(',', '', str(book_value))) * unit_change[unit] if is_num(
-                            book_value) else 0.00,
-                            bad_debt_prepar=Decimal(re.sub(',', '', str(bad_debt_prepar))) * unit_change[unit] if is_num(bad_debt_prepar) else 0.00,
+                            balanc=num_to_decimal(book_value, unit),
+                            bad_debt_prepar=num_to_decimal(bad_debt_prepar, unit),
                         )
+                        create_and_update('RelatReceivPayabl',**value_dict)
 
 class RelatPartiCommit(HandleIndexContent):
     '''
@@ -1274,31 +877,8 @@ class RelatPartiCommit(HandleIndexContent):
         super(RelatPartiCommit, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b0c070000','0b0c0700']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                                instructi.append(df.to_string())
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b0c070000','0b0c0700']
+        pass
 
     def converse(self):
 
@@ -1308,18 +888,9 @@ class RelatPartiCommit(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        if len(instructi) > 0 :
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.relat_parti_commit = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    relat_parti_commit=instructi
-                )
+        df, unit, instructi = recognize_instucti(self.indexcontent)
+        save_combine_instructi(instructi, models.ComprehensNote, self.stk_cd_id, self.acc_per,'A',
+                       'relat_parti_commit')
 
 class ImportCommit(HandleIndexContent):
     '''
@@ -1330,31 +901,8 @@ class ImportCommit(HandleIndexContent):
         super(ImportCommit, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b0e010000','0b0e0100']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                                instructi.append(df.to_string())
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b0e010000','0b0e0100']
+        pass
 
     def converse(self):
 
@@ -1364,18 +912,9 @@ class ImportCommit(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        if len(instructi) > 0 :
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.import_commit = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    import_commit=instructi
-                )
+        df, unit, instructi = recognize_instucti(self.indexcontent)
+        save_combine_instructi(instructi, models.ComprehensNote, self.stk_cd_id, self.acc_per,'A',
+                       'import_commit')
 
 class Conting(HandleIndexContent):
     '''
@@ -1386,31 +925,8 @@ class Conting(HandleIndexContent):
         super(Conting, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b0e020100','0b0e0201']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                                instructi.append(df.to_string())
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos= ['0b0e020100','0b0e0201']
+        pass
 
     def converse(self):
 
@@ -1420,18 +936,9 @@ class Conting(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        if len(instructi) > 0 :
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.conting = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    conting=instructi
-                )
+        df, unit, instructi = recognize_instucti(self.indexcontent)
+        save_combine_instructi(instructi, models.ComprehensNote, self.stk_cd_id, self.acc_per,'A',
+                       'conting')
 
 class InvestInSubsidiari(HandleIndexContent):
     '''
@@ -1442,30 +949,8 @@ class InvestInSubsidiari(HandleIndexContent):
         super(InvestInSubsidiari, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b11030100','0b110301']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b11030100','0b110301']
+        pass
 
     def converse(self):
 
@@ -1475,74 +960,47 @@ class InvestInSubsidiari(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
+            print(df)
             # df = df[df.iloc[:,0]!="合计"]
-            name_pos = list(np.where(df.iloc[0, :].str.contains('被投资单位'))[0])
+            company_name_pos = list(np.where(df.iloc[0, :].str.contains('被投资单位'))[0])
             before_pos = list(np.where(df.iloc[0, :].str.contains('期初余额'))[0])
             increase_pos = list(np.where(df.iloc[0, :].str.contains('本期增加'))[0])
             cut_back_pos = list(np.where(df.iloc[0, :].str.contains('本期减少'))[0])
             end_pos = list(np.where(df.iloc[0, :].str.contains('期末余额'))[0])
-            impair_pos = list(np.where(df.iloc[0, :].str.contains('本期计提减值准备'))[0])
+            impair_pos = list(np.where(df.iloc[0, :].str.contains('计提减值准备'))[0])
             impair_balanc_pos = list(np.where(df.iloc[0, :].str.contains('减值准备期末余额'))[0])
 
-            pattern = re.compile('^.*?\d.*?$')
-            start_pos = list(
-                np.where(df.iloc[:, end_pos[0]].str.match(pattern) | df.iloc[:,end_pos[0]].str.match( 'nan'))[0])
+            start_pos = compute_start_pos(df)
+            if len(start_pos)>0:
+                company_names = get_values(df,start_pos,company_name_pos,'t')
+                befores = get_values(df,start_pos,before_pos,'d')
+                increases = get_values(df,start_pos,increase_pos,'d')
+                cut_backs = get_values(df,start_pos,cut_back_pos,'d')
+                ends = get_values(df,start_pos,end_pos,'d')
+                impairs = get_values(df,start_pos,impair_pos,'d')
+                impair_balancs = get_values(df,start_pos,impair_balanc_pos,'d')
+                for (company_name, before, increase, cut_back, end,impair,impair_balanc) in \
+                        zip(company_names, befores, increases, cut_backs, ends,impairs,impair_balancs):
 
-            names = list(df.iloc[start_pos[0]:, name_pos[0]])
-            befores = list(df.iloc[start_pos[0]:, before_pos[0]])
-            increases = list(df.iloc[start_pos[0]:, increase_pos[0]])
-            cut_backs = list(df.iloc[start_pos[0]:, cut_back_pos[0]])
-            ends = list(df.iloc[start_pos[0]:, end_pos[0]])
-            impairs = list(df.iloc[start_pos[0]:, impair_pos[0]])
-            impair_balancs = list(df.iloc[start_pos[0]:, impair_balanc_pos[0]])
-            for (name, before, increase, cut_back, end,impair,impair_balanc) in \
-                    zip(names, befores, increases, cut_backs, ends,impairs,impair_balancs):
-
-                if models.CompanyName.objects.filter(natur_of_the_unit='s', name=name):
-                    obj_name = models.CompanyName.objects.get(natur_of_the_unit='s', name=name)
-                else:
-                    obj_name = models.CompanyName.objects.create(natur_of_the_unit='s', name=name)
-
-                if models.InvestInSubsidiari.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                    typ_rep_id='A', name_id=obj_name.id):
-                    obj = models.InvestInSubsidiari.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                        typ_rep_id='A', name_id=obj_name.id)
-
-                    obj.before = Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(
-                        before) else 0.00
-                    obj.increase = Decimal(re.sub(',', '', str(increase))) * unit_change[
-                        unit] if is_num(increase) else 0.00
-                    obj.cut_back = Decimal(re.sub(',', '', str(cut_back))) * unit_change[
-                        unit] if is_num(cut_back) else 0.00
-                    obj.end = Decimal(re.sub(',', '', str(end))) * unit_change[unit] if is_num(
-                        end) else 0.00
-                    obj.impair = Decimal(re.sub(',', '', str(impair))) * unit_change[unit] if is_num(
-                        impair) else 0.00
-                    obj.impair_balanc = Decimal(re.sub(',', '', str(impair_balanc))) * unit_change[unit] if is_num(
-                        impair_balanc) else 0.00
-                    obj.save()
-                else:
-                    models.InvestInSubsidiari.objects.create(
+                    if models.CompanyName.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, company_name=company_name):
+                        obj_name = models.CompanyName.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, company_name=company_name)
+                    else:
+                        obj_name = models.CompanyName.objects.create(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,natur_of_the_unit='s', company_name=company_name)
+                    value_dict = dict(
                         stk_cd_id=self.stk_cd_id,
                         acc_per=self.acc_per,
                         typ_rep_id='A',
-                        name_id=obj_name.id,
-                        before=Decimal(re.sub(',', '', str(before))) * unit_change[unit] if is_num(
-                            before) else 0.00,
-                        increase=Decimal(re.sub(',', '', str(increase))) * unit_change[
-                            unit] if is_num(increase) else 0.00,
-                        cut_back=Decimal(re.sub(',', '', str(cut_back))) * unit_change[
-                            unit] if is_num(cut_back) else 0.00,
-                        end=Decimal(re.sub(',', '', str(end))) * unit_change[
-                            unit] if is_num(end) else 0.00,
-                        impair=Decimal(re.sub(',', '', str(impair))) * unit_change[
-                            unit] if is_num(impair) else 0.00,
-                        impair_balanc=Decimal(re.sub(',', '', str(impair_balanc))) * unit_change[
-                            unit] if is_num(impair_balanc) else 0.00,
+                        company_name_id=obj_name.id,
+                        before=num_to_decimal(before, unit),
+                        increase=num_to_decimal(increase, unit),
+                        cut_back=num_to_decimal(cut_back, unit),
+                        end=num_to_decimal(end, unit),
+                        impair=num_to_decimal(impair, unit),
+                        impair_balanc=num_to_decimal(impair_balanc, unit),
                     )
+                    create_and_update('InvestInSubsidiari',**value_dict)
         else:
             pass
 
@@ -1556,30 +1014,8 @@ class ReturnOnEquitiAndEarnPerShare(HandleIndexContent):
         super(ReturnOnEquitiAndEarnPerShare, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位[：:](.*?元).*?$')
-        if self.indexno in ['0b12020000','0b120200']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b12020000','0b120200']
+        pass
 
     def converse(self):
 
@@ -1589,7 +1025,7 @@ class ReturnOnEquitiAndEarnPerShare(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
             return_on_equiti_pos = list(np.where(df.iloc[1, :].str.contains('加权平均净资产收益率'))[0])
             basic_earn_per_share_pos = list(np.where(df.iloc[1, :].str.contains('基本每股收益'))[0])
@@ -1602,27 +1038,16 @@ class ReturnOnEquitiAndEarnPerShare(HandleIndexContent):
                 return_on_equiti = df.iloc[poses[gain_or_loss_type][0],return_on_equiti_pos[0]]
                 basic_earn_per_share = df.iloc[poses[gain_or_loss_type][0],basic_earn_per_share_pos[0]]
                 dilut_earn_per_share = df.iloc[poses[gain_or_loss_type][0],dilut_earn_per_share_pos[0]]
-                if models.ReturnOnEquitiAndEarnPerShare.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                            typ_rep_id='A', gain_or_loss_type=gain_or_loss_type):
-                    obj = models.ReturnOnEquitiAndEarnPerShare.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                                typ_rep_id='A', gain_or_loss_type=gain_or_loss_type)
-
-                    obj.return_on_equiti = Decimal(re.sub(',', '', str(return_on_equiti)))  if is_num(
-                        return_on_equiti) else 0.00
-                    obj.basic_earn_per_share = Decimal(re.sub(',', '', str(basic_earn_per_share)))  if is_num(basic_earn_per_share) else 0.00
-                    obj.dilut_earn_per_share = Decimal(re.sub(',', '', str(dilut_earn_per_share))) if is_num(dilut_earn_per_share) else 0.00
-                    obj.save()
-                else:
-                    models.ReturnOnEquitiAndEarnPerShare.objects.create(
-                        stk_cd_id=self.stk_cd_id,
-                        acc_per=self.acc_per,
-                        typ_rep_id='A',
-                        gain_or_loss_type=gain_or_loss_type,
-                        return_on_equiti=Decimal(re.sub(',', '', str(return_on_equiti)))  if is_num(
-                            return_on_equiti) else 0.00,
-                        basic_earn_per_share=Decimal(re.sub(',', '', str(basic_earn_per_share))) if is_num(basic_earn_per_share) else 0.00,
-                        dilut_earn_per_share=Decimal(re.sub(',', '', str(dilut_earn_per_share))) if is_num(dilut_earn_per_share) else 0.00,
-                    )
+                value_dict = dict(
+                    stk_cd_id=self.stk_cd_id,
+                    acc_per=self.acc_per,
+                    typ_rep_id='A',
+                    gain_or_loss_type=gain_or_loss_type,
+                    return_on_equiti=num_to_decimal(return_on_equiti),
+                    eps=num_to_decimal(basic_earn_per_share),
+                    deps=num_to_decimal(dilut_earn_per_share),
+                )
+                create_and_update('ReturnOnEquitiAndEarnPerShare',**value_dict)
         else:
             pass
 
@@ -1635,31 +1060,8 @@ class BusiMergerNotUnderTheSameControl(HandleIndexContent):
         super(BusiMergerNotUnderTheSameControl, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b080101']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                if table.iloc[0,:].str.contains('被购买方名称').any():
-                                    df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b080101']
+        pass
 
     def converse(self):
 
@@ -1669,10 +1071,9 @@ class BusiMergerNotUnderTheSameControl(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
-            name_pos = list(np.where(df.iloc[0, :].str.contains('被购买方名称'))[0])
+            company_name_pos = list(np.where(df.iloc[0, :].str.contains('被购买方名称'))[0])
             acquisit_time_pos = list(np.where(df.iloc[0, :].str.contains('股权取得时点'))[0])
             acquisit_cost_pos = list(np.where(df.iloc[0, :].str.contains('股权取得成本'))[0])
             acquisit_rate_pos = list(np.where(df.iloc[0, :].str.contains('股权取得比例'))[0])
@@ -1682,58 +1083,41 @@ class BusiMergerNotUnderTheSameControl(HandleIndexContent):
             income_pos = list(np.where(df.iloc[0, :].str.contains('购买日至期末被购买方的收入'))[0])
             np_pos = list(np.where(df.iloc[0, :].str.contains('购买日至期末被购买方的净利润'))[0])
 
-            pattern = re.compile('^.*?\d.*?$')
-            start_pos = list(
-                np.where(df.iloc[:, income_pos[0]].str.match(pattern) | df.iloc[:, income_pos[0]].str.match('nan'))[0])
-            names = list(df.iloc[start_pos[0]:, name_pos[0]])
-            acquisit_times = list(df.iloc[start_pos[0]:, acquisit_time_pos[0]])
-            acquisit_costs = list(df.iloc[start_pos[0]:, acquisit_cost_pos[0]])
-            acquisit_rates = list(df.iloc[start_pos[0]:, acquisit_rate_pos[0]])
-            acquisit_styles = list(df.iloc[start_pos[0]:, acquisit_style_pos[0]])
-            purchas_days = list(df.iloc[start_pos[0]:, purchas_day_pos[0]])
-            purchas_day_determi_basis = list(df.iloc[start_pos[0]:, purchas_day_determi_basi_pos[0]])
-            incomes = list(df.iloc[start_pos[0]:, income_pos[0]])
-            nps = list(df.iloc[start_pos[0]:, np_pos[0]]) if len(np_pos) > 0 else [0.00 for i in range(len(names))]
+            start_pos = compute_start_pos(df)
+            if len(start_pos)>0:
+                company_names = get_values(df,start_pos,company_name_pos,'t')
+                acquisit_times = get_values(df,start_pos,acquisit_time_pos,'t')
+                acquisit_costs = get_values(df,start_pos,acquisit_cost_pos,'d')
+                acquisit_rates = get_values(df,start_pos,acquisit_rate_pos,'d')
+                acquisit_styles = get_values(df,start_pos,acquisit_style_pos,'t')
+                purchas_days = get_values(df,start_pos,purchas_day_pos,'t')
+                purchas_day_determi_basis =  get_values(df,start_pos,purchas_day_determi_basi_pos,'t')
+                incomes = get_values(df,start_pos,income_pos,'d')
+                nps = get_values(df,start_pos,np_pos,'d')
 
-            for (name, acquisit_time, acquisit_cost, acquisit_rate,acquisit_style,purchas_day,
-                        purchas_day_determi_basi,income,np) in\
-                    zip(names, acquisit_times, acquisit_costs, acquisit_rates,acquisit_styles,purchas_days,
-                        purchas_day_determi_basis,incomes,nps):
-                if models.CompanyName.objects.filter(name=name):
-                    obj_name = models.CompanyName.objects.get( name=name)
-                else:
-                    obj_name = models.CompanyName.objects.create(name=name)
-
-                if models.BusiMergerNotUnderTheSameControl.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                          typ_rep_id='A', name_id=obj_name.id):
-                    obj = models.BusiMergerNotUnderTheSameControl.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
-                                                              typ_rep_id='A', name_id=obj_name.id)
-
-                    obj.acquisit_time = acquisit_time
-                    obj.acquisit_cost = Decimal(re.sub(',', '', str(acquisit_cost))) * unit_change[unit] if is_num(acquisit_cost) else 0.00
-                    obj.acquisit_rate = Decimal(re.sub(',', '', str(acquisit_rate)))  if is_num(acquisit_rate) else 0.00
-                    obj.acquisit_style = acquisit_style
-                    obj.purchas_day = purchas_day
-                    obj.purchas_day_determi_basi = purchas_day_determi_basi
-                    obj.income = Decimal(re.sub(',', '', str(income))) * unit_change[unit] if is_num(income) else 0.00
-                    obj.np = Decimal(re.sub(',', '', str(np))) * unit_change[unit] if is_num(np) else 0.00
-
-                    obj.save()
-                else:
-                    models.BusiMergerNotUnderTheSameControl.objects.create(
+                for (company_name, acquisit_time, acquisit_cost, acquisit_rate,acquisit_style,purchas_day,
+                            purchas_day_determi_basi,income,net_profit) in\
+                        zip(company_names, acquisit_times, acquisit_costs, acquisit_rates,acquisit_styles,purchas_days,
+                            purchas_day_determi_basis,incomes,nps):
+                    if models.CompanyName.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, company_name=company_name):
+                        obj_name = models.CompanyName.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, company_name=company_name)
+                    else:
+                        obj_name = models.CompanyName.objects.create(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, company_name=company_name)
+                    value_dict = dict(
                         stk_cd_id=self.stk_cd_id,
                         acc_per=self.acc_per,
                         typ_rep_id='A',
-                        name_id=obj_name.id,
+                        company_name_id=obj_name.id,
                         acquisit_time=acquisit_time,
-                        acquisit_cost=Decimal(re.sub(',', '', str(acquisit_cost))) * unit_change[unit] if is_num(acquisit_cost) else 0.00,
-                        acquisit_rate=Decimal(re.sub(',', '', str(acquisit_rate)))  if is_num(acquisit_rate) else 0.00,
+                        acquisit_cost=num_to_decimal(acquisit_cost, unit),
+                        acquisit_rate=num_to_decimal(acquisit_rate),
                         acquisit_style=acquisit_style,
                         purchas_day=purchas_day,
                         purchas_day_determi_basi=purchas_day_determi_basi,
-                        income=Decimal(re.sub(',', '', str(income))) * unit_change[unit] if is_num(income) else 0.00,
-                        np = Decimal(re.sub(',', '', str(np))) * unit_change[unit] if is_num(np) else 0.00
+                        income=num_to_decimal(income, unit),
+                        np=num_to_decimal(net_profit, unit)
                     )
+                    create_and_update('BusiMergerNotUnderTheSameControl',**value_dict)
         else:
             pass
 
@@ -1748,31 +1132,8 @@ class ConsolidCostAndGoodwil(HandleIndexContent):
         super(ConsolidCostAndGoodwil, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b080102']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                if table.iloc[:,0].str.contains('合并成本').any():
-                                    df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b080102']
+        pass
 
     def converse(self):
 
@@ -1782,9 +1143,8 @@ class ConsolidCostAndGoodwil(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
-        if df is not None and len(df) > 1:
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
+        if df is not None and len(df) > 8:
             df = df.T
             cash_pos = list(np.where(df.iloc[0, :].str.contains('现金'))[0])
             non_cash_asset_pos = list(np.where(df.iloc[0, :].str.contains('非现金资产'))[0])
@@ -1797,90 +1157,50 @@ class ConsolidCostAndGoodwil(HandleIndexContent):
             recogniz_net_asset_fair_valu_pos = list(np.where(df.iloc[0, :].str.contains('可辨认净资产公允价值'))[0])
             goodwil_pos = list(np.where(df.iloc[0, :].str.contains('商誉'))[0])
 
+            start_pos = compute_start_pos(df)
+            if len(start_pos)>0:
+                company_names = get_values(df,start_pos,0,'t')
+                cashs = get_values(df,start_pos,cash_pos,'d')
+                non_cash_assets = get_values(df,start_pos,non_cash_asset_pos,'d')
+                issu_or_assum_debts = get_values(df,start_pos,issu_or_assum_debt_pos,'d')
+                issuanc_of_equiti_securs = get_values(df,start_pos,issuanc_of_equiti_secur_pos,'d')
+                or_have_considers = get_values(df,start_pos,or_have_consider_pos,'d')
+                share_held_prior_to_the_acquiss = get_values(df,start_pos,share_held_prior_to_the_acquis_pos,'d')
+                others = get_values(df,start_pos,other_pos,'d')
+                total_combin_costs =  get_values(df,start_pos,total_combin_cost_pos,'d')
+                recogniz_net_asset_fair_valus = get_values(df,start_pos,recogniz_net_asset_fair_valu_pos,'d')
+                goodwils = get_values(df,start_pos,goodwil_pos,'d')
 
-            pattern = re.compile('^.*?\d.*?$')
-            start_pos = list(
-                np.where(df.iloc[:, cash_pos[0]].str.match(pattern) | df.iloc[:, cash_pos[0]].str.match('nan'))[0])
-            names = list(df.iloc[start_pos[0]:,0])
-            cashs = list(df.iloc[start_pos[0]:, cash_pos[0]])  if len(cash_pos) > 0 else [0.00 for i in range(len(names))]
-            non_cash_assets = list(df.iloc[start_pos[0]:, non_cash_asset_pos[0]])  if len(non_cash_asset_pos) > 0 else [0.00 for i in range(len(names))]
-            issu_or_assum_debts = list(df.iloc[start_pos[0]:, issu_or_assum_debt_pos[0]]) if len(issu_or_assum_debt_pos) > 0 else [0.00 for i in range(len(names))]
-            issuanc_of_equiti_securs = list(df.iloc[start_pos[0]:, issuanc_of_equiti_secur_pos[0]]) if len(issuanc_of_equiti_secur_pos) > 0 else [0.00 for i in range(len(names))]
-            or_have_considers = list(df.iloc[start_pos[0]:, or_have_consider_pos[0]]) if len(or_have_consider_pos) > 0 else [0.00 for i in range(len(names))]
-            share_held_prior_to_the_acquiss = list(df.iloc[start_pos[0]:, share_held_prior_to_the_acquis_pos[0]]) if len(share_held_prior_to_the_acquis_pos) > 0 else [0.00 for i in range(len(names))]
-            others = list(df.iloc[start_pos[0]:, other_pos[0]]) if len(other_pos) > 0 else [0.00 for i in range(len(names))]
-            total_combin_costs = list(df.iloc[start_pos[0]:, total_combin_cost_pos[0]]) if len(total_combin_cost_pos) > 0 else [0.00 for i in range(len(names))]
-            recogniz_net_asset_fair_valus = list(df.iloc[start_pos[0]:, recogniz_net_asset_fair_valu_pos[0]]) if len(recogniz_net_asset_fair_valu_pos) > 0 else [0.00 for i in range(len(names))]
-            goodwils = list(df.iloc[start_pos[0]:, goodwil_pos[0]]) if len(goodwil_pos) > 0 else [0.00 for i in range(len(names))]
-
-            for (name,cash, non_cash_asset, issu_or_assum_debt, issuanc_of_equiti_secur, or_have_consider, share_held_prior_to_the_acquis,
-                        other, total_combin_cost, recogniz_net_asset_fair_valu,goodwil) in \
-                    zip(names,cashs, non_cash_assets, issu_or_assum_debts, issuanc_of_equiti_securs, or_have_considers, share_held_prior_to_the_acquiss,
-                        others, total_combin_costs, recogniz_net_asset_fair_valus,goodwils):
-                if models.CompanyName.objects.filter(name=name):
-                    obj_name = models.CompanyName.objects.get(name=name)
-                else:
-                    obj_name = models.CompanyName.objects.create(name=name)
-
-                if models.ConsolidCostAndGoodwil.objects.filter(stk_cd_id=self.stk_cd_id,
-                                                                          acc_per=self.acc_per,
-                                                                          typ_rep_id='A', name_id=obj_name.id):
-                    obj = models.ConsolidCostAndGoodwil.objects.get(stk_cd_id=self.stk_cd_id,
-                                                                              acc_per=self.acc_per,
-                                                                              typ_rep_id='A', name_id=obj_name.id)
-                    obj.cash = Decimal(re.sub(',', '', str(cash))) * unit_change[unit] if is_num(
-                        cash) else 0.00
-                    obj.non_cash_asset = Decimal(re.sub(',', '', str(non_cash_asset))) * unit_change[unit] if is_num(
-                        non_cash_asset) else 0.00
-                    obj.issu_or_assum_debt = Decimal(re.sub(',', '', str(issu_or_assum_debt))) if is_num(issu_or_assum_debt) else 0.00
-                    obj.issuanc_of_equiti_secur = Decimal(re.sub(',', '', str(issuanc_of_equiti_secur))) if is_num(issuanc_of_equiti_secur) else 0.00
-                    obj.or_have_consider = Decimal(re.sub(',', '', str(or_have_consider))) if is_num(or_have_consider) else 0.00
-                    obj.share_held_prior_to_the_acquis = Decimal(re.sub(',', '', str(share_held_prior_to_the_acquis))) if is_num(share_held_prior_to_the_acquis) else 0.00
-                    obj.other = Decimal(re.sub(',', '', str(other))) if is_num(other) else 0.00
-                    obj.total_combin_cost = Decimal(re.sub(',', '', str(total_combin_cost))) if is_num(total_combin_cost) else 0.00
-                    obj.recogniz_net_asset_fair_valu = Decimal(re.sub(',', '', str(recogniz_net_asset_fair_valu))) if is_num(recogniz_net_asset_fair_valu) else 0.00
-                    obj.goodwil = Decimal(re.sub(',', '', str(goodwil))) if is_num(goodwil) else 0.00
-                    obj.save()
-                else:
-                    models.ConsolidCostAndGoodwil.objects.create(
+                for (company_name,cash, non_cash_asset, issu_or_assum_debt, issuanc_of_equiti_secur, or_have_consider, share_held_prior_to_the_acquis,
+                            other, total_combin_cost, recogniz_net_asset_fair_valu,goodwil) in \
+                        zip(company_names,cashs, non_cash_assets, issu_or_assum_debts, issuanc_of_equiti_securs, or_have_considers, share_held_prior_to_the_acquiss,
+                            others, total_combin_costs, recogniz_net_asset_fair_valus,goodwils):
+                    if models.CompanyName.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, company_name=company_name):
+                        obj_name = models.CompanyName.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, company_name=company_name)
+                    else:
+                        obj_name = models.CompanyName.objects.create(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                                     company_name=company_name)
+                    value_dict = dict(
                         stk_cd_id=self.stk_cd_id,
                         acc_per=self.acc_per,
                         typ_rep_id='A',
-                        name_id=obj_name.id,
-                        cash=Decimal(re.sub(',', '', str(cash))) * unit_change[unit] if is_num(
-                            cash) else 0.00,
-                        non_cash_asset=Decimal(re.sub(',', '', str(non_cash_asset))) * unit_change[unit] if is_num(
-                            non_cash_asset) else 0.00,
-                        issu_or_assum_debt=Decimal(re.sub(',', '', str(issu_or_assum_debt))) if is_num(
-                            issu_or_assum_debt) else 0.00,
-                        issuanc_of_equiti_secur=Decimal(re.sub(',', '', str(issuanc_of_equiti_secur))) if is_num(
-                            issuanc_of_equiti_secur) else 0.00,
-                        or_have_consider=Decimal(re.sub(',', '', str(or_have_consider))) if is_num(
-                            or_have_consider) else 0.00,
-                        share_held_prior_to_the_acquis=Decimal(
-                            re.sub(',', '', str(share_held_prior_to_the_acquis))) if is_num(share_held_prior_to_the_acquis) else 0.00,
-                        other=Decimal(re.sub(',', '', str(other))) if is_num(other) else 0.00,
-                        total_combin_cost=Decimal(re.sub(',', '', str(total_combin_cost))) if is_num(
-                            total_combin_cost) else 0.00,
-                        recogniz_net_asset_fair_valu=Decimal(
-                            re.sub(',', '', str(recogniz_net_asset_fair_valu))) if is_num(
-                            recogniz_net_asset_fair_valu) else 0.00,
-                        goodwil=Decimal(re.sub(',', '', str(goodwil))) if is_num(goodwil) else 0.00,
+                        company_name_id=obj_name.id,
+                        cash=num_to_decimal(cash, unit),
+                        non_cash_asset=num_to_decimal(non_cash_asset, unit),
+                        issu_or_assum_debt=num_to_decimal(issu_or_assum_debt, unit),
+                        issuanc_of_equiti_secur=num_to_decimal(issuanc_of_equiti_secur, unit),
+                        or_have_consider=num_to_decimal(or_have_consider, unit),
+                        share_held_prior_to_the_acquis=num_to_decimal(share_held_prior_to_the_acquis, unit),
+                        other=num_to_decimal(other, unit),
+                        total_combin_cost=num_to_decimal(total_combin_cost, unit),
+                        recogniz_net_asset_fair_valu=num_to_decimal(recogniz_net_asset_fair_valu, unit),
+                        goodwil=num_to_decimal(goodwil, unit),
                     )
+                    create_and_update('ConsolidCostAndGoodwil',**value_dict)
         else:
             pass
-
-        if len(instructi) > 1:
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.consolid_cost_and_goodwil = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    consolid_cost_and_goodwil=instructi
-                )
+        save_combine_instructi(instructi, models.ComprehensNote, self.stk_cd_id, self.acc_per,'A',
+                       'consolid_cost_and_goodwil')
 
 class AcquireRecognisAssetAndLiab(HandleIndexContent):
     '''
@@ -1891,30 +1211,8 @@ class AcquireRecognisAssetAndLiab(HandleIndexContent):
         super(AcquireRecognisAssetAndLiab, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b080103']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b080103']
+        pass
 
     def converse(self):
 
@@ -1925,48 +1223,40 @@ class AcquireRecognisAssetAndLiab(HandleIndexContent):
 
     def save(self):
         value_type_dict={'购买日公允价值':'f','购买日账面价值':'b'}
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
             df = df.set_index([0])
             df = df.dropna(how='all')
             df = df.reset_index()
 
-            pattern = re.compile('^.*?\d.*?$')
-            start_pos = list(np.where(df.iloc[:,1].str.match(pattern) | df.iloc[:, 1].str.match('nan'))[0])
-            subjects = list(df.iloc[start_pos[0]:,:])
-            company_names = list(df.iloc[0,1:])
-            value_types = list(df.iloc[1,1:])
+            start_pos = compute_start_pos(df)
+            if len(start_pos)>0:
+                subjects = list(df.iloc[start_pos[0]:,:])
+                company_names = list(df.iloc[0,1:])
+                value_types = list(df.iloc[1,1:])
 
-            for key,company_name in enumerate(company_names):
-                if models.CompanyName.objects.filter(name=company_name):
-                    obj_name = models.CompanyName.objects.get(name=company_name)
-                else:
-                    obj_name = models.CompanyName.objects.create(name=company_name)
+                for key,company_name in enumerate(company_names):
+                    if models.CompanyName.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, company_name=company_name):
+                        obj_name = models.CompanyName.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per, company_name=company_name)
+                    else:
+                        obj_name = models.CompanyName.objects.create(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per,
+                                                                     company_name=company_name)
 
-                value_type_name = value_types[key]
-                if value_type_dict.get(value_type_name) is not None:
-                    value_type = value_type_dict[value_type_name]
-                    for i,subject in enumerate(subjects):
+                    value_type_name = value_types[key]
 
-                        if models.SubjectName.objects.filter(name=subject):
-                            subject_name = models.SubjectName.objects.get(name=subject)
-                        else:
-                            subject_name = models.SubjectName.objects.create(name=subject)
+                    if value_type_dict.get(value_type_name) is not None:
+                        value_type = value_type_dict[value_type_name]
+                        for i,subject in enumerate(subjects):
+
+                            if models.SubjectName.objects.filter(name=subject):
+                                subject_name = models.SubjectName.objects.get(name=subject)
+                            else:
+                                subject_name = models.SubjectName.objects.create(name=subject)
 
 
-                        amount = df.iloc[(start_pos[0]+i),(key+1)]
-                        amount = Decimal(re.sub(',', '', str(amount))) * unit_change[unit] if is_num(amount) else 0.00
-                        if models.AcquireRecognisAssetAndLiab.objects.filter(stk_cd_id=self.stk_cd_id,
-                                                                        acc_per=self.acc_per,value_type=value_type,subject_id=subject_name.id,
-                                                                        typ_rep_id='A', company_name_id=obj_name.id):
-                            obj = models.AcquireRecognisAssetAndLiab.objects.get(stk_cd_id=self.stk_cd_id,subject_id=subject_name.id,
-                                                                            acc_per=self.acc_per,value_type=value_type,
-                                                                            typ_rep_id='A', company_name_id=obj_name.id)
-                            obj.amount = amount
-                            obj.save()
-                        else:
-                            models.AcquireRecognisAssetAndLiab.objects.create(
+                            amount = df.iloc[(start_pos[0]+i),(key+1)]
+                            amount = num_to_decimal(amount,unit)
+                            value_dict = dict(
                                 stk_cd_id=self.stk_cd_id,
                                 acc_per=self.acc_per,
                                 typ_rep_id='A',
@@ -1975,6 +1265,7 @@ class AcquireRecognisAssetAndLiab(HandleIndexContent):
                                 subject_id=subject_name.id,
                                 amount=amount
                             )
+                            create_and_update('AcquireRecognisAssetAndLiab',**value_dict)
         else:
             pass
 
@@ -1987,31 +1278,8 @@ class BusiMergerUnderTheSameControl(HandleIndexContent):
         super(BusiMergerUnderTheSameControl, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b080201']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                if table.iloc[0, :].str.contains('被合并方名称').any():
-                                    df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b080201']
+        pass
 
     def converse(self):
 
@@ -2021,10 +1289,9 @@ class BusiMergerUnderTheSameControl(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
-            name_pos = list(np.where(df.iloc[0, :].str.contains('被合并方名称'))[0])
+            company_name_pos = list(np.where(df.iloc[0, :].str.contains('被合并方名称'))[0])
             acquisit_rate_pos = list(np.where(df.iloc[0, :].str.contains('企业合并中取得的权益比例'))[0])
             same_control_basi_pos = list(np.where(df.iloc[0, :].str.contains('构成同一控制下企业合并的依据'))[0])
             merger_date_pos = list(np.where(df.iloc[0, :].str.contains('合并日'))[0])
@@ -2034,64 +1301,41 @@ class BusiMergerUnderTheSameControl(HandleIndexContent):
             before_income_pos = list(np.where(df.iloc[0, :].str.contains('比较期间被合并方的收入'))[0])
             before_np_pos = list(np.where(df.iloc[0, :].str.contains('比较期间被合并方的净利润'))[0])
 
-            pattern = re.compile('^.*?\d.*?$')
-            start_pos = list(
-                np.where(df.iloc[:, this_income_pos[0]].str.match(pattern) | df.iloc[:, this_income_pos[0]].str.match('nan'))[0])
-            names = list(df.iloc[start_pos[0]:, name_pos[0]])
-            acquisit_rates = list(df.iloc[start_pos[0]:, acquisit_rate_pos[0]])
-            same_control_basis = list(df.iloc[start_pos[0]:, same_control_basi_pos[0]])
-            merger_dates = list(df.iloc[start_pos[0]:, merger_date_pos[0]])
-            merger_date_determi_basis = list(df.iloc[start_pos[0]:, merger_date_determi_basi_pos[0]])
-            this_incomes = list(df.iloc[start_pos[0]:, this_income_pos[0]])
-            this_nps = list(df.iloc[start_pos[0]:, this_np_pos[0]])
-            before_incomes = list(df.iloc[start_pos[0]:, before_income_pos[0]])
-            before_nps = list(df.iloc[start_pos[0]:, before_np_pos[0]]) if len(before_np_pos) > 0 else [0.00 for i in range(len(names))]
+            start_pos = compute_start_pos(df)
+            if len(start_pos)>0:
+                company_names = get_values(df,start_pos,company_name_pos,'t')
+                acquisit_rates = get_values(df,start_pos,acquisit_rate_pos,'t')
+                same_control_basis = get_values(df,start_pos,same_control_basi_pos,'t')
+                merger_dates = get_values(df,start_pos,merger_date_pos,'t')
+                merger_date_determi_basis = get_values(df,start_pos,merger_date_determi_basi_pos,'t')
+                this_incomes = get_values(df,start_pos,this_income_pos,'d')
+                this_nps = get_values(df,start_pos,this_np_pos,'d')
+                before_incomes = get_values(df,start_pos,before_income_pos,'d')
+                before_nps = get_values(df,start_pos,before_np_pos,'d')
 
-            for (name, acquisit_rate,same_control_basi,merger_date,merger_date_determi_basi,
-                        this_income,this_np,before_income,before_np) in \
-                    zip(names, acquisit_rates,same_control_basis,merger_dates,merger_date_determi_basis,
-                        this_incomes,this_nps,before_incomes,before_nps):
-                if models.CompanyName.objects.filter(name=name):
-                    obj_name = models.CompanyName.objects.get(name=name)
-                else:
-                    obj_name = models.CompanyName.objects.create(name=name)
-
-                if models.BusiMergerUnderTheSameControl.objects.filter(stk_cd_id=self.stk_cd_id,
-                                                                          acc_per=self.acc_per,
-                                                                          typ_rep_id='A', name_id=obj_name.id):
-                    obj = models.BusiMergerUnderTheSameControl.objects.get(stk_cd_id=self.stk_cd_id,
-                                                                              acc_per=self.acc_per,
-                                                                              typ_rep_id='A', name_id=obj_name.id)
-
-                    obj.acquisit_rate = Decimal(re.sub(',', '', str(acquisit_rate)))if is_num(
-                        acquisit_rate) else 0.00
-                    obj.same_control_basi = same_control_basi
-                    obj.merger_date = merger_date
-                    obj.merger_date_determi_basi = merger_date_determi_basi
-                    obj.this_income = Decimal(re.sub(',', '', str(this_income))) * unit_change[unit] if is_num(this_income) else 0.00
-                    obj.this_np = Decimal(re.sub(',', '', str(this_np))) * unit_change[unit] if is_num(this_np) else 0.00
-                    obj.before_income = Decimal(re.sub(',', '', str(before_income))) * unit_change[unit] if is_num(before_income) else 0.00
-                    obj.before_np = Decimal(re.sub(',', '', str(before_np))) * unit_change[unit] if is_num(before_np) else 0.00
-                    obj.save()
-                else:
-                    models.BusiMergerUnderTheSameControl.objects.create(
+                for (company_name, acquisit_rate,same_control_basi,merger_date,merger_date_determi_basi,
+                            this_income,this_np,before_income,before_np) in \
+                        zip(company_names, acquisit_rates,same_control_basis,merger_dates,merger_date_determi_basis,
+                            this_incomes,this_nps,before_incomes,before_nps):
+                    if models.CompanyName.objects.filter(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name):
+                        obj_name = models.CompanyName.objects.get(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name)
+                    else:
+                        obj_name = models.CompanyName.objects.create(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name)
+                    value_dict = dict(
                         stk_cd_id=self.stk_cd_id,
                         acc_per=self.acc_per,
                         typ_rep_id='A',
-                        name_id=obj_name.id,
-                        acquisit_rate=Decimal(re.sub(',', '', str(acquisit_rate))) if is_num(
-                            acquisit_rate) else 0.00,
+                        company_name_id=obj_name.id,
+                        acquisit_rate=num_to_decimal(acquisit_rate),
                         same_control_basi=same_control_basi,
                         merger_date=merger_date,
                         merger_date_determi_basi=merger_date_determi_basi,
-                        this_income=Decimal(re.sub(',', '', str(this_income))) * unit_change[unit] if is_num(
-                            this_income) else 0.00,
-                        this_np=Decimal(re.sub(',', '', str(this_np))) * unit_change[unit] if is_num(this_np) else 0.00,
-                        before_income=Decimal(re.sub(',', '', str(before_income))) * unit_change[unit] if is_num(
-                            before_income) else 0.00,
-                        before_np = Decimal(re.sub(',', '', str(before_np))) * unit_change[unit] if is_num(
-                            before_np) else 0.00
+                        this_income=num_to_decimal(this_income, unit),
+                        this_np=num_to_decimal(this_np, unit),
+                        before_income=num_to_decimal(before_income, unit),
+                        before_np=num_to_decimal(before_np, unit)
                     )
+                    create_and_update('BusiMergerUnderTheSameControl',**value_dict)
         else:
             pass
 
@@ -2104,31 +1348,8 @@ class ConsolidCost(HandleIndexContent):
         super(ConsolidCost, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b080202']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                if table.iloc[:, 0].str.contains('合并成本').any():
-                                    df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b080202']
+        pass
 
     def converse(self):
 
@@ -2138,9 +1359,8 @@ class ConsolidCost(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
-        if df is not None and len(df) > 1:
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
+        if df is not None and len(df) > 4:
             df = df.T
             cash_pos = list(np.where(df.iloc[0, :].str.contains('现金'))[0])
             non_cash_asset_pos = list(np.where(df.iloc[0, :].str.contains('非现金资产'))[0])
@@ -2148,80 +1368,39 @@ class ConsolidCost(HandleIndexContent):
             issuanc_of_equiti_secur_pos = list(np.where(df.iloc[0, :].str.contains('权益性证券'))[0])
             or_have_consider_pos = list(np.where(df.iloc[0, :].str.contains('或有对价'))[0])
 
+            start_pos = compute_start_pos(df)
+            if len(start_pos)>0:
+                company_names = get_values(df,start_pos,0,'t')
+                cashs = get_values(df,start_pos,cash_pos,'d')
+                non_cash_assets = get_values(df,start_pos,non_cash_asset_pos,'d')
+                issu_or_assum_debts = get_values(df,start_pos,issu_or_assum_debt_pos,'d')
+                issuanc_of_equiti_securs = get_values(df,start_pos,issuanc_of_equiti_secur_pos,'d')
+                or_have_considers = get_values(df,start_pos,or_have_consider_pos,'d')
 
-            pattern = re.compile('^.*?\d.*?$')
-            start_pos = list(
-                np.where(df.iloc[:, cash_pos[0]].str.match(pattern) | df.iloc[:, cash_pos[0]].str.match('nan'))[0])
-            names = list(df.iloc[start_pos[0]:, 0])
-            cashs = list(df.iloc[start_pos[0]:, cash_pos[0]]) if len(cash_pos) > 0 else [0.00 for i in
-                                                                                         range(len(names))]
-            non_cash_assets = list(df.iloc[start_pos[0]:, non_cash_asset_pos[0]]) if len(non_cash_asset_pos) > 0 else [
-                0.00 for i in range(len(names))]
-            issu_or_assum_debts = list(df.iloc[start_pos[0]:, issu_or_assum_debt_pos[0]]) if len(
-                issu_or_assum_debt_pos) > 0 else [0.00 for i in range(len(names))]
-            issuanc_of_equiti_securs = list(df.iloc[start_pos[0]:, issuanc_of_equiti_secur_pos[0]]) if len(
-                issuanc_of_equiti_secur_pos) > 0 else [0.00 for i in range(len(names))]
-            or_have_considers = list(df.iloc[start_pos[0]:, or_have_consider_pos[0]]) if len(
-                or_have_consider_pos) > 0 else [0.00 for i in range(len(names))]
-
-            for (name, cash, non_cash_asset, issu_or_assum_debt, issuanc_of_equiti_secur, or_have_consider,
-                 ) in \
-                    zip(names, cashs, non_cash_assets, issu_or_assum_debts, issuanc_of_equiti_securs, or_have_considers,
-                        ):
-                if models.CompanyName.objects.filter(name=name):
-                    obj_name = models.CompanyName.objects.get(name=name)
-                else:
-                    obj_name = models.CompanyName.objects.create(name=name)
-
-                if models.ConsolidCost.objects.filter(stk_cd_id=self.stk_cd_id,
-                                                                acc_per=self.acc_per,
-                                                                typ_rep_id='A', name_id=obj_name.id):
-                    obj = models.ConsolidCost.objects.get(stk_cd_id=self.stk_cd_id,
-                                                                    acc_per=self.acc_per,
-                                                                    typ_rep_id='A', name_id=obj_name.id)
-                    obj.cash = Decimal(re.sub(',', '', str(cash))) * unit_change[unit] if is_num(
-                        cash) else 0.00
-                    obj.non_cash_asset = Decimal(re.sub(',', '', str(non_cash_asset))) * unit_change[unit] if is_num(
-                        non_cash_asset) else 0.00
-                    obj.issu_or_assum_debt = Decimal(re.sub(',', '', str(issu_or_assum_debt))) if is_num(
-                        issu_or_assum_debt) else 0.00
-                    obj.issuanc_of_equiti_secur = Decimal(re.sub(',', '', str(issuanc_of_equiti_secur))) if is_num(
-                        issuanc_of_equiti_secur) else 0.00
-                    obj.or_have_consider = Decimal(re.sub(',', '', str(or_have_consider))) if is_num(
-                        or_have_consider) else 0.00
-
-                    obj.save()
-                else:
-                    models.ConsolidCost.objects.create(
+                for (company_name, cash, non_cash_asset, issu_or_assum_debt, issuanc_of_equiti_secur, or_have_consider,
+                     ) in \
+                        zip(company_names, cashs, non_cash_assets, issu_or_assum_debts, issuanc_of_equiti_securs, or_have_considers,
+                            ):
+                    if models.CompanyName.objects.filter(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name):
+                        obj_name = models.CompanyName.objects.get(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name)
+                    else:
+                        obj_name = models.CompanyName.objects.create(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name)
+                    value_dict = dict(
                         stk_cd_id=self.stk_cd_id,
                         acc_per=self.acc_per,
                         typ_rep_id='A',
-                        name_id=obj_name.id,
-                        cash=Decimal(re.sub(',', '', str(cash))) * unit_change[unit] if is_num(
-                            cash) else 0.00,
-                        non_cash_asset=Decimal(re.sub(',', '', str(non_cash_asset))) * unit_change[unit] if is_num(
-                            non_cash_asset) else 0.00,
-                        issu_or_assum_debt=Decimal(re.sub(',', '', str(issu_or_assum_debt))) if is_num(
-                            issu_or_assum_debt) else 0.00,
-                        issuanc_of_equiti_secur=Decimal(re.sub(',', '', str(issuanc_of_equiti_secur))) if is_num(
-                            issuanc_of_equiti_secur) else 0.00,
-                        or_have_consider=Decimal(re.sub(',', '', str(or_have_consider))) if is_num(
-                            or_have_consider) else 0.00,
+                        company_name_id=obj_name.id,
+                        cash=num_to_decimal(cash, unit),
+                        non_cash_asset=num_to_decimal(non_cash_asset, unit),
+                        issu_or_assum_debt=num_to_decimal(issu_or_assum_debt, unit),
+                        issuanc_of_equiti_secur=num_to_decimal(issuanc_of_equiti_secur, unit),
+                        or_have_consider=num_to_decimal(or_have_consider, unit),
                     )
+                    create_and_update('ConsolidCost',**value_dict)
         else:
             pass
-
-        if len(instructi) > 1:
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.consolid_cost = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    consolid_cost=instructi
-                )
+        save_combine_instructi(instructi, models.ComprehensNote, self.stk_cd_id, self.acc_per,'A',
+                       'consolid_cost')
 
 class BookValuOfAssetAndLiabil(HandleIndexContent):
     '''
@@ -2232,30 +1411,8 @@ class BookValuOfAssetAndLiabil(HandleIndexContent):
         super(BookValuOfAssetAndLiabil, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b080203']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b080203']
+        pass
 
     def converse(self):
 
@@ -2266,53 +1423,37 @@ class BookValuOfAssetAndLiabil(HandleIndexContent):
 
     def save(self):
         deadlin_dict = {'合并日': 'm', '上年年末': 'b'}
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
             df = df.set_index([0])
             df = df.dropna(how='all')
             df = df.reset_index()
 
-            pattern = re.compile('^.*?\d.*?$')
-            start_pos = list(np.where(df.iloc[:, 1].str.match(pattern) | df.iloc[:, 1].str.match('nan'))[0])
-            subjects = list(df.iloc[start_pos[0]:, :])
-            company_names = list(df.iloc[0, 1:])
-            deadlins = list(df.iloc[1, 1:])
+            start_pos = compute_start_pos(df)
+            if len(start_pos)>0:
+                subjects = list(df.iloc[start_pos[0]:, :])
+                company_names = list(df.iloc[0, 1:])
+                deadlins = list(df.iloc[1, 1:])
 
-            for key, company_name in enumerate(company_names):
-                if models.CompanyName.objects.filter(name=company_name):
-                    obj_name = models.CompanyName.objects.get(name=company_name)
-                else:
-                    obj_name = models.CompanyName.objects.create(name=company_name)
+                for key, company_name in enumerate(company_names):
+                    if models.CompanyName.objects.filter(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name):
+                        obj_name = models.CompanyName.objects.get(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name)
+                    else:
+                        obj_name = models.CompanyName.objects.create(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name)
 
-                deadlin_name = deadlins[key]
-                if deadlin_dict.get(deadlin_name) is not None:
-                    deadlin = deadlin_dict[deadlin_name]
-                    for i, subject in enumerate(subjects):
+                    deadlin_name = deadlins[key]
+                    if deadlin_dict.get(deadlin_name) is not None:
+                        deadlin = deadlin_dict[deadlin_name]
+                        for i, subject in enumerate(subjects):
 
-                        if models.SubjectName.objects.filter(name=subject):
-                            subject_name = models.SubjectName.objects.get(name=subject)
-                        else:
-                            subject_name = models.SubjectName.objects.create(name=subject)
+                            if models.SubjectName.objects.filter(name=subject):
+                                subject_name = models.SubjectName.objects.get(name=subject)
+                            else:
+                                subject_name = models.SubjectName.objects.create(name=subject)
 
-                        amount = df.iloc[(start_pos[0] + i), (key + 1)]
-                        amount = Decimal(re.sub(',', '', str(amount))) * unit_change[unit] if is_num(amount) else 0.00
-                        if models.AcquireRecognisAssetAndLiab.objects.filter(stk_cd_id=self.stk_cd_id,
-                                                                             acc_per=self.acc_per,
-                                                                             deadlin=deadlin,
-                                                                             subject_id=subject_name.id,
-                                                                             typ_rep_id='A',
-                                                                             company_name_id=obj_name.id):
-                            obj = models.AcquireRecognisAssetAndLiab.objects.get(stk_cd_id=self.stk_cd_id,
-                                                                                 subject_id=subject_name.id,
-                                                                                 acc_per=self.acc_per,
-                                                                                 deadlin=deadlin,
-                                                                                 typ_rep_id='A',
-                                                                                 company_name_id=obj_name.id)
-                            obj.amount = amount
-                            obj.save()
-                        else:
-                            models.AcquireRecognisAssetAndLiab.objects.create(
+                            amount = df.iloc[(start_pos[0] + i), (key + 1)]
+                            amount = num_to_decimal(amount,unit)
+                            value_dict = dict(
                                 stk_cd_id=self.stk_cd_id,
                                 acc_per=self.acc_per,
                                 typ_rep_id='A',
@@ -2321,6 +1462,7 @@ class BookValuOfAssetAndLiabil(HandleIndexContent):
                                 subject_id=subject_name.id,
                                 amount=amount
                             )
+                            create_and_update('AcquireRecognisAssetAndLiab',**value_dict)
         else:
             pass
 
@@ -2333,31 +1475,8 @@ class ReversPurchas(HandleIndexContent):
         super(ReversPurchas, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b080300']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                                instructi.append(df.to_string())
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b080300']
+        pass
 
     def converse(self):
 
@@ -2367,20 +1486,9 @@ class ReversPurchas(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
-
-        if len(instructi) > 1:
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.revers_purchas = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    revers_purchas=instructi
-                )
+        df, unit, instructi = recognize_instucti(self.indexcontent)
+        save_combine_instructi(instructi, models.ComprehensNote, self.stk_cd_id, self.acc_per,'A',
+                       'revers_purchas')
 
 class ChangInConsolidScopeWithOtherReason(HandleIndexContent):
     '''
@@ -2391,31 +1499,8 @@ class ChangInConsolidScopeWithOtherReason(HandleIndexContent):
         super(ChangInConsolidScopeWithOtherReason, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b080500']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                                instructi.append(df.to_string())
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b080500']
+        pass
 
     def converse(self):
 
@@ -2425,20 +1510,10 @@ class ChangInConsolidScopeWithOtherReason(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_instucti(self.indexcontent)
+        save_combine_instructi(instructi, models.ComprehensNote, self.stk_cd_id, self.acc_per,'A',
+                       'chang_in_consolid_scope_with_other_reason')
 
-        if len(instructi) > 1:
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.chang_in_consolid_scope_with_other_reason = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    chang_in_consolid_scope_with_other_reason=instructi
-                )
 
 class ChangInShareOfOwnerEquitiInSu(HandleIndexContent):
     '''
@@ -2449,31 +1524,8 @@ class ChangInShareOfOwnerEquitiInSu(HandleIndexContent):
         super(ChangInShareOfOwnerEquitiInSu, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b090201']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                                instructi.append(df.to_string())
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b090201']
+        pass
 
     def converse(self):
 
@@ -2483,20 +1535,10 @@ class ChangInShareOfOwnerEquitiInSu(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_instucti(self.indexcontent)
+        save_combine_instructi(instructi, models.ComprehensNote, self.stk_cd_id, self.acc_per,'A',
+                       'chang_share_of_owner_equiti_in_subsidiari')
 
-        if len(instructi) > 1:
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.chang_share_of_owner_equiti_in_subsidiari = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    chang_share_of_owner_equiti_in_subsidiari=instructi
-                )
 
 class TransactImpactInChangeShareOfSubsidiari(HandleIndexContent):
     '''
@@ -2506,30 +1548,8 @@ class TransactImpactInChangeShareOfSubsidiari(HandleIndexContent):
         super(TransactImpactInChangeShareOfSubsidiari, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b090202']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b090202']
+        pass
 
     def converse(self):
 
@@ -2539,43 +1559,30 @@ class TransactImpactInChangeShareOfSubsidiari(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
             company_names = list(df.iloc[0,1:])
             project_names = list(df.iloc[1:,0])
 
             for key, company_name in enumerate(company_names):
-                if models.CompanyName.objects.filter(name=company_name):
-                    obj_name = models.CompanyName.objects.get(name=company_name)
+                if models.CompanyName.objects.filter(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name):
+                    obj_name = models.CompanyName.objects.get(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name)
                 else:
-                    obj_name = models.CompanyName.objects.create(name=company_name)
+                    obj_name = models.CompanyName.objects.create(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name)
 
                 for i, project_name in enumerate(project_names):
 
                     amount = df.iloc[(i + 1), (key + 1)]
-                    amount = Decimal(re.sub(',', '', str(amount))) * unit_change[unit] if is_num(amount) else 0.00
-                    if models.TransactImpactInChangeShareOfSubsidiari.objects.filter(stk_cd_id=self.stk_cd_id,
-                                                                         acc_per=self.acc_per,
-                                                                         project_name=project_name,
-                                                                         typ_rep_id='A',
-                                                                         name_id=obj_name.id):
-                        obj = models.TransactImpactInChangeShareOfSubsidiari.objects.get(stk_cd_id=self.stk_cd_id,
-                                                                             project_name=project_name,
-                                                                             acc_per=self.acc_per,
-                                                                             typ_rep_id='A',
-                                                                             name_id=obj_name.id)
-                        obj.amount = amount
-                        obj.save()
-                    else:
-                        models.TransactImpactInChangeShareOfSubsidiari.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            typ_rep_id='A',
-                            name_id=obj_name.id,
-                            project_name=project_name,
-                            amount=amount
-                        )
+                    amount = num_to_decimal(amount,unit)
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        name_id=obj_name.id,
+                        project_name=project_name,
+                        amount=amount
+                    )
+                    create_and_update('TransactImpactInChangeShareOfSubsidiari',**value_dict)
         else:
             pass
 
@@ -2588,53 +1595,19 @@ class TheDeterminBasiAndAccountPolic(HandleIndexContent):
         super(TheDeterminBasiAndAccountPolic, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b100601']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                                instructi.append(df.to_string())
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b100601']
+        pass
 
     def converse(self):
-
         pass
 
     def logic(self):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-
-        if len(instructi) > 1:
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.determin_basi_and_account_report_divis = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    determin_basi_and_account_report_divis=instructi
-                )
+        df, unit, instructi = recognize_instucti(self.indexcontent)
+        save_combine_instructi(instructi, models.ComprehensNote, self.stk_cd_id, self.acc_per,'A',
+                       'determin_basi_and_account_report_divis')
 
 class ReportDivisFinanciInform(HandleIndexContent):
     '''
@@ -2644,30 +1617,8 @@ class ReportDivisFinanciInform(HandleIndexContent):
         super(ReportDivisFinanciInform, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b100602']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b100602']
+        pass
 
     def converse(self):
 
@@ -2677,44 +1628,30 @@ class ReportDivisFinanciInform(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-        unit_change = {'元': 1, '千元': 1000, '万元': 10000, '百万元': 1000000, '亿元': 100000000}
+        df, unit, instructi = recognize_df_and_instucti(self.indexcontent)
         if df is not None and len(df) > 1:
             company_names = list(df.iloc[0,1:])
-            project_names = list(df.iloc[1:,0])
+            names = list(df.iloc[1:,0])
 
             for key, company_name in enumerate(company_names):
-                if models.CompanyName.objects.filter(name=company_name):
-                    obj_name = models.CompanyName.objects.get(name=company_name)
+                if models.CompanyName.objects.filter(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name):
+                    obj_name = models.CompanyName.objects.get(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name)
                 else:
-                    obj_name = models.CompanyName.objects.create(name=company_name)
+                    obj_name = models.CompanyName.objects.create(stk_cd_id=self.stk_cd_id,acc_per=self.acc_per,company_name=company_name)
 
-                for i, project_name in enumerate(project_names):
+                for i, name in enumerate(names):
 
                     amount = df.iloc[(i + 1), (key + 1)]
-                    amount = Decimal(re.sub(',', '', str(amount))) * unit_change[unit] if is_num(amount) else 0.00
-                    print(amount)
-                    if models.ReportDivisFinanciInform.objects.filter(stk_cd_id=self.stk_cd_id,
-                                                                         acc_per=self.acc_per,
-                                                                         project_name=project_name,
-                                                                         typ_rep_id='A',
-                                                                         name_id=obj_name.id):
-                        obj = models.ReportDivisFinanciInform.objects.get(stk_cd_id=self.stk_cd_id,
-                                                                             project_name=project_name,
-                                                                             acc_per=self.acc_per,
-                                                                             typ_rep_id='A',
-                                                                             name_id=obj_name.id)
-                        obj.amount = amount
-                        obj.save()
-                    else:
-                        models.ReportDivisFinanciInform.objects.create(
-                            stk_cd_id=self.stk_cd_id,
-                            acc_per=self.acc_per,
-                            typ_rep_id='A',
-                            name_id=obj_name.id,
-                            project_name=project_name,
-                            amount=amount
-                        )
+                    amount = num_to_decimal(amount,unit)
+                    value_dict = dict(
+                        stk_cd_id=self.stk_cd_id,
+                        acc_per=self.acc_per,
+                        typ_rep_id='A',
+                        company_name_id=obj_name.id,
+                        name=name,
+                        amount=amount
+                    )
+                    create_and_update('ReportDivisFinanciInform',**value_dict)
         else:
             pass
 
@@ -2722,36 +1659,12 @@ class OtherImportTransactAndEvent(HandleIndexContent):
     '''
           其他对投资者决策有影响的重要事项
        '''
-
     def __init__(self, stk_cd_id, acc_per, indexno, indexcontent):
         super(OtherImportTransactAndEvent, self).__init__(stk_cd_id, acc_per, indexno, indexcontent)
 
     def recognize(self):
-        df = None
-        instructi = []
-        unit = '元'
-        pattern0 = re.compile('^.*?单位：(.*?元).*?$')
-        if self.indexno in ['0b100700']:
-            for k, content in enumerate(self.indexcontent):
-                for classify, item in content.items():
-                    if classify == 'c' and len(item) > 0:
-                        for tables in item:
-                            for table in tables:
-                                df = remove_per_from_df(remove_space_from_df(table))
-                                instructi.append(df.to_string())
-                    elif classify == 't' and len(item) > 0:
-                        if pattern0.match(item):
-                            unit = pattern0.match(item).groups()[0]
-                        else:
-                            ret = re.sub('.*?.适用.不适用', '', item)
-                            if ret != '':
-                                instructi.append(ret)
-                    else:
-                        pass
-        else:
-            pass
-
-        return df, unit, ''.join(instructi)
+        indexnos = ['0b100700']
+        pass
 
     def converse(self):
 
@@ -2761,16 +1674,6 @@ class OtherImportTransactAndEvent(HandleIndexContent):
         pass
 
     def save(self):
-        df, unit, instructi = self.recognize()
-
-        if len(instructi) > 1:
-            if models.ComprehensNote.objects.filter(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per):
-                obj = models.ComprehensNote.objects.get(stk_cd_id=self.stk_cd_id, acc_per=self.acc_per)
-                obj.other_import_transact_and_event = instructi
-                obj.save()
-            else:
-                models.ComprehensNote.objects.create(
-                    stk_cd_id=self.stk_cd_id,
-                    acc_per=self.acc_per,
-                    other_import_transact_and_event=instructi
-                )
+        df, unit, instructi = recognize_instucti(self.indexcontent)
+        save_combine_instructi(instructi, models.ComprehensNote, self.stk_cd_id, self.acc_per,'A',
+                       'other_import_transact_and_event')

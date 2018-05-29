@@ -6,7 +6,7 @@ from .eleventh import ReportType,CompanyName,SubjectName
 
 class BusiMergerNotUnderTheSameControl(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
-    name = models.ForeignKey(CompanyName,on_delete=models.CASCADE,verbose_name='被购买方名称')
+    company_name = models.ForeignKey(CompanyName,on_delete=models.CASCADE,verbose_name='被购买方名称')
     acquisit_time = models.CharField(verbose_name='股权取得时点',default='',max_length=150)
     acquisit_cost = models.DecimalField(verbose_name='股权取得成本', decimal_places=2, max_digits=22, default=0.00)
     acquisit_rate = models.DecimalField(verbose_name='股权取得比例', decimal_places=2, max_digits=22, default=0.00)
@@ -17,14 +17,14 @@ class BusiMergerNotUnderTheSameControl(CommonInfo):
     np = models.DecimalField(verbose_name='购买日至期末被购买方的净利润', decimal_places=2, max_digits=22, default=0.00)
 
     class Meta:
-        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'company_name')
 
     def __str__(self):
         return '本期发生的非同一控制下企业合并 ：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
 
 class BusiMergerUnderTheSameControl(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
-    name = models.ForeignKey(CompanyName,on_delete=models.CASCADE,verbose_name='被合并方名称')
+    company_name = models.ForeignKey(CompanyName,on_delete=models.CASCADE,verbose_name='被合并方名称')
     acquisit_rate = models.DecimalField(verbose_name='企业合并中取得的权益比例', decimal_places=2, max_digits=22, default=0.00)
     same_control_basi = models.CharField(verbose_name='构成同一控制下企业合并的依据',max_length=150,default='')
     merger_date = models.CharField(verbose_name='合并日',max_length=150,default='')
@@ -35,14 +35,14 @@ class BusiMergerUnderTheSameControl(CommonInfo):
     before_np = models.DecimalField(verbose_name='比较期间被合并方的净利润', decimal_places=2, max_digits=22, default=0.00)
 
     class Meta:
-        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'company_name')
 
     def __str__(self):
         return '本年发生的同一控制下企业合并 ：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
 
 class ConsolidCostAndGoodwil(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
-    name = models.ForeignKey(CompanyName, on_delete=models.CASCADE, verbose_name='被购买方名称')
+    company_name = models.ForeignKey(CompanyName, on_delete=models.CASCADE, verbose_name='被购买方名称')
     cash = models.DecimalField(verbose_name='现金', decimal_places=2, max_digits=22, default=0.00)
     non_cash_asset = models.DecimalField(verbose_name='非现金资产的公允价值', decimal_places=2, max_digits=22, default=0.00)
     issu_or_assum_debt = models.DecimalField(verbose_name='发行或承担的债务的公允价值', decimal_places=2, max_digits=22, default=0.00)
@@ -55,14 +55,14 @@ class ConsolidCostAndGoodwil(CommonInfo):
     goodwil = models.DecimalField(verbose_name='商誉/合并成本小于取得的可辨认净资产公允价值份额的金额', decimal_places=2, max_digits=22, default=0.00)
 
     class Meta:
-        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'company_name')
 
     def __str__(self):
         return '合并成本及商誉 ：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
 
 class ConsolidCost(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
-    name = models.ForeignKey(CompanyName, on_delete=models.CASCADE, verbose_name='单位名称')
+    company_name = models.ForeignKey(CompanyName, on_delete=models.CASCADE, verbose_name='单位名称')
     cash = models.DecimalField(verbose_name='现金', decimal_places=2, max_digits=22, default=0.00)
     non_cash_asset = models.DecimalField(verbose_name='非现金资产的账面价值', decimal_places=2, max_digits=22, default=0.00)
     issu_or_assum_debt = models.DecimalField(verbose_name='发行或承担的债务的账面价值', decimal_places=2, max_digits=22, default=0.00)
@@ -70,7 +70,7 @@ class ConsolidCost(CommonInfo):
     or_have_consider = models.DecimalField(verbose_name='或有对价', decimal_places=2, max_digits=22, default=0.00)
 
     class Meta:
-        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'company_name')
 
     def __str__(self):
         return '合并成本 ：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
@@ -113,16 +113,16 @@ class BookValuOfAssetAndLiabil(CommonInfo):
 
 class CompositOfEnterprisGroup(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
-    name = models.ForeignKey(CompanyName,on_delete=models.CASCADE,verbose_name='公司名称')
+    company_name = models.ForeignKey(CompanyName,on_delete=models.CASCADE,verbose_name='公司名称')
     main_place_of_busi = models.CharField(verbose_name='主要经营地',max_length=150,default='')
     registr_place = models.CharField(verbose_name='注册地',max_length=150,default='')
     busi_natur = models.CharField(verbose_name='业务性质',max_length=150,default='')
     direct_sharehold = models.CharField(verbose_name='直接持股比例',max_length=150,default='')
     indirect_sharehold = models.CharField(verbose_name='间接持股比例',max_length=150,default='')
-    get_method = models.CharField(verbose_name='取得方式',max_length=150,default='')
+    acquisit_style = models.CharField(verbose_name='取得方式',max_length=150,default='')
 
     class Meta:
-        unique_together = ("stk_cd", "acc_per", "typ_rep",'name')
+        unique_together = ("stk_cd", "acc_per", "typ_rep",'company_name')
 
     def __str__(self):
         return '企业集团的构成：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
@@ -182,13 +182,13 @@ class MajorNonwhollyownSubsidiaryFinanciInform(CommonInfo):
     company_type = models.CharField(verbose_name='公司类型', max_length=30, choices=COM_TYPE, default='s')
     before_end = models.CharField(verbose_name='期初期末', max_length=30, choices=BEFORE_END, default='e')
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
-    subcompani_name = models.CharField(verbose_name='公司名称', max_length=150, default='')
-    subject = models.CharField(verbose_name='项目名称', max_length=30, choices=SUBJECT, default='e')
+    company_name = models.CharField(verbose_name='公司名称', max_length=150, default='')
+    name = models.CharField(verbose_name='项目名称', max_length=30, choices=SUBJECT, default='e')
     amount = models.DecimalField(verbose_name='金额', decimal_places=2, max_digits=22,default=0.00)
 
 
     class Meta:
-        unique_together = ("stk_cd", "acc_per", "typ_rep", 'company_type','before_end','subcompani_name','subject')
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'company_type','before_end','company_name','name')
 
     def __str__(self):
         return '重要的非全资子公司财务信息：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
@@ -196,13 +196,13 @@ class MajorNonwhollyownSubsidiaryFinanciInform(CommonInfo):
 class ParentCompaniAndActualControl(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
     parent_compani_name = models.CharField(verbose_name='母公司名称', max_length=150, default='')
-    registr = models.CharField(verbose_name='注册地', max_length=150, default='')
+    registr_place = models.CharField(verbose_name='注册地', max_length=150, default='')
     busi_natur = models.CharField(verbose_name='业务性质', max_length=150, default='')
-    regist_capit = models.DecimalField(verbose_name='注册资本', decimal_places=2, max_digits=22, default=0.00)
+    regist_capit = models.CharField(verbose_name='注册资本', default='',max_length=150)
     parent_company_share = models.DecimalField(verbose_name='母公司对本企业的持股比例', decimal_places=2, max_digits=22, default=0.00)
     parent_company_vote_right = models.DecimalField(verbose_name='母公司对本企业的表决权比例', decimal_places=2, max_digits=22, default=0.00)
     actual_control = models.CharField(verbose_name='实际控制人', max_length=150, default='')
-    desc = models.TextField(verbose_name='说明',default='')
+    instruct = models.TextField(verbose_name='详细说明',default='')
 
     class Meta:
         unique_together = ("stk_cd", "acc_per", "typ_rep", 'parent_compani_name',)
@@ -272,7 +272,7 @@ class MoneyLend(CommonInfo):
     amount = models.DecimalField(verbose_name='拆借金额', decimal_places=2, max_digits=22, default=0.00)
     start_date = models.CharField(verbose_name='起始日', max_length=150, default='')
     expiri_date = models.CharField(verbose_name='到期日', max_length=150, default='')
-    desc = models.CharField(verbose_name='说明', max_length=300, default='')
+    instruct = models.CharField(verbose_name='说明', max_length=300, default='')
 
     class Meta:
         unique_together = ("stk_cd", "acc_per", "typ_rep", 'transact_type', 'name','amount','start_date','expiri_date')
@@ -287,8 +287,8 @@ class KeyManagStaffRemuner(CommonInfo):
     before = models.DecimalField(verbose_name='上期发生额', decimal_places=2, max_digits=22, default=0.00)
 
     class Meta:
-        unique_together = (
-        "stk_cd", "acc_per", "typ_rep", 'name')
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+
 
     def __str__(self):
         return '关键管理人员薪酬：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
@@ -305,22 +305,22 @@ class RelatReceivPayabl(CommonInfo):
     before_end = models.CharField(verbose_name='期初期末', max_length=30, choices=BEFORE_END, default='e')
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
     natur_of_payment = models.CharField(verbose_name='款项性质', choices=TRANSACT_TYPE, default='s', max_length=30)
-    name = models.CharField(verbose_name='科目名称', max_length=150, default='')
+    subject = models.CharField(verbose_name='科目名称', max_length=150, default='')
     relat_parti_name = models.CharField(verbose_name='关联方名称', max_length=150, default='')
-    book_value = models.DecimalField(verbose_name='账面余额', decimal_places=2, max_digits=22, default=0.00)
+    balanc = models.DecimalField(verbose_name='账面余额', decimal_places=2, max_digits=22, default=0.00)
     bad_debt_prepar = models.DecimalField(verbose_name='坏账准备', decimal_places=2, max_digits=22, default=0.00)
 
 
     class Meta:
-        unique_together = (
-        "stk_cd", "acc_per", "typ_rep", 'before_end', 'name', 'natur_of_payment', 'name', 'relat_parti_name')
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'before_end',  'natur_of_payment', 'subject', 'relat_parti_name')
+
 
     def __str__(self):
         return '关联方应收应付款：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
 
 class InvestInSubsidiari(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
-    name = models.ForeignKey(CompanyName, on_delete=models.CASCADE, verbose_name='公司名称')
+    company_name = models.ForeignKey(CompanyName, on_delete=models.CASCADE, verbose_name='公司名称')
     before = models.DecimalField(verbose_name='期初余额', decimal_places=2, max_digits=22, default=0.00)
     increase = models.DecimalField(verbose_name='本期增加', decimal_places=2, max_digits=22, default=0.00)
     cut_back = models.DecimalField(verbose_name='本期减少', decimal_places=2, max_digits=22, default=0.00)
@@ -329,7 +329,7 @@ class InvestInSubsidiari(CommonInfo):
     impair_balanc = models.DecimalField(verbose_name='减值准备期末余额', decimal_places=2, max_digits=22, default=0.00)
 
     class Meta:
-        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name')
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'company_name')
 
     def __str__(self):
         return '对子公司投资：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
@@ -342,8 +342,8 @@ class ReturnOnEquitiAndEarnPerShare(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
     gain_or_loss_type = models.CharField(verbose_name='收益类别', choices=TYPE, default='s', max_length=30)
     return_on_equiti = models.DecimalField(verbose_name='净资产收益率', decimal_places=2, max_digits=10, default=0.00)
-    basic_earn_per_share = models.DecimalField(verbose_name='基本每股收益', decimal_places=2, max_digits=10, default=0.00)
-    dilut_earn_per_share = models.DecimalField(verbose_name='稀释每股收益', decimal_places=2, max_digits=10, default=0.00)
+    eps = models.DecimalField(verbose_name='基本每股收益', decimal_places=2, max_digits=10, default=0.00)
+    deps = models.DecimalField(verbose_name='稀释每股收益', decimal_places=2, max_digits=10, default=0.00)
 
     class Meta:
         unique_together = ("stk_cd", "acc_per", "typ_rep", 'gain_or_loss_type')
@@ -353,24 +353,24 @@ class ReturnOnEquitiAndEarnPerShare(CommonInfo):
 
 class TransactImpactInChangeShareOfSubsidiari(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
-    name = models.ForeignKey(CompanyName, on_delete=models.CASCADE, verbose_name='公司名称')
-    project_name = models.CharField(verbose_name='项目名称',default='',max_length=150)
+    company_name = models.ForeignKey(CompanyName, on_delete=models.CASCADE, verbose_name='公司名称')
+    name = models.CharField(verbose_name='项目名称',default='',max_length=150)
     amount = models.DecimalField(verbose_name='金额', decimal_places=2, max_digits=22, default=0.00)
 
     class Meta:
-        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name','project_name')
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'company_name','name')
 
     def __str__(self):
         return '交易对于少数股东权益及归属于母公司所有者权益的影响：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)
 
 class ReportDivisFinanciInform(CommonInfo):
     typ_rep = models.ForeignKey(ReportType, on_delete=models.CASCADE, verbose_name='报表类型')
-    name = models.ForeignKey(CompanyName, on_delete=models.CASCADE, verbose_name='报告分部')
-    project_name = models.CharField(verbose_name='项目名称', default='', max_length=150)
+    company_name = models.ForeignKey(CompanyName, on_delete=models.CASCADE, verbose_name='报告分部')
+    name = models.CharField(verbose_name='项目名称', default='', max_length=150)
     amount = models.DecimalField(verbose_name='金额', decimal_places=2, max_digits=22, default=0.00)
 
     class Meta:
-        unique_together = ("stk_cd", "acc_per", "typ_rep", 'name', 'project_name')
+        unique_together = ("stk_cd", "acc_per", "typ_rep", 'company_name', 'name')
 
     def __str__(self):
         return '报告分部的财务信息：{}于{}的{}'.format(self.stk_cd, self.acc_per, self.typ_rep)

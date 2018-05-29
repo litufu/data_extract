@@ -12,10 +12,10 @@ filepath = os.path.join(os.path.join(BASE_DIR,'report_data_extract'),'models')
 def add_roottabledesc():
     root.RootTableDesc.objects.create(
         tablename='StdContentIndex',
-        table_cn_name = 'æ ‡å‡†ç´¢å¼•è¡¨',
+        table_cn_name = '±ê×¼Ë÷Òı±í',
         class_str=json.dumps(['def __str__(self):','return self.name']),
         functions='',
-        meta = {"verbose_name" : "æ ‡å‡†ç´¢å¼•è¡¨"}
+        meta = {"verbose_name" : "±ê×¼Ë÷Òı±í"}
     )
 
 
@@ -33,7 +33,7 @@ def add_root():
         isunique_together = True,
         choices = '',
         default = '',
-        verbosename = 'è¯åˆ¸å¸‚åœº',
+        verbosename = 'Ö¤È¯ÊĞ³¡',
         foreignkey = '',
 
     )
@@ -51,3 +51,7 @@ p = subprocess.Popen('python manage.py makemigrations',stdout=subprocess.PIPE,sh
 print(p.stdout.read())
 p = subprocess.Popen('python manage.py migrate',stdout=subprocess.PIPE,shell=True,cwd='H:\data_extract')
 print(p.stdout.read())
+
+
+
+

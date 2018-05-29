@@ -3,15 +3,20 @@
 import pandas as pd
 from collections import OrderedDict
 import re
+import timeit
 from sqlalchemy import create_engine
 engine = create_engine(r'sqlite:///H:\data_extract\db.sqlite3')
 import os,django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "data_extract.settings")
 django.setup()
+from django.db import transaction
 from utils.mytools import remove_space_from_df
+from utils.mytools import func_timer
+from utils.handleindexcontent.base import registr
 from report_data_extract import models
-from utils.handleIndex import HtmlFile
+from utils.handleIndex import HtmlFile,HtmlPage
 from utils.handleTable import HtmlTable
+from utils.handleindexcontent.base import save_table_attr
 from  utils.handleindexcontent.first import *
 from  utils.handleindexcontent.second import *
 from  utils.handleindexcontent.third import *
@@ -106,12 +111,15 @@ def produce_table(cells_list):
     table = HtmlTable(cells_list)
     dfs = []
     for table1 in table.fill_merge_cells_table:
-        html_table = table.create_html_table(table1)
-        try:
-            df = html_table_to_df(str(html_table))
-            dfs.append(df)
-        except Exception as e:
-            return pd.DataFrame()
+        if isinstance(table1,tuple):
+            dfs.append(table1[1])
+        else:
+            html_table = table.create_html_table(table1)
+            try:
+                df = html_table_to_df(str(html_table))
+                dfs.append(df)
+            except Exception as e:
+                return pd.DataFrame()
     return dfs
 
 def html_table_to_df(html_table):
@@ -124,10 +132,12 @@ def print_contents(indexno,indexcontents):
             if classify =='t':
                 print(classify,item)
             elif classify == 'c' and len(item)>0:
-                # print('item',item)
                 for tables in item:
-                    # print('tables',tables)
                     for table in tables:
+                        if isinstance(table,str):
+                            continue
+                        with transaction.atomic():
+                            save_table_attr(table,indexno)
                         print(classify, remove_space_from_df(table))
             else:
                 print('未统计')
@@ -140,24 +150,31 @@ def handle_content(indexno,indexcontents,stk_cd_id,acc_per):
     if len(handle_classname) > 0 and handle_classname[0].handle_classname != 'pass':
         Handleclass = eval(handle_classname[0].handle_classname)
         obj = Handleclass(stk_cd_id, acc_per, indexno, indexcontents)
-        obj.save()
+        with transaction.atomic():
+            obj.save()
     elif len(handle_classname) > 0 and handle_classname[0].handle_classname == 'pass':
         print('无需处理', indexno)
         pass
     else:
         print('尚未进行处理', indexno)
-        exit()
+        choice = input('是否暂时通过[yes|no]')
+        if choice == 'yes':
+            registr(indexno,'pass')
+        else:
+            exit()
 
+@func_timer
 def handle_all_contents(filepath):
     stk_cd,acc_per,indexcontents = extract(filepath)
     stk_cd_id = models.CompanyList.objects.get(code=stk_cd).code
     for contents in indexcontents:
         for indexno,indexcontents in contents.items():
             print('--------{}开始----------'.format(indexno))
-            if indexno != '08050200':
-                continue
+            # if indexno != '08030000':
+            #     continue
             handle_content(indexno,indexcontents,stk_cd_id,acc_per)
 
+@func_timer
 def print_all_contents(filepath):
     stk_cd,acc_per,indexcontents = extract(filepath)
     # stk_cd_id = models.CompanyList.objects.get(code=stk_cd).code
@@ -167,44 +184,36 @@ def print_all_contents(filepath):
             print_contents(indexno,indexcontents)
 
 if __name__ == '__main__':
-    # filepath = r'H:\data_extract\report\shanghai\sh_600312_20171231.html'
-    filepath = r'H:\data_extract\report\shenzhen\sz_000701_20171231.html'
+    # filepath1 = r'c:\Users\28521\Desktop\report\shanghai\sh_600312_20171231.html'
+    # filepath2 = r'c:\Users\28521\Desktop\report\shenzhen\sz_000701_20171231.html'
+    # filepath3 = r'c:\Users\28521\Desktop\report\shenzhen\sz_000878_20171231.html'
+    # filepath4 = r'c:\Users\28521\Desktop\report\shenzhen\sz_002085_20171231.html'
+    # filepath5 = r'c:\Users\28521\Desktop\report\shenzhen\sz_300623_20171231.html'
+    # filepath6 = r'c:\Users\28521\Desktop\report\shenzhen\sz_300662_20171231.html'
+    # filepath7 = r'c:\Users\28521\Desktop\report\sh\sh_600129_20171231.html'
+    # filepath8 = r'c:\Users\28521\Desktop\report\sh\sh_600249_20171231.html'
+    # filepath9 = r'c:\Users\28521\Desktop\report\sh\sh_600469_20171231.html'
+    # filepath10 = r'c:\Users\28521\Desktop\report\sh\sh_600978_20171231.html'
+    # filepath11 = r'c:\Users\28521\Desktop\report\sh\sh_600161_20171231.html'
+    # filepath12 = r'c:\Users\28521\Desktop\report\sh\sh_600252_20171231.html'
+    # filepath13 = r'C:\Users\28521\Desktop\report\sh\sh_600488_20171231.html'
+    # filepath14 = r'c:\Users\28521\Desktop\report\sz\sz_000727_20171231.html'
+    # filepath15 = r'c:\Users\28521\Desktop\report\sz\sz_002147_20171231.html'
+    # filepath16 = r'c:\Users\28521\Desktop\report\sz\sz_002209_20171231.html'
+    # filepath17 = r'c:\Users\28521\Desktop\report\sz\sz_300063_20171231.html'
+    # filepath18 = r'c:\Users\28521\Desktop\report\sz\sz_300115_20171231.html'
+    # filepath = r'c:\Users\28521\Desktop\report\sz\sz_300156_20171231.html'
+    filepath = r'c:\Users\28521\Desktop\report\sz\sz_300440_20171231.html'
+    # filepaths = [filepath1,filepath2,filepath3,filepath4]
+    # for filepath in filepaths:
     handle_all_contents(filepath)
-    # print_all_contents(filepath)
-
-
-    # stk_cd,acc_per,indexcontents = extract(filepath)
-    # stk_cd_id = models.CompanyList.objects.get(code=stk_cd).code
-    # for contents in indexcontents:
-    #     for indexno,indexcontents in contents.items():
-    #         print('--------{}开始----------'.format(indexno))
-    #         # if indexno != '0b11030000':
-    #         #     continue
-    #         indexno_id = models.StdContentIndex.objects.get(no=indexno).id
-    #         handle_classname = models.IndexHandleMethod.objects.filter(indexno_id=indexno_id)
-    #         if len(handle_classname)>0 and handle_classname[0].handle_classname != 'pass':
-    #             Handleclass = eval(handle_classname[0].handle_classname)
-    #             obj = Handleclass(stk_cd_id,acc_per,indexno,indexcontents)
-    #             obj.save()
-    #         elif len(handle_classname)>0 and handle_classname[0].handle_classname == 'pass':
-    #             print('无需处理',indexno)
-    #             pass
-    #         else:
-    #             print('尚未进行处理',indexno)
-    #             exit()
+    # filepaths = ['filepath{}'.format(i) for i in range(1,19)]
+    # for filepath in filepaths:
+    #     s3 = eval(filepath)
+    #     try:
+    #         print_all_contents(s3)
+    #     except Exception:
+    #         print('{}失败'.format(filepath))
+    #         continue
     #
     #
-    #         # for content in indexcontents:
-    #         #     for classify,item in content.items():
-    #         #         if classify =='t':
-    #         #             print(classify,item)
-    #         #         elif classify == 'c' and len(item)>0:
-    #         #             # print('item',item)
-    #         #             for tables in item:
-    #         #                 # print('tables',tables)
-    #         #                 for table in tables:
-    #         #                     print(classify, remove_space_from_df(table))
-    #         #         else:
-    #         #             print('未统计')
-    #         #         print('-------------------')
-    #         # print('--------{}结束----------'.format(indexno))
